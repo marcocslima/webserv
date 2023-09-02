@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 03:21:54 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/01 04:02:45 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/02 04:16:18 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ int main() {
     int server_fd, new_socket;
     struct sockaddr_in address;
     int addrlen = sizeof(address);
-    //char buffer[1024] = {0};
+    char buffer[1024] = {0};
 
-    // Lê o conteúdo do arquivo HTML
-    ifstream htmlFile("www/index.html");
-    string htmlContent((istreambuf_iterator<char>(htmlFile)), istreambuf_iterator<char>());
+    // Lê o conteúdo do arquivo HTML para a página padrão
+    ifstream defaultHtmlFile("www/index.html");
+    string defaultHtmlContent((istreambuf_iterator<char>(defaultHtmlFile)), istreambuf_iterator<char>());
 
     // Criar o socket
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
@@ -65,16 +65,49 @@ int main() {
             exit(EXIT_FAILURE);
         }
 
-        // Construir o cabeçalho HTTP
-        char responseHeader[1024];
-        sprintf(responseHeader, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n", (int)htmlContent.length());
+        // Receber a solicitação HTTP do cliente
+        int bytesRead = recv(new_socket, buffer, sizeof(buffer), 0);
 
-        // Enviar o cabeçalho HTTP
-        send(new_socket, responseHeader, strlen(responseHeader), 0);
+        if (bytesRead > 0) {
+            // Analisar a solicitação HTTP para determinar a rota
+            string request(buffer, bytesRead);
+            size_t start = request.find("GET ");
+            size_t end = request.find(" HTTP/1.1");
+            if (start != string::npos && end != string::npos) {
+                string route = request.substr(start + 4, end - start - 4);
 
-        // Enviar o conteúdo HTML como resposta para o cliente
-        send(new_socket, htmlContent.c_str(), htmlContent.length(), 0);
-        printf("Página HTML enviada para o cliente\n");
+                if (route == "/") {
+                    // Servir a página padrão (www/index.html)
+
+                    // Construir o cabeçalho HTTP
+                    char responseHeader[1024];
+                    sprintf(responseHeader, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n", (int)defaultHtmlContent.length());
+
+                    // Enviar o cabeçalho HTTP
+                    send(new_socket, responseHeader, strlen(responseHeader), 0);
+
+                    // Enviar o conteúdo HTML da página padrão como resposta
+                    send(new_socket, defaultHtmlContent.c_str(), defaultHtmlContent.length(), 0);
+                } else if (route == "/upload") {
+                    // Rota "/upload" para exibir a página de upload
+                    ifstream uploadHtmlFile("www/upload.html");
+                    string uploadHtmlContent((istreambuf_iterator<char>(uploadHtmlFile)), istreambuf_iterator<char>());
+
+                    // Construir o cabeçalho HTTP
+                    char responseHeader[1024];
+                    sprintf(responseHeader, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n", (int)uploadHtmlContent.length());
+
+                    // Enviar o cabeçalho HTTP
+                    send(new_socket, responseHeader, strlen(responseHeader), 0);
+
+                    // Enviar o conteúdo HTML da página de upload como resposta
+                    send(new_socket, uploadHtmlContent.c_str(), uploadHtmlContent.length(), 0);
+                } else {
+                    // Tratar outras rotas aqui
+                    // ...
+                }
+            }
+        }
 
         // Fechar o socket da nova conexão
         close(new_socket);
