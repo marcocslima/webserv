@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 03:21:54 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/02 04:16:18 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/03 17:34:47 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,11 @@ int main() {
         // Receber a solicitação HTTP do cliente
         int bytesRead = recv(new_socket, buffer, sizeof(buffer), 0);
 
+
         if (bytesRead > 0) {
             // Analisar a solicitação HTTP para determinar a rota
             string request(buffer, bytesRead);
+            cout << request << endl;
             size_t start = request.find("GET ");
             size_t end = request.find(" HTTP/1.1");
             if (start != string::npos && end != string::npos) {
