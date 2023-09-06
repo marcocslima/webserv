@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+         #
+#    By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/01 03:40:55 by mcl              ###   ########.fr        #
+#    Updated: 2023/09/05 20:25:38 by jefernan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,22 +25,22 @@ RM = rm -rf
 
 # DIRECTORIES #
 
-SRC_DIR = ./
+# SRC_DIR =
+# INC_DIR = -I./sources/request
 
-VPATH = $(SRC_DIR)\
+vpath %.cpp ./sources ./sources/request
+vpath %.hpp ./sources/request
 
-# FILES #
-
-FILES =		main
-
+FILES =		main Request
+INCLUDE = Request.hpp
 SOURCES =	$(FILES:=.cpp)
 
 # COMPILED_SOURCES #
 
-SRC_PATH =	./
-OBJ_PATH =	obj/
-SRCS =	${addprefix ${SRC_PATH}, ${SOURCES}}
-OBJS =	$(addprefix $(OBJ_PATH), $(SOURCES:.c=.o))
+# SRC_PATH =	./sources ./sources/request
+OBJ_PATH =	./obj/
+# SRCS =	${addprefix ${SRC_PATH}, ${SOURCES}}
+OBJS =	$(addprefix $(OBJ_PATH), $(SOURCES:.cpp=.o))
 
 # *************************************************************************** #
 
@@ -48,18 +48,21 @@ OBJS =	$(addprefix $(OBJ_PATH), $(SOURCES:.c=.o))
 
 all: $(NAME)
 
-$(NAME) : $(SRCS)
-	$(CC) $(FLAGS) $(SRCS) -o $(NAME)
+$(NAME) : $(OBJS) $(OBJ_PATH)
+	@$(CC) $(FLAGS) $(OBJS) -o $(NAME)
+	@echo "\e[0;35m Successfully compiled! \e[0m"
 
-${OBJ_PATH}%.o:	$(SRC_PATH)%.c
-	@mkdir -p obj
+${OBJ_PATH}%.o:	%.cpp $(INCLUDE)
+	@mkdir -p ${OBJ_PATH}
 	@${CC} ${FLAGS} -c $< -o $@
 
 clean:
-	$(RM) $(OBJ_PATH)
+	@$(RM) $(OBJ_PATH)
+	@echo "\e[0;36m Objects removed! \e[0m"
 
 fclean: clean
-	$(RM) $(NAME)
+	@$(RM) $(NAME)
+	@echo "\e[0;36m Program has been cleaned! \e[0m"
 
 re: fclean all
 
