@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/07 10:37:07 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/07 11:09:35 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ std::vector<std::string> split(const std::string str) {
     std::istringstream iss(str);
     std::string token;
 
-    //iss >> token; // skip first word
-
     while (iss >> token) {
         vtokens.push_back(token);
     }
@@ -30,7 +28,7 @@ std::vector<std::string> split(const std::string str) {
 }
 
 void Parser::getFile(const char* fileconf) {
-    std:: string line;
+    std::string line;
     std::vector<std::string> ckey;
     std::vector<std::string> cvalues;
     std::vector<std::pair<std::string, std::vector<std::string> > > vconfs;
