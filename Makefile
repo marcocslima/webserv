@@ -6,7 +6,7 @@
 #    By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/01 03:40:55 by mcl              ###   ########.fr        #
+#    Updated: 2023/09/07 08:04:17 by mcl              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,8 @@ VPATH = $(SRC_DIR)\
 
 # FILES #
 
-FILES =		main
+FILES =		main \
+			sources/Parser \
 
 SOURCES =	$(FILES:=.cpp)
 

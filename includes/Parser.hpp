@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/05 03:57:34 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/07 09:12:35 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,20 @@
 #include <iostream>
 #include <map>
 #include <fstream>
+#include <vector>
+#include <string>
 #include <cstdlib>
+#include <sstream>
 
 class Parser
 {
     private:
-        std::string _conf;
-        std::multimap<std::string, std::string> _data;
+        
     public:
         Parser();
         ~Parser();
-        Parser(const Parser& cpy);
-        Parser& operator=(const Parser& obj);
+        //Parser(const Parser& cpy);
+        //Parser& operator=(const Parser& obj);
 
-        void	getData(const std::string& conf);
+        void getFile(const char* fileconf);       
 };
