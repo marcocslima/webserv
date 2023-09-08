@@ -6,7 +6,7 @@
 #    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/07 23:13:37 by pmitsuko         ###   ########.fr        #
+#    Updated: 2023/09/08 00:06:21 by pmitsuko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,12 +40,14 @@ RM = rm -rf
 SRC_DIR = ./src/
 
 VPATH = $(SRC_DIR)\
-		$(SRC_DIR)server
+		$(SRC_DIR)server\
+		$(SRC_DIR)utils
 
 # FILES #
 
 FILES = main.cpp\
-		ServerSocket.cpp
+		ServerSocket.cpp\
+		Logger.cpp
 
 # COMPILED_SOURCES #
 
