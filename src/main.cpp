@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 22:12:39 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/08 00:12:19 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/08 00:46:25 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ int	main(void)
 	{
 		return (-1);
 	}
-	logger.log(Logger::INFO, "Listening at 127.0.0.1:" PORT);
 	while (true)
 	{
 		clientSocket = server.acceptConnection();
