@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 20:59:33 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/07 23:12:39 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/08 00:25:44 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #ifndef SERVER_SOCKET_H
 # define SERVER_SOCKET_H
 
+# include "Logger.hpp"
 # include <iostream>
 # include <cstring>
 # include <cstdlib>
@@ -33,6 +34,7 @@ class ServerSocket
 		int					_serverSocket;
 		const char*			_port;
 		struct addrinfo*	_serverInfo;
+		Logger				logger;
 
 	public:
 		ServerSocket(void);

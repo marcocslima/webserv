@@ -6,11 +6,12 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 22:12:39 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/07 23:34:39 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/08 00:12:19 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerSocket.hpp"
+#include "Logger.hpp"
 #include <fstream>
 #include <csignal>
 #include <cstdlib>
@@ -18,10 +19,12 @@
 #define PORT "3000"
 
 ServerSocket	server(PORT);
+Logger	logger;
 
 void handleSignal(int signal) {
 	if (signal == SIGINT) {
-		std::cout << "\nEncerrando o servidor..." << std::endl;
+		std::cout << std::endl;
+		logger.log(Logger::INFO, "Stop server...");
 		server.closeSocket();
 		std::exit(0);
 	}
@@ -43,6 +46,7 @@ int	main(void)
 	{
 		return (-1);
 	}
+	logger.log(Logger::INFO, "Listening at 127.0.0.1:" PORT);
 	while (true)
 	{
 		clientSocket = server.acceptConnection();

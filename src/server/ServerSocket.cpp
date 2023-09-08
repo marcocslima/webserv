@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 21:01:05 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/07 23:11:06 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/08 00:36:41 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,16 +55,18 @@ bool	ServerSocket::createSocket(void)
 	int result = getaddrinfo(NULL, this->_port, &hints, &this->_serverInfo);
 	if (result != 0)
 	{
-		std::cerr << "Erro ao obter informações de endereço: "
-			<< gai_strerror(result) << std::endl;
+		std::string errorMessage = "Error getting address information: " +
+			std::string(gai_strerror(result));
+		logger.log(Logger::ERROR, errorMessage);
 		return (false);
 	}
 	this->_serverSocket = socket(this->_serverInfo->ai_family,
 		this->_serverInfo->ai_socktype, this->_serverInfo->ai_protocol);
 	if (this->_serverSocket == -1)
 	{
-		std::cerr << "Erro ao criar o socket do servidor: "
-			<< strerror(errno) << std::endl;
+		std::string errorMessage = "Error creating server socket: " +
+			std::string(strerror(errno));
+		logger.log(Logger::ERROR, errorMessage);
 		return (false);
 	}
 	return (true);
@@ -75,8 +77,9 @@ bool	ServerSocket::bindSocket(void)
 	if (bind(this->_serverSocket, this->_serverInfo->ai_addr,
 		this->_serverInfo->ai_addrlen) == -1)
 	{
-		std::cerr << "Erro ao vincular o socket à porta: "
-			<< strerror(errno) << std::endl;
+		std::string errorMessage = "Error binding socket to port: " +
+			std::string(strerror(errno));
+		logger.log(Logger::ERROR, errorMessage);
 		return (false);
 	}
 	return (true);
@@ -85,7 +88,9 @@ bool	ServerSocket::bindSocket(void)
 bool	ServerSocket::listenForConnections(void)
 {
 	if (listen(this->_serverSocket, BACKLOG) == -1) {
-		std::cerr << "Erro ao ouvir conexões: " << strerror(errno) << std::endl;
+		std::string errorMessage = "Error listening for connections: " +
+			std::string(strerror(errno));
+		logger.log(Logger::ERROR, errorMessage);
 		return (false);
 	}
 	return (true);
@@ -101,8 +106,9 @@ int	ServerSocket::acceptConnection(void)
 		&addr_size);
 	if (clientSocket == -1)
 	{
-		std::cerr << "Erro ao aceitar conexão do cliente: "
-			<< strerror(errno) << std::endl;
+		std::string errorMessage = "Error accepting client connection: " +
+			std::string(strerror(errno));
+		logger.log(Logger::ERROR, errorMessage);
 	}
 	return (clientSocket);
 }
