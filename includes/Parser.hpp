@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/07 09:12:35 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/09 00:45:57 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,5 @@ class Parser
         //Parser(const Parser& cpy);
         //Parser& operator=(const Parser& obj);
 
-        void getFile(const char* fileconf);       
+        void getConf(const char* fileconf);       
 };
