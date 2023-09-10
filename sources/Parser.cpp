@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/10 11:06:54 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/10 18:05:59 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,69 +34,40 @@ conf_servers* server(int locs){
 }
 
 std::vector<std::string> split(const std::string str) {
-    std::vector<std::string> vtokens;
-    std::istringstream iss(str);
-    std::string token;
+    
+    std::vector<std::string>    vtokens;
+    std::istringstream          iss(str);
+    std::string                 token;
 
     while (iss >> token) {
         vtokens.push_back(token);
     }
+    
     return vtokens;
 }
 
-int countServers(std::ifstream& conf){
-    int count = 0;
-    while(!conf.eof()){
-        std::string line;
-        std::getline(conf, line);
-        if (line.find("server") != std::string::npos)
-            count++;
+std::vector<std::string> splitTokens(const std::string str) {
+
+    std::vector<std::string>    tokens;
+    std::string                 tmp_str = str;
+    std::string                 line;
+
+    size_t pos = str.find('\n');
+    while (pos != std::string::npos) {
+        line = tmp_str.substr(0, pos);
+        tokens.push_back(line);
+        tmp_str = tmp_str.substr(pos + 1);
+        pos = tmp_str.find('\n');
     }
-    return count;
-}
-
-std::vector<std::string> extractLocations(const std::string& text) {
-    std::vector<std::string> locations;
-    std::string keyword = "location ";
-    std::string::size_type pos = 0;
-
-    while ((pos = text.find(keyword, pos)) != std::string::npos) {
-        // Encontrou a palavra-chave "location"
-        pos += keyword.length();
-        // Encontre o próximo '}' a partir da posição atual
-        std::string::size_type start = pos;
-        
-        // Verifique se a linha contém apenas "}"
-        bool onlyClosingBrace = true;
-        while (pos < text.length() && text[pos] != '\n') {
-            if (text[pos] != '}' && text[pos] != ' ' && text[pos] != '\t') {
-                onlyClosingBrace = false;
-                break;
-            }
-            ++pos;
-        }
-
-        if (onlyClosingBrace) {
-            // Encontrou uma linha contendo apenas "}", adicione-a ao vetor de locations
-            locations.push_back(text.substr(start, pos - start));
-        } else {
-            while (text[pos] != '}' && pos < text.length()) {
-                ++pos;
-            }
-            if (text[pos] == '}') {
-                // Encontrou um bloco válido, adicione-o ao vetor de locations
-                locations.push_back(text.substr(start, pos - start + 1));
-            }
-        }
-    }
-    return locations;
+    return tokens;
 }
 
 bool verifyBlockEnd(const std::string& text) {
-    std::string::size_type pos = 0;
-    bool onlyClosingBrace = true;
-    int countBrace = 0;
-    int countSpace = 0;
+    
+    std::string::size_type  pos = 0;
+    bool                    onlyClosingBrace = true;
+    int                     countBrace = 0;
+    int                     countSpace = 0;
         
     while (pos < text.length() && text[pos] != '\n') {
         if (text[pos] != '}' && text[pos] != ' ') {
@@ -113,6 +84,7 @@ bool verifyBlockEnd(const std::string& text) {
         onlyClosingBrace = false;
     if (countSpace == 0 && countBrace == 1)
         onlyClosingBrace = true;
+
     return onlyClosingBrace;
 }
 
@@ -130,28 +102,26 @@ bool verifyLineEmpty(const std::string& text) {
 }
 
 void Parser::getConf(const char* fileconf) {
-    std::string line;
-    std::vector<std::vector<std::string> > servers;
-    std::vector<std::vector<std::string> > locations;
-    params vconfs;
+    
+    std::string                             line;
+    std::vector<std::vector<std::string> >  servers;
+    std::vector<std::vector<std::string> >  locations;
+    params                                  vconfs;
+    std::vector<std::string>                serverBlocks;
+    std::vector<std::string>                locationBlocks;
+    std::string                             currentServerBlock;
+    std::string                             currentLocationBlock;
+    bool                                    insideServerBlock = false;
+    bool                                    insideLocationBlock = false;
+    bool                                    blockEnd = false;
 
     std::ifstream conf(fileconf);
     if (!conf.is_open()) {
         std::cout << "Error opening file" << std::endl;
         exit(1);
     }
-
-    std::cout << countServers(conf) << std::endl;
     conf.clear();
     conf.seekg(0, std::ios::beg);
-
-    std::vector<std::string> serverBlocks;
-    std::vector<std::string> locationBlocks;
-    std::string currentServerBlock;
-    std::string currentLocationBlock;
-    bool insideServerBlock = false;
-    bool insideLocationBlock = false;
-    bool blockEnd = false;
 
     while (!conf.eof()) {
         std::string line;
@@ -172,21 +142,20 @@ void Parser::getConf(const char* fileconf) {
         if(insideLocationBlock)
             currentLocationBlock += line + "\n";
 
-        if (insideLocationBlock && verifyBlockEnd(line)) {
-            locationBlocks.push_back(currentLocationBlock);
-            currentLocationBlock.clear();
-            insideLocationBlock = false;
-            blockEnd = true;
+        if (verifyBlockEnd(line)){
+            if (insideLocationBlock){
+                locationBlocks.push_back(currentLocationBlock);
+                currentLocationBlock.clear();
+                insideLocationBlock = false;
+            } else if (insideServerBlock && !insideLocationBlock){
+                serverBlocks.push_back(currentServerBlock);
+                currentServerBlock.clear();
+                insideServerBlock = false;
+                blockEnd = true;
+            }
         }
 
-        if (insideServerBlock && !insideLocationBlock && verifyBlockEnd(line) && blockEnd) {
-            serverBlocks.push_back(currentServerBlock);
-            currentServerBlock.clear();
-            insideServerBlock = false;
-            blockEnd = false;
-        }
-
-        if (!insideServerBlock && !insideLocationBlock && verifyBlockEnd(line) && blockEnd) {
+        if (!insideServerBlock && !insideLocationBlock && blockEnd) {
             servers.push_back(serverBlocks);
             locations.push_back(locationBlocks);
             serverBlocks.clear();
@@ -194,6 +163,7 @@ void Parser::getConf(const char* fileconf) {
             blockEnd = false;
         }
     }
-
     conf.close();
+
+    splitTokens(servers[0][0]);
 }
