@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 03:21:54 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/06 12:55:18 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/08 17:58:49 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <fstream>
 #include <string>
-#include "./request/Request.hpp"
+#include "./sources/request/Request.hpp"
 
 using namespace std;
 

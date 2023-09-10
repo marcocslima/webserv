@@ -6,11 +6,17 @@
 #    By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/05 20:25:38 by jefernan         ###   ########.fr        #
+#    Updated: 2023/09/08 18:49:05 by jefernan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = server
+
+RESET	:= \033[0m
+CYAN	:= \033[1;36m
+BLUE	:=	\e[0;31m
+CHECK	:= \342\234\224
+LOG		:= printf "[$(CYAN)$(CHECK)$(RESET)] %s\n"
 
 # LIBRARY #
 
@@ -25,21 +31,20 @@ RM = rm -rf
 
 # DIRECTORIES #
 
-# SRC_DIR =
-# INC_DIR = -I./sources/request
+SRC_DIR = ./
 
-vpath %.cpp ./sources ./sources/request
-vpath %.hpp ./sources/request
+VPATH = $(SRC_DIR)\
 
-FILES =		main Request
+FILES =		main \
+			sources/request/Request
 INCLUDE = Request.hpp
 SOURCES =	$(FILES:=.cpp)
 
 # COMPILED_SOURCES #
 
-# SRC_PATH =	./sources ./sources/request
-OBJ_PATH =	./obj/
-# SRCS =	${addprefix ${SRC_PATH}, ${SOURCES}}
+SRC_PATH =	./
+OBJ_PATH =	obj/
+SRCS =	${addprefix ${SRC_PATH}, ${SOURCES}}
 OBJS =	$(addprefix $(OBJ_PATH), $(SOURCES:.cpp=.o))
 
 # *************************************************************************** #
@@ -48,21 +53,21 @@ OBJS =	$(addprefix $(OBJ_PATH), $(SOURCES:.cpp=.o))
 
 all: $(NAME)
 
-$(NAME) : $(OBJS) $(OBJ_PATH)
-	@$(CC) $(FLAGS) $(OBJS) -o $(NAME)
-	@echo "\e[0;35m Successfully compiled! \e[0m"
+$(NAME) : $(SRCS)
+	@$(CC) $(FLAGS) $(SRCS) -o $(NAME)
+	@$(LOG) " Successfully compiled! "
 
-${OBJ_PATH}%.o:	%.cpp $(INCLUDE)
-	@mkdir -p ${OBJ_PATH}
+${OBJ_PATH}%.o:	$(SRC_PATH)%.c
+	@mkdir -p obj
 	@${CC} ${FLAGS} -c $< -o $@
 
 clean:
 	@$(RM) $(OBJ_PATH)
-	@echo "\e[0;36m Objects removed! \e[0m"
+	@$(LOG) "  Objects removed!  "
 
 fclean: clean
 	@$(RM) $(NAME)
-	@echo "\e[0;36m Program has been cleaned! \e[0m"
+	@$(LOG) "  Program has been cleaned! "
 
 re: fclean all
 

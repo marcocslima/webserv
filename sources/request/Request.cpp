@@ -6,50 +6,90 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/06 15:59:59 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/10 19:34:47 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-HttpRequest::HttpRequest() {};
+HttpRequest::HttpRequest() {
+    this->contentLength = 0;
+    initMethods();
+};
 
 HttpRequest::~HttpRequest() {};
 
-bool HttpRequest::parseHttpRequest(const std::string& request, std::string& method, std::string& url, std::vector<std::string>& headers) {
-    std::string	header[6] = {"Host", "User-Agent", "Accept", "Accept-Language, Referer, Connection"};
-    std::istringstream iss(request);
-    std::string line;
+void    HttpRequest::initMethods(){
+    methods.push_back("GET");
+    methods.push_back("HEAD");
+    methods.push_back("POST");
+    methods.push_back("DELETE");
+}
 
-    if (std::getline(iss, line)) {
-        std::istringstream lineStream(line);
-        lineStream >> method ;
-    } else {
-        return false;
-    }
+void HttpRequest::findContentLength() {
+    std::string content;
 
-while (std::getline(iss, line) && !line.empty()) {
-    for (int i = 0; i < 6; i++) {
-        if (line.compare(0, header[i].length(), header[i]) == 0) {
-            headers.push_back(line);
-        }
+    std::map<std::string, std::string>::const_iterator it = this->headers.find("Content-Length");
+    if (it != headers.end()) {
+        content = it->second;
+        this->contentLength = atoi(content.c_str());
     }
 }
 
+bool	HttpRequest::checkFirstLine(std::string requestLine) {
+    std::istringstream iss(requestLine);
+    std::string line;
+
+    if (!(iss >> this->method >> this->uri >> this->httpVersion)) {
+        std::cout << "400 Bad Request." << std::endl;
+        return false;
+    }
+    if (std::count(requestLine.begin(), requestLine.end(), ' ') != 2 ||
+        std::find(methods.begin(), methods.end(), method) == methods.end()) {
+        std::cout << "400 Bad Request." << std::endl;
+        return false;
+    }
+    if (this->uri[0] != '/' || this->httpVersion != "HTTP/1.1"){
+        std::cout << "400 Bad Request." << std::endl;
+        return (false);
+    }
+    return (true);
+}
+
+bool HttpRequest::parseHttpRequest(const std::string& request, std::map<std::string, std::string>& headers) {
+    size_t firstLineEnd = request.find("\r\n");
+    this->requestLine = request.substr(0, firstLineEnd);
+
+    if (!checkFirstLine(requestLine)){
+        return (false);
+    }
+    std::string headersPart = request.substr(firstLineEnd + 2);
+    std::istringstream iss(headersPart);
+    std::string headerLine;
+    while (std::getline(iss, headerLine, '\r')) {
+        headerLine.erase(std::remove(headerLine.begin(), headerLine.end(), '\n'), headerLine.end());
+        size_t colonPos = headerLine.find(":");
+
+        if (colonPos != std::string::npos) {
+            std::string key = headerLine.substr(0, colonPos);
+            std::string value = headerLine.substr(colonPos + 1);
+            headers[key] = value;
+        }
+    }
     return true;
 }
 
-void	HttpRequest::requestHttp(std::string request){
-
-    if (parseHttpRequest(request, method, url, headers)) {
-        std::cout << "Method: " << method << std::endl;
-        std::cout << "URL: " << url << std::endl;
+void	HttpRequest::requestHttp(std::string request) {
+    if (parseHttpRequest(request, headers)) {
+        std::cout << this->requestLine << std::endl;
         std::cout << "Headers:" << std::endl;
-        for (std::vector<std::string>::const_iterator it = headers.begin(); it != headers.end(); ++it) {
-            const std::string& header = *it;
-            std::cout << header << std::endl;
+        std::map<std::string, std::string>::iterator it;
+        for (it = headers.begin(); it != headers.end(); ++it) {
+            std::cout << it->first << ": " << it->second << std::endl;
         }
+        std::cout << std::endl;
+        findContentLength();
     } else {
-        std::cerr << "Error parsing HTTP request." << std::endl;
+        std::cerr << "Error parsing HTTP request." << std::endl << std::endl;
     }
 }
