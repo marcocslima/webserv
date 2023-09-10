@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/09 01:01:18 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/10 11:06:54 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 Parser::Parser() {}
 
 Parser::~Parser() {}
-
 
 typedef std::map<std::string, std::vector<std::string> > params;
 
@@ -33,7 +32,6 @@ conf_servers* server(int locs){
     server->locations = new conf_locations*[locs];
     return server;
 }
-
 
 std::vector<std::string> split(const std::string str) {
     std::vector<std::string> vtokens;
@@ -56,7 +54,6 @@ int countServers(std::ifstream& conf){
     }
     return count;
 }
-
 
 std::vector<std::string> extractLocations(const std::string& text) {
     std::vector<std::string> locations;
@@ -95,19 +92,47 @@ std::vector<std::string> extractLocations(const std::string& text) {
     return locations;
 }
 
-
-void printLocations(const std::vector<std::string>& locations) {
-    for (size_t i = 0; i < locations.size(); ++i) {
-        std::cout << "Location " << i + 1 << ":\n";
-        std::cout << locations[i] << "\n---\n";
+bool verifyBlockEnd(const std::string& text) {
+    std::string::size_type pos = 0;
+    bool onlyClosingBrace = true;
+    int countBrace = 0;
+    int countSpace = 0;
+        
+    while (pos < text.length() && text[pos] != '\n') {
+        if (text[pos] != '}' && text[pos] != ' ') {
+            onlyClosingBrace = false;
+            break;
+        }
+        if (text[pos] == '}')
+            countBrace++;
+        if (text[pos] == ' ')
+            countSpace++;
+        ++pos;
     }
+    if (countBrace != 1)
+        onlyClosingBrace = false;
+    if (countSpace == 0 && countBrace == 1)
+        onlyClosingBrace = true;
+    return onlyClosingBrace;
 }
 
+bool verifyLineEmpty(const std::string& text) {
+
+    bool emptyLine = true;
+
+    for (size_t i = 0; i < text.length(); i++) {
+        if (!isspace(text[i])) {
+            emptyLine = false;
+            return emptyLine;
+        }
+    }
+    return emptyLine;
+}
 
 void Parser::getConf(const char* fileconf) {
     std::string line;
-    std::vector<std::string> ckey;
-    std::vector<std::string> cvalues;
+    std::vector<std::vector<std::string> > servers;
+    std::vector<std::vector<std::string> > locations;
     params vconfs;
 
     std::ifstream conf(fileconf);
@@ -120,58 +145,54 @@ void Parser::getConf(const char* fileconf) {
     conf.clear();
     conf.seekg(0, std::ios::beg);
 
-    
     std::vector<std::string> serverBlocks;
     std::vector<std::string> locationBlocks;
     std::string currentServerBlock;
     std::string currentLocationBlock;
     bool insideServerBlock = false;
     bool insideLocationBlock = false;
+    bool blockEnd = false;
 
     while (!conf.eof()) {
         std::string line;
         std::getline(conf, line);
 
-        if (line.find("server ") != std::string::npos) {
-            if (insideServerBlock) {
-                serverBlocks.push_back(currentServerBlock);
-                currentServerBlock.clear();
-            }
-            insideServerBlock = true;
-            insideLocationBlock = false;
-        }
-        if(insideServerBlock)
-            currentServerBlock += line + "\n";
+        if (verifyLineEmpty(line))
+            continue;
 
-        if (line.find("location ") != std::string::npos) {
-            if (insideLocationBlock) {
-                locationBlocks.push_back(line);
-                currentLocationBlock.clear();
-            }
+        if (line.find("server ") != std::string::npos)
+            insideServerBlock = true;
+
+        if (line.find("location ") != std::string::npos)
             insideLocationBlock = true;
-            insideServerBlock = false;
-        }
+        
+        if(insideServerBlock && !insideLocationBlock)
+            currentServerBlock += line + "\n";
 
         if(insideLocationBlock)
             currentLocationBlock += line + "\n";
 
-        if (line == "}") {
+        if (insideLocationBlock && verifyBlockEnd(line)) {
+            locationBlocks.push_back(currentLocationBlock);
+            currentLocationBlock.clear();
             insideLocationBlock = false;
-        }
-        
-    }
-
-    // Agora, serverBlocks contém os conteúdos de cada bloco "server", e locationBlocks contém os blocos "location"
-    for (size_t i = 0; i < serverBlocks.size(); ++i) {
-        std::cout << "Bloco " << i + 1 << ":\n";
-        std::cout << serverBlocks[i] << "\n";
-
-        std::cout << "Blocos 'location' dentro do Bloco " << i + 1 << ":\n";
-        for (size_t j = 0; j < locationBlocks.size(); ++j) {
-            std::cout << locationBlocks[j] << "\n";
+            blockEnd = true;
         }
 
-        std::cout << "---\n";
+        if (insideServerBlock && !insideLocationBlock && verifyBlockEnd(line) && blockEnd) {
+            serverBlocks.push_back(currentServerBlock);
+            currentServerBlock.clear();
+            insideServerBlock = false;
+            blockEnd = false;
+        }
+
+        if (!insideServerBlock && !insideLocationBlock && verifyBlockEnd(line) && blockEnd) {
+            servers.push_back(serverBlocks);
+            locations.push_back(locationBlocks);
+            serverBlocks.clear();
+            locationBlocks.clear();
+            blockEnd = false;
+        }
     }
 
     conf.close();

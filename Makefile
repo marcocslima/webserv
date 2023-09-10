@@ -6,7 +6,7 @@
 #    By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/07 08:04:17 by mcl              ###   ########.fr        #
+#    Updated: 2023/09/10 09:02:46 by mcl              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ NAME = server
 # COMPILATION #
 
 CC = c++
-FLAGS = -g -std=c++98 -Werror -Wextra -Wall
+FLAGS = -g3 -std=c++98 -Werror -Wextra -Wall
 
 # DELETE #
 
