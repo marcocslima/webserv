@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/10 18:05:59 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/11 02:37:57 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,39 @@ std::vector<std::string> split(const std::string str) {
     return vtokens;
 }
 
+std::string removeExtraSpaces(const std::string& input) {
+    std::string result;
+    bool previousCharWasSpace = false;
+
+    for (size_t i = 0; i < input.length(); i++) {
+        if (input[i] != ' ') {
+            result += input[i];
+            previousCharWasSpace = false;
+        } else if (!previousCharWasSpace) {
+            result += ' ';
+            previousCharWasSpace = true;
+        }
+    }
+    if (result[0] == ' ') {
+        result.erase(0, 1);
+    }
+    if (!result.empty() && result[result.length() - 1] == ' ') {
+        result.erase(result.length() - 1);
+    }
+
+    return result;
+}
+
 std::vector<std::string> splitTokens(const std::string str) {
 
     std::vector<std::string>    tokens;
     std::string                 tmp_str = str;
-    std::string                 line;
+    std::string                 token;
 
     size_t pos = str.find('\n');
     while (pos != std::string::npos) {
-        line = tmp_str.substr(0, pos);
-        tokens.push_back(line);
+        token = tmp_str.substr(0, pos);
+        tokens.push_back(removeExtraSpaces(token));
         tmp_str = tmp_str.substr(pos + 1);
         pos = tmp_str.find('\n');
     }
@@ -124,7 +147,6 @@ void Parser::getConf(const char* fileconf) {
     conf.seekg(0, std::ios::beg);
 
     while (!conf.eof()) {
-        std::string line;
         std::getline(conf, line);
 
         if (verifyLineEmpty(line))
@@ -165,5 +187,5 @@ void Parser::getConf(const char* fileconf) {
     }
     conf.close();
 
-    splitTokens(servers[0][0]);
+    splitTokens(locations[0][0]);
 }
