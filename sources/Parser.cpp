@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/11 02:37:57 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/11 15:25:08 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,15 @@ conf_servers* server(int locs){
     return server;
 }
 
-std::vector<std::string> split(const std::string str) {
+std::vector<std::string> splitTokens(const std::string str) {
     
     std::vector<std::string>    vtokens;
     std::istringstream          iss(str);
     std::string                 token;
 
     while (iss >> token) {
+        if (token == "{" || token == "}")
+            continue;
         vtokens.push_back(token);
     }
     
@@ -69,8 +71,9 @@ std::string removeExtraSpaces(const std::string& input) {
     return result;
 }
 
-std::vector<std::string> splitTokens(const std::string str) {
+params* getParams(const std::string str) {
 
+    params*                     vconfs = new params; 
     std::vector<std::string>    tokens;
     std::string                 tmp_str = str;
     std::string                 token;
@@ -82,7 +85,17 @@ std::vector<std::string> splitTokens(const std::string str) {
         tmp_str = tmp_str.substr(pos + 1);
         pos = tmp_str.find('\n');
     }
-    return tokens;
+    for (size_t i = 0; i < tokens.size(); i++) {
+        pos = tokens[i].find(' ');
+        if (pos != std::string::npos) {
+            std::string key = tokens[i].substr(0, pos);
+            std::vector<std::string> value = splitTokens(tokens[i].substr(pos + 1));
+            if (key != "server")
+                (*vconfs)[key] = value;
+        }
+    }
+        
+    return vconfs;
 }
 
 bool verifyBlockEnd(const std::string& text) {
@@ -187,5 +200,16 @@ void Parser::getConf(const char* fileconf) {
     }
     conf.close();
 
-    splitTokens(locations[0][0]);
+    params* tmp = getParams(locations[0][0]);
+
+    for (params::iterator it = tmp->begin(); it != tmp->end(); ++it) {
+        std::cout << "Key: " << it->first << ", Values: ";
+        for (size_t i = 0; i < it->second.size(); ++i) {
+            std::cout << it->second[i] << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    delete(tmp);
+    (void) tmp;
 }
