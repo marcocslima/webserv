@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/11 15:25:08 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/12 04:39:22 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,15 @@ typedef struct {
     conf_locations** locations;
 } conf_servers;
 
-conf_servers* server(int locs){
+conf_servers* allocateServer(int locs) {
     conf_servers* server = new conf_servers;
+    server->server = new params;
     server->locations = new conf_locations*[locs];
+
+    for (int i = 0; i < locs; i++) {
+        server->locations[i] = new conf_locations;
+        server->locations[i]->location = new params;
+    }
     return server;
 }
 
@@ -71,9 +77,8 @@ std::string removeExtraSpaces(const std::string& input) {
     return result;
 }
 
-params* getParams(const std::string str) {
-
-    params*                     vconfs = new params; 
+params* getParams(const std::string str, params* vconfs) {
+ 
     std::vector<std::string>    tokens;
     std::string                 tmp_str = str;
     std::string                 token;
@@ -200,16 +205,21 @@ void Parser::getConf(const char* fileconf) {
     }
     conf.close();
 
-    params* tmp = getParams(locations[0][0]);
+    conf_servers* cservers = new conf_servers[servers.size()];
 
-    for (params::iterator it = tmp->begin(); it != tmp->end(); ++it) {
-        std::cout << "Key: " << it->first << ", Values: ";
-        for (size_t i = 0; i < it->second.size(); ++i) {
-            std::cout << it->second[i] << " ";
-        }
-        std::cout << std::endl;
+    for (size_t i = 0; i < servers.size(); i++) {
+        cservers[i] = *allocateServer(locations[i].size());
+        cservers[i].server = getParams(servers[i][0], cservers[i].server);
+        for (size_t j = 0; j < locations[i].size(); j++) {
+            cservers[i].locations[j]->location = getParams(locations[i][j], cservers[i].locations[j]->location);
+        }        
     }
 
-    delete(tmp);
-    (void) tmp;
+    // for (params::iterator it = cservers->server->begin(); it != cservers->server->end(); ++it) {
+    //     std::cout << "Key: " << it->first << ", Values: ";
+    //     for (size_t i = 0; i < it->second.size(); ++i) {
+    //         std::cout << it->second[i] << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
 }
