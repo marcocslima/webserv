@@ -6,14 +6,13 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/10 19:34:47 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/12 16:32:11 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
 HttpRequest::HttpRequest() {
-    this->contentLength = 0;
     initMethods();
 };
 
@@ -26,13 +25,24 @@ void    HttpRequest::initMethods(){
     methods.push_back("DELETE");
 }
 
-void HttpRequest::findContentLength() {
-    std::string content;
+void    HttpRequest::findQuery(std::string request){
+    size_t pos = this->uri.find("?");
 
-    std::map<std::string, std::string>::const_iterator it = this->headers.find("Content-Length");
-    if (it != headers.end()) {
-        content = it->second;
-        this->contentLength = atoi(content.c_str());
+    if (pos != std::string::npos){
+        this->query = uri.substr(pos + 1);
+    } else {
+        this->query = "";
+    }
+}
+
+void    HttpRequest::findBody(std::string request){
+    size_t bodyStart = request.find("\r\n\r\n");
+
+    if (bodyStart != std::string::npos) {
+        bodyStart += 4;
+        this->body = request.substr(bodyStart);
+    } else {
+        this->body = "";
     }
 }
 
@@ -68,8 +78,8 @@ bool HttpRequest::parseHttpRequest(const std::string& request, std::map<std::str
     std::string headerLine;
     while (std::getline(iss, headerLine, '\r')) {
         headerLine.erase(std::remove(headerLine.begin(), headerLine.end(), '\n'), headerLine.end());
-        size_t colonPos = headerLine.find(":");
-
+        size_t colonPos = headerLine.find(": ");
+        std::cout << headerLine << std::endl;
         if (colonPos != std::string::npos) {
             std::string key = headerLine.substr(0, colonPos);
             std::string value = headerLine.substr(colonPos + 1);
@@ -88,7 +98,7 @@ void	HttpRequest::requestHttp(std::string request) {
             std::cout << it->first << ": " << it->second << std::endl;
         }
         std::cout << std::endl;
-        findContentLength();
+        findBody(request);
     } else {
         std::cerr << "Error parsing HTTP request." << std::endl << std::endl;
     }

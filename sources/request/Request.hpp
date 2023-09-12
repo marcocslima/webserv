@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 16:43:15 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/10 19:30:31 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/12 16:30:00 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,14 @@ class HttpRequest {
 		void	requestHttp(std::string request);
 		bool	parseHttpRequest(const std::string& request, std::map<std::string, std::string>& headers);
 		bool	checkFirstLine(std::string requestLine);
-		void	findContentLength();
+		void    findBody(std::string request);
+		void    findQuery(std::string request);
 
 		std::string	requestLine, method, uri, httpVersion;
+		std::string							query;
         std::map<std::string, std::string>	headers;
 		std::vector<std::string>			methods;
-		size_t								contentLength;
+		std::string							body;
 };
 
 #endif
