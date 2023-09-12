@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 03:21:54 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/10 09:12:48 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/12 14:18:55 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    parser.getConf(argv[1]);
+    parser.setConfs(argv[1]);
 
     return 0;
 }

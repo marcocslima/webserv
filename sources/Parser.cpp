@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/12 05:16:42 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/12 14:46:44 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ std::string removeExtraSpaces(const std::string& input) {
     return result;
 }
 
-params* getParams(const std::string str, params* vconfs) {
+params* setParams(const std::string str, params* vconfs) {
  
     std::vector<std::string>    tokens;
     std::string                 tmp_str = str;
@@ -139,12 +139,41 @@ bool verifyLineEmpty(const std::string& text) {
     return emptyLine;
 }
 
-void Parser::getConf(const char* fileconf) {
+std::vector<std::string> Parser::getLocationParam (int server, int location, std::string param) {
+
+    if (_cservers[server].locations[location]->location->find(param) !=
+        _cservers[server].locations[location]->location->end()) {
+        std::vector<std::string> vparams = (*_cservers[server].locations[location]->location)[param];
+        for (size_t i = 0; i < vparams.size(); i++) {
+            std::cout << "Elemento: " << vparams[i] << std::endl;
+        }
+        return vparams;
+    } else {
+        std::cout << "Chave não encontrada no mapa." << std::endl;
+    }
+    return std::vector<std::string>();
+}
+
+std::vector<std::string> Parser::getServerParam (int server, std::string param) {
+
+    if (_cservers[server].server->find(param) !=
+        _cservers[server].server->end()) {
+        std::vector<std::string> vparams = (*_cservers[server].server)[param];
+        for (size_t i = 0; i < vparams.size(); i++) {
+            std::cout << "Elemento: " << vparams[i] << std::endl;
+        }
+        return vparams;
+    } else {
+        std::cout << "Chave não encontrada no mapa." << std::endl;
+    }
+    return std::vector<std::string>();
+}
+
+void Parser::setConfs(const char* fileconf) {
     
     std::string                             line;
     std::vector<std::vector<std::string> >  servers;
     std::vector<std::vector<std::string> >  locations;
-    params                                  vconfs;
     std::vector<std::string>                serverBlocks;
     std::vector<std::string>                locationBlocks;
     std::string                             currentServerBlock;
@@ -202,28 +231,29 @@ void Parser::getConf(const char* fileconf) {
     }
     conf.close();
 
-    conf_servers* cservers = new conf_servers[servers.size()];
+    conf_servers* cservs = new conf_servers[servers.size()];
 
     for (size_t i = 0; i < servers.size(); i++) {
-        cservers[i] = *allocateServer(locations[i].size());
-        cservers[i].server = getParams(servers[i][0], cservers[i].server);
+        cservs[i] = *allocateServer(locations[i].size());
+        cservs[i].server = setParams(servers[i][0], cservs[i].server);
         for (size_t j = 0; j < locations[i].size(); j++) {
-            cservers[i].locations[j]->location = getParams(locations[i][j], cservers[i].locations[j]->location);
+            cservs[i].locations[j]->location = setParams(locations[i][j], cservs[i].locations[j]->location);
         }        
     }
 
-    for (size_t i = 0; i < servers.size(); i++) {
-        for (params::iterator it = cservers[i].server->begin(); it != cservers[i].server->end(); ++it) {
-            std::cout << "Key: " << it->first << ", Values: ";
-            for (size_t i = 0; i < it->second.size(); ++i) {
-                std::cout << it->second[i] << " ";
-            }
-            std::cout << std::endl;
-        }
-    }
+    _cservers = cservs;
 
-    for (size_t i = 0; i < servers.size(); i++) {
-        deallocateServers(&cservers[i], locations[i].size());
-    }
+    int ser = 0;
+    int loc = 1;
+    std::string param = "server_name";
+
+    getServerParam(ser, param);
+    getLocationParam(ser, loc, param);
+
+    // for (size_t i = 0; i < servers.size(); i++) {
+    //     deallocateServers(&cservers[i], locations[i].size());
+    // }
+
+    // delete[] cservers;
 
 }
