@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/12 05:05:28 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/12 05:16:42 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,6 @@
 Parser::Parser() {}
 
 Parser::~Parser() {}
-
-typedef std::map<std::string, std::vector<std::string> > params;
-
-typedef struct {
-    params* location;
-} conf_locations;
-
-typedef struct {
-    params* server;
-    conf_locations** locations;
-} conf_servers;
 
 conf_servers* allocateServer(int locs) {
     conf_servers* server = new conf_servers;
