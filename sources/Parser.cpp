@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/12 04:39:22 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/12 04:59:15 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,18 @@ conf_servers* allocateServer(int locs) {
     return server;
 }
 
+void deallocateServers(conf_servers* server, int locs) {
+    delete server->server;
+
+    for (int i = 0; i < locs; i++) {
+        delete server->locations[i]->location;
+        delete server->locations[i];
+    }
+
+    delete[] server->locations;
+    delete server;
+}
+
 std::vector<std::string> splitTokens(const std::string str) {
     
     std::vector<std::string>    vtokens;
@@ -50,7 +62,6 @@ std::vector<std::string> splitTokens(const std::string str) {
             continue;
         vtokens.push_back(token);
     }
-    
     return vtokens;
 }
 
@@ -73,7 +84,6 @@ std::string removeExtraSpaces(const std::string& input) {
     if (!result.empty() && result[result.length() - 1] == ' ') {
         result.erase(result.length() - 1);
     }
-
     return result;
 }
 
@@ -98,8 +108,7 @@ params* getParams(const std::string str, params* vconfs) {
             if (key != "server")
                 (*vconfs)[key] = value;
         }
-    }
-        
+    } 
     return vconfs;
 }
 
@@ -215,11 +224,18 @@ void Parser::getConf(const char* fileconf) {
         }        
     }
 
-    // for (params::iterator it = cservers->server->begin(); it != cservers->server->end(); ++it) {
-    //     std::cout << "Key: " << it->first << ", Values: ";
-    //     for (size_t i = 0; i < it->second.size(); ++i) {
-    //         std::cout << it->second[i] << " ";
-    //     }
-    //     std::cout << std::endl;
+    for (size_t i = 0; i < servers.size(); i++) {
+        for (params::iterator it = cservers[i].server->begin(); it != cservers[i].server->end(); ++it) {
+            std::cout << "Key: " << it->first << ", Values: ";
+            for (size_t i = 0; i < it->second.size(); ++i) {
+                std::cout << it->second[i] << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    // for (size_t i = 0; i < servers.size(); i++) {
+    //     deallocateServers(&cservers[i], locations[i].size());
     // }
+
 }
