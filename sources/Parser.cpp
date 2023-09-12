@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/12 04:59:15 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/12 05:05:28 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,13 @@ conf_servers* allocateServer(int locs) {
 }
 
 void deallocateServers(conf_servers* server, int locs) {
-    delete server->server;
 
     for (int i = 0; i < locs; i++) {
         delete server->locations[i]->location;
         delete server->locations[i];
     }
-
     delete[] server->locations;
+    delete server->server;
     delete server;
 }
 
@@ -234,8 +233,8 @@ void Parser::getConf(const char* fileconf) {
         }
     }
 
-    // for (size_t i = 0; i < servers.size(); i++) {
-    //     deallocateServers(&cservers[i], locations[i].size());
-    // }
+    for (size_t i = 0; i < servers.size(); i++) {
+        deallocateServers(&cservers[i], locations[i].size());
+    }
 
 }

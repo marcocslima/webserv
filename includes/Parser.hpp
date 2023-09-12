@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/09 00:45:57 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/12 05:11:40 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,17 @@
 #include <cstdlib>
 #include <sstream>
 
+typedef std::map<std::string, std::vector<std::string> > params;
+
+typedef struct {
+    params* location;
+} conf_locations;
+
+typedef struct {
+    params* server;
+    conf_locations** locations;
+} conf_servers;
+
 class Parser
 {
     private:
@@ -27,8 +38,6 @@ class Parser
     public:
         Parser();
         ~Parser();
-        //Parser(const Parser& cpy);
-        //Parser& operator=(const Parser& obj);
 
         void getConf(const char* fileconf);       
 };
