@@ -6,53 +6,54 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 23:49:57 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/08 00:27:54 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/13 21:57:59 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Logger.hpp"
 
-Logger::Logger(void)
-{}
+const std::string Logger::_colors[3] = {"\033[92m", "\033[93m", "\033[95m"};
+const std::string Logger::_levelStrings[3] = {"INFO", "WARNING", "ERROR"};
 
-Logger::~Logger(void)
-{}
+Logger::LogEntry Logger::info(INFO);
+Logger::LogEntry Logger::warning(WARNING);
+Logger::LogEntry Logger::error(ERROR);
 
-void	Logger::log(LogLevel level, const std::string& message)
-{
-	std::string	levelStr;
-	std::string	colorCode;
+Logger::Logger(void) {}
+
+Logger::~Logger(void) {}
+
+std::string Logger::LogEntry::_timestamp(void) {
 	std::time_t	currentTime;
 	std::tm*	localTime;
 	char		timeStr[24];
-	std::string	resetCode;
 
-	resetCode = "\033[0m";
-	switch (level) {
-		case INFO:
-			levelStr = "INFO";
-			colorCode = "\033[92m";
-			break;
-		case WARNING:
-			levelStr = "WARNING";
-			colorCode = "\033[93m";
-			break;
-		case ERROR:
-			levelStr = "ERROR";
-			colorCode = "\033[95m";
-			break;
-	}
-	currentTime = std::time(NULL);
+	currentTime = std::time(0);
 	localTime = std::localtime(&currentTime);
-	std::strftime(timeStr, sizeof(timeStr), "%d/%m/%Y - %H:%M:%S", localTime);
-	if (level == ERROR)
-	{
-		std::cerr << colorCode << "[" << timeStr << "]  "
-			<< levelStr << " - " << message << resetCode << std::endl;
-	}
+	std::strftime(timeStr, sizeof(timeStr), "[%d/%m/%Y - %H:%M:%S]", localTime);
+	return (std::string(timeStr));
+}
+
+std::string Logger::LogEntry::_addHeader(void) {
+	std::string			header;
+	std::stringstream	ss;
+
+	ss << _colors[_level] << _timestamp() << "  ";
+	ss << std::left << std::setw(8) <<  _levelStrings[_level] << ": ";
+	header = ss.str();
+	return (header);
+}
+
+Logger::LogEntry::LogEntry(LogLevel level): _level(level) {}
+
+Logger::LogEntry::~LogEntry(void) {}
+
+Logger::LogEntry &Logger::LogEntry::operator<<(std::ostream &(*manipulator)(std::ostream &)) {
+	if (_level == ERROR)
+		std::cerr << _addHeader() << _stream.str() << RESET_COLOR << manipulator;
 	else
-	{
-		std::cout << colorCode << "[" << timeStr << "]  "
-			<< levelStr << " - " << message << resetCode << std::endl;
-	}
+		std::cout << _addHeader() << _stream.str() << RESET_COLOR << manipulator;
+	_stream.str("");
+	_stream.clear();
+	return (*this);
 }

@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 23:49:52 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/08 00:14:01 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/13 21:47:23 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,12 @@
 # include <iostream>
 # include <string>
 # include <ctime>
+# include <sstream>
+# include <iomanip>
 
-class Logger
-{
+# define RESET_COLOR "\033[0m"
+
+class Logger {
 	public:
 		enum LogLevel
 		{
@@ -31,7 +34,34 @@ class Logger
 		Logger(void);
 		~Logger(void);
 
-		void	log(LogLevel level, const std::string& message);
+		class LogEntry {
+			public:
+				LogEntry(LogLevel level);
+				~LogEntry(void);
+
+				template <typename T>
+				LogEntry &operator<<(T const &value) {
+					_stream << value;
+					return (*this);
+				};
+
+				LogEntry &operator<<(std::ostream &(*manipulator)(std::ostream &));
+
+			private:
+				LogLevel			_level;
+				std::stringstream	_stream;
+
+				std::string	_timestamp(void);
+				std::string	_addHeader(void);
+		};
+
+		static LogEntry	info;
+		static LogEntry	warning;
+		static LogEntry	error;
+
+	private:
+		static const std::string	_colors[3];
+		static const std::string	_levelStrings[3];
 };
 
 #endif
