@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/15 16:24:05 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/15 16:58:08 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,14 @@ class Parser
         ~Parser();
 
         void setConfs(const char* fileconf);
+        void allocateServers(conf_servers* server, int locs);
+        void deallocateServers(conf_servers* server, int locs);
         std::vector<std::string> getServerParam (int server, std::string param);
         std::vector<std::string> getLocationParam (int server, int location, std::string param);   
 };
+
+std::vector<std::string> splitTokens(const std::string str);
+std::string removeExtraSpaces(const std::string& input);
+params* setParams(const std::string str, params* vconfs);
+bool verifyBlockEnd(const std::string& text);
+bool verifyLineEmpty(const std::string& text);
