@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/12 14:46:44 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/15 16:36:43 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,27 +16,20 @@ Parser::Parser() {}
 
 Parser::~Parser() {}
 
-conf_servers* allocateServer(int locs) {
-    conf_servers* server = new conf_servers;
-    server->server = new params;
-    server->locations = new conf_locations*[locs];
+void allocateServers(conf_servers* server, int locs) {
 
-    for (int i = 0; i < locs; i++) {
-        server->locations[i] = new conf_locations;
-        server->locations[i]->location = new params;
-    }
-    return server;
+    server->server = new params;
+    server->locations = new params*[locs];
+    for (int i = 0; i < locs; i++)
+        server->locations[i] = new params;
 }
 
 void deallocateServers(conf_servers* server, int locs) {
 
-    for (int i = 0; i < locs; i++) {
-        delete server->locations[i]->location;
+    for (int i = 0; i < locs; i++)
         delete server->locations[i];
-    }
     delete[] server->locations;
     delete server->server;
-    delete server;
 }
 
 std::vector<std::string> splitTokens(const std::string str) {
@@ -139,32 +132,35 @@ bool verifyLineEmpty(const std::string& text) {
     return emptyLine;
 }
 
-std::vector<std::string> Parser::getLocationParam (int server, int location, std::string param) {
+std::vector<std::string> Parser::getServerParam(int serverIndex, std::string param) {
 
-    if (_cservers[server].locations[location]->location->find(param) !=
-        _cservers[server].locations[location]->location->end()) {
-        std::vector<std::string> vparams = (*_cservers[server].locations[location]->location)[param];
-        for (size_t i = 0; i < vparams.size(); i++) {
-            std::cout << "Elemento: " << vparams[i] << std::endl;
+    if (serverIndex < 0 || serverIndex >= _servers)
+        return std::vector<std::string>();
+
+    if (_cservers[serverIndex].server->find(param) != _cservers[serverIndex].server->end()) {
+        std::vector<std::string> vparam = (*_cservers[serverIndex].server)[param];
+        for (size_t i = 0; i < vparam.size(); i++) {
+            std::cout << vparam[i] << std::endl;
         }
-        return vparams;
-    } else {
-        std::cout << "Chave não encontrada no mapa." << std::endl;
+        return vparam;
     }
     return std::vector<std::string>();
 }
 
-std::vector<std::string> Parser::getServerParam (int server, std::string param) {
+std::vector<std::string> Parser::getLocationParam (int serverIndex, int location, std::string param) {
 
-    if (_cservers[server].server->find(param) !=
-        _cservers[server].server->end()) {
-        std::vector<std::string> vparams = (*_cservers[server].server)[param];
-        for (size_t i = 0; i < vparams.size(); i++) {
-            std::cout << "Elemento: " << vparams[i] << std::endl;
+    if (serverIndex < 0 || serverIndex >= _servers)
+        return std::vector<std::string>();
+
+    if (location < 0 || location >= _locs[serverIndex])
+        return std::vector<std::string>();
+
+    if (_cservers[serverIndex].locations[location]->find(param) != _cservers[serverIndex].locations[location]->end()) {
+        std::vector<std::string> vparam = (*_cservers[serverIndex].locations[location])[param];
+        for (size_t i = 0; i < vparam.size(); i++) {
+            std::cout << vparam[i] << std::endl;
         }
-        return vparams;
-    } else {
-        std::cout << "Chave não encontrada no mapa." << std::endl;
+        return vparam;
     }
     return std::vector<std::string>();
 }
@@ -231,29 +227,25 @@ void Parser::setConfs(const char* fileconf) {
     }
     conf.close();
 
-    conf_servers* cservs = new conf_servers[servers.size()];
-
+    _servers = servers.size();
+    _cservers = new conf_servers[_servers];
+    
     for (size_t i = 0; i < servers.size(); i++) {
-        cservs[i] = *allocateServer(locations[i].size());
-        cservs[i].server = setParams(servers[i][0], cservs[i].server);
+        allocateServers(&_cservers[i], locations[i].size());
+        _cservers[i].server = setParams(servers[i][0], _cservers[i].server);
         for (size_t j = 0; j < locations[i].size(); j++) {
-            cservs[i].locations[j]->location = setParams(locations[i][j], cservs[i].locations[j]->location);
-        }        
+            _cservers[i].locations[j] = setParams(locations[i][j], _cservers[i].locations[j]);
+        }
+        _locs.push_back(locations[i].size());
     }
 
-    _cservers = cservs;
+    getServerParam(0, "server_name");
+    getLocationParam(0, 0, "error_page");
 
-    int ser = 0;
-    int loc = 1;
-    std::string param = "server_name";
+    for (size_t i = 0; i < servers.size(); i++) {
+        deallocateServers(&_cservers[i], locations[i].size());
+    }
 
-    getServerParam(ser, param);
-    getLocationParam(ser, loc, param);
-
-    // for (size_t i = 0; i < servers.size(); i++) {
-    //     deallocateServers(&cservers[i], locations[i].size());
-    // }
-
-    // delete[] cservers;
+    delete [] _cservers;
 
 }
