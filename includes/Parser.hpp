@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/15 16:58:08 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/15 17:10:04 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class Parser
         void setConfs(const char* fileconf);
         void allocateServers(conf_servers* server, int locs);
         void deallocateServers(conf_servers* server, int locs);
+        void populateConfs(std::vector<std::vector<std::string> > servers, std::vector<std::vector<std::string> > locations);
         std::vector<std::string> getServerParam (int server, std::string param);
         std::vector<std::string> getLocationParam (int server, int location, std::string param);   
 };

@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/15 17:02:08 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/15 17:12:26 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,21 @@ std::vector<std::string> Parser::getLocationParam (int serverIndex, int location
         return vparam;
     }
     return std::vector<std::string>();
+}
+
+void Parser::populateConfs(std::vector<std::vector<std::string> > servers, std::vector<std::vector<std::string> > locations) {
+
+    _servers = servers.size();
+    _cservers = new conf_servers[_servers];
+    
+    for (size_t i = 0; i < servers.size(); i++) {
+        allocateServers(&_cservers[i], locations[i].size());
+        _cservers[i].server = setParams(servers[i][0], _cservers[i].server);
+        for (size_t j = 0; j < locations[i].size(); j++) {
+            _cservers[i].locations[j] = setParams(locations[i][j], _cservers[i].locations[j]);
+        }
+        _locs.push_back(locations[i].size());
+    }
 }
 
 void Parser::setConfs(const char* fileconf) {
@@ -132,17 +147,7 @@ void Parser::setConfs(const char* fileconf) {
     }
     conf.close();
 
-    _servers = servers.size();
-    _cservers = new conf_servers[_servers];
-    
-    for (size_t i = 0; i < servers.size(); i++) {
-        allocateServers(&_cservers[i], locations[i].size());
-        _cservers[i].server = setParams(servers[i][0], _cservers[i].server);
-        for (size_t j = 0; j < locations[i].size(); j++) {
-            _cservers[i].locations[j] = setParams(locations[i][j], _cservers[i].locations[j]);
-        }
-        _locs.push_back(locations[i].size());
-    }
+    populateConfs(servers, locations);
 
     getServerParam(0, "server_name");
     getLocationParam(0, 0, "error_page");
