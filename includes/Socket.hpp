@@ -1,24 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ServerSocket.hpp                                   :+:      :+:    :+:   */
+/*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 20:59:33 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/08 00:25:44 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/15 23:39:28 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#ifndef SERVER_SOCKET_H
-# define SERVER_SOCKET_H
+#ifndef SOCKET_H
+# define SOCKET_H
 
 # include "Logger.hpp"
+
 # include <iostream>
 # include <cstring>
 # include <cstdlib>
 # include <cerrno>
+# include <stdexcept>
+# include <string>
+
 # include <unistd.h>
 # include <arpa/inet.h>
 # include <sys/types.h>
@@ -26,32 +30,39 @@
 # include <netinet/in.h>
 # include <netdb.h>
 
-# define BACKLOG 10
-
-class ServerSocket
+class Socket
 {
 	private:
-		int					_serverSocket;
-		const char*			_port;
+		int					_socketFd;
+		std::string			_port;
+		std::string			_ip;
 		struct addrinfo*	_serverInfo;
-		Logger				logger;
 
 	public:
-		ServerSocket(void);
-		ServerSocket(const char* port);
-		ServerSocket(ServerSocket const &obj);
-		~ServerSocket(void);
-		ServerSocket&	operator=(ServerSocket const &obj);
+		Socket(std::string port, std::string ip);
+		~Socket(void);
 
-	bool	createSocket(void);
-	bool	bindSocket(void);
-	bool	listenForConnections(void);
-	int		acceptConnection(void);
-	void	closeSocket(void);
+		void	createSocket(void);
+		void	bindSocket(void);
+		void	listenForConnections(void);
+		void	*get_in_addr(struct sockaddr *sa);
+		int		acceptConnection(int socketFd);
+		void	closeSocket(void);
 
-	const char*			getPort(void) const;
-	int					getServerSocket(void) const;
-	struct addrinfo*	getServerInfo(void) const;
+		int			getSocketFd(void) const;
+		std::string	getPort(void) const;
+		std::string	getIp(void) const;
+
+		class SocketException: public std::exception
+		{
+			private:
+				std::string	_msg;
+
+			public:
+				SocketException(const char* msg);
+				virtual ~SocketException() throw ();
+				virtual const char* what() const throw();
+		};
 };
 
 #endif
