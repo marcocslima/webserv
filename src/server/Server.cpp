@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 05:16:04 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/16 18:16:54 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ bool	Server::acceptNewConnection(size_t i)
 
 void	Server::processClientData(int clientSocket)
 {
+	HttpRequest req;
 	char buffer[1024] = {0};
 	int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
 
@@ -94,14 +95,15 @@ void	Server::processClientData(int clientSocket)
 	else
 	{
 		std::string	request(buffer, bytesRead);
-		size_t		start = request.find("GET ");
-		size_t		end = request.find(" HTTP/1.1");
+
+		req.requestHttp(request);
+		size_t		start = request.find(req.getMethod());
+		size_t		end = request.find(req.getHttp());
 
 		if (start != std::string::npos && end != std::string::npos)
 		{
-			std::string route = request.substr(start + 4, end - start - 4);
 
-			if (route == "/")
+			if (req.getUri() == "/")
 			{
 				char	responseHeader[1024];
 
