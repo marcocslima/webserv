@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/16 00:07:52 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/16 00:25:08 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ class Parser
         void deallocateServers(conf_servers* server, int locs);
         void populateConfs(std::vector<std::vector<std::string> > servers, std::vector<std::vector<std::string> > locations);
         std::vector<std::string> getServerParam (int server, std::string param);
-        std::vector<std::string> getLocationParam (int server, int location, std::string param);   
+        std::vector<std::string> getLocationParam (int server, int location, std::string param);
+        std::vector<int> getSizeServers ();   
 };
 
 std::vector<std::string> splitTokens(const std::string str);

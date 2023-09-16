@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/16 00:05:44 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/16 00:30:50 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,18 @@ void Parser::populateConfs(std::vector<std::vector<std::string> > servers, std::
         _locs.push_back(locations[i].size());
     }
 }
+
+std::vector<int> Parser::getSizeServers () {
+    std::vector<int> sizeServers;
+    sizeServers.push_back(_servers);
+    for (int i = 0; i < _servers; i++) {
+        sizeServers.push_back(_locs[i]);
+    }
+    for (size_t i = 0; i < sizeServers.size(); i++)
+        std::cout << sizeServers[i] << " - ";
+    std::cout << std::endl;
+    return sizeServers;
+} 
 
 void Parser::setConfs(const char* fileconf) {
     
