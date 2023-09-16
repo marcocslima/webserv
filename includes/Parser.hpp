@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/15 17:10:04 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/16 00:07:52 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ class Parser
         std::vector<int>    _locs;
     public:
         Parser();
+        Parser(const char* fileconf);
         ~Parser();
 
         void setConfs(const char* fileconf);

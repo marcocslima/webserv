@@ -6,13 +6,17 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/15 17:12:26 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/16 00:05:44 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Parser.hpp"
 
 Parser::Parser() {}
+
+Parser::Parser(const char* fileconf) {
+    setConfs(fileconf);
+}
 
 Parser::~Parser() {
     for (int i = 0; i < _servers; i++) {
@@ -148,10 +152,6 @@ void Parser::setConfs(const char* fileconf) {
     conf.close();
 
     populateConfs(servers, locations);
-
-    getServerParam(0, "server_name");
-    getLocationParam(0, 0, "error_page");
-
 }
 
 std::vector<std::string> splitTokens(const std::string str) {
