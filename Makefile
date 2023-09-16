@@ -6,7 +6,7 @@
 #    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/16 15:32:22 by pmitsuko         ###   ########.fr        #
+#    Updated: 2023/09/16 16:02:10 by pmitsuko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,7 @@ GREEN		=	\e[92m
 YELLOW		=	\e[93m
 MAGENTA		=	\e[95m
 CYAN		=	\e[96m
+LOG		:= printf "[$(CYAN)$(CHECK)$(RESET)] %s\n"
 
 # **************************************************************************** #
 
@@ -40,8 +41,10 @@ RM = rm -rf
 SRC_DIR = ./src/
 
 VPATH = $(SRC_DIR)\
+		$(SRC_DIR)parser\
+		$(SRC_DIR)request\
 		$(SRC_DIR)server\
-		$(SRC_DIR)utils
+		$(SRC_DIR)utils\
 
 # FILES #
 
@@ -50,7 +53,8 @@ FILES = main.cpp\
 		Poll.cpp\
 		Server.cpp\
 		Logger.cpp\
-		Parser.cpp
+		Parser.cpp\
+		Request.cpp
 
 # COMPILED_SOURCES #
 
@@ -65,9 +69,7 @@ all: $(NAME)
 
 $(NAME) : $(OBJS)
 	$(CC) $(FLAGS) $(OBJS) $(HEADER) -o $(NAME)
-	@echo "\n$(CYAN)----------------------------------------"
-	@echo "------------- MAKE WEBSERV -------------"
-	@echo "----------------------------------------\n$(DEFAULT)"
+	@$(LOG) " Successfully compiled! "
 
 $(OBJ_DIR)%.o: %.cpp
 	@mkdir -p obj
@@ -75,12 +77,11 @@ $(OBJ_DIR)%.o: %.cpp
 
 clean:
 	$(RM) $(OBJ_DIR)
+	@$(LOG) "  Objects removed!  "
 
 fclean: clean
 	$(RM) $(NAME)
-	@echo "\n$(MAGENTA)----------------------------------------"
-	@echo "------------- CLEANING DONE ------------"
-	@echo "----------------------------------------\n$(DEFAULT)"
+	@$(LOG) "  Program has been cleaned! "
 
 re: fclean all
 
