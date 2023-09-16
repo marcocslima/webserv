@@ -6,7 +6,7 @@
 #    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/13 21:39:40 by pmitsuko         ###   ########.fr        #
+#    Updated: 2023/09/16 04:00:30 by pmitsuko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,6 +47,8 @@ VPATH = $(SRC_DIR)\
 
 FILES = main.cpp\
 		Socket.cpp\
+		Poll.cpp\
+		Server.cpp\
 		Logger.cpp
 
 # COMPILED_SOURCES #
