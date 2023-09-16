@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 22:12:39 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 03:59:47 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/16 05:10:54 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,17 @@ void handleSignal(int signal) {
 	}
 }
 
-int	main(void)
+int	main(int argc, char* argv[])
 {
+	for (int i = 1; i < argc; ++i) {
+		std::string arg(argv[i]);
+
+		if (arg == "-a") {
+			server.setVerbose(true);
+			break;
+		}
+	}
+
 	signal(SIGINT, handleSignal);
 	server.initSockets();
 	server.initPoll();

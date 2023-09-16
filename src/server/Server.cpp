@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 05:02:14 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/16 05:16:04 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,25 +101,25 @@ void	Server::processClientData(int clientSocket)
 		{
 			std::string route = request.substr(start + 4, end - start - 4);
 
-			if (route == "/") // Servir a página padrão (www/index.html)
+			if (route == "/")
 			{
-				// Construir o cabeçalho HTTP
 				char	responseHeader[1024];
 
 				sprintf(responseHeader,
 					"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
 					(int)_defaultHtmlContent.length());
 
-				// Enviar o cabeçalho HTTP
 				send(clientSocket, responseHeader, strlen(responseHeader), 0);
 
-				// Enviar o conteúdo HTML da página padrão como resposta
 				send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
 
 				Logger::info << "Serving the default page." << std::endl;
-				// TODO: incluir uma flag para imprimir mais detalhes dos logs
-				// Logger::info << "Request: " << request << std::endl;
-				// Logger::info << "Response: " << responseHeader << _defaultHtmlContent << std::endl;
+
+				if (this->_verbose)
+				{
+					Logger::verbose << "Request: " << request << std::endl;
+					Logger::verbose << "Response: " << responseHeader << _defaultHtmlContent << std::endl;
+				}
 			}
 		}
 	}
@@ -168,4 +168,9 @@ void	Server::closeServer(void)
 	}
 	_sockets.clear();
 	this->_poll.closePoll();
+}
+
+void	Server::setVerbose(bool verbose)
+{
+	this->_verbose = verbose;
 }

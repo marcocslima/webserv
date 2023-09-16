@@ -6,18 +6,19 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 23:49:57 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/13 21:57:59 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/16 05:18:12 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Logger.hpp"
 
-const std::string Logger::_colors[3] = {"\033[92m", "\033[93m", "\033[95m"};
-const std::string Logger::_levelStrings[3] = {"INFO", "WARNING", "ERROR"};
+const std::string Logger::_colors[4] = {"\033[92m", "\033[93m", "\033[95m", "\033[37m"};
+const std::string Logger::_levelStrings[4] = {"INFO", "WARNING", "ERROR", "VERBOSE"};
 
 Logger::LogEntry Logger::info(INFO);
 Logger::LogEntry Logger::warning(WARNING);
 Logger::LogEntry Logger::error(ERROR);
+Logger::LogEntry Logger::verbose(VERBOSE);
 
 Logger::Logger(void) {}
 

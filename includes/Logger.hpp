@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 23:49:52 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/13 21:47:23 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/16 05:15:40 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ class Logger {
 		{
 			INFO,
 			WARNING,
-			ERROR
+			ERROR,
+			VERBOSE
 		};
 
 		Logger(void);
@@ -58,10 +59,11 @@ class Logger {
 		static LogEntry	info;
 		static LogEntry	warning;
 		static LogEntry	error;
+		static LogEntry	verbose;
 
 	private:
-		static const std::string	_colors[3];
-		static const std::string	_levelStrings[3];
+		static const std::string	_colors[4];
+		static const std::string	_levelStrings[4];
 };
 
 #endif
