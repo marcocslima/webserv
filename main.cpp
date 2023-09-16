@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 03:21:54 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/08 17:58:49 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/16 15:39:21 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <fstream>
 #include <string>
-#include "./sources/request/Request.hpp"
+#include "./sources/includes/Request.hpp"
 
 using namespace std;
 
@@ -77,13 +77,14 @@ int main() {
 
             request.requestHttp(req);
 
-            size_t start = req.find("GET ");
-            size_t end = req.find(" HTTP/1.1");
+            size_t start = req.find(request.getMethod());
+            size_t end = req.find(request.getHttp());
 
             if (start != string::npos && end != string::npos) {
-                string route = req.substr(start + 4, end - start - 4);
 
-                if (route == "/") {
+
+
+                if (request.getUri() == "/") {
                     // Servir a página padrão (www/index.html)
 
                     // Construir o cabeçalho HTTP
@@ -95,23 +96,83 @@ int main() {
 
                     // Enviar o conteúdo HTML da página padrão como resposta
                     send(new_socket, defaultHtmlContent.c_str(), defaultHtmlContent.length(), 0);
-                } else if (route == "/upload") {
-                    // Rota "/upload" para exibir a página de upload
+                } else if (request.getUri() == "/upload") {
+                     // Rota "/upload" para exibir a página de upload
+
                     ifstream uploadHtmlFile("www/upload.html");
                     string uploadHtmlContent((istreambuf_iterator<char>(uploadHtmlFile)), istreambuf_iterator<char>());
 
-                    // Construir o cabeçalho HTTP
                     char responseHeader[1024];
                     sprintf(responseHeader, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n", (int)uploadHtmlContent.length());
 
-                    // Enviar o cabeçalho HTTP
+        // Enviar o cabeçalho HTTP
                     send(new_socket, responseHeader, strlen(responseHeader), 0);
 
-                    // Enviar o conteúdo HTML da página de upload como resposta
+        // Enviar o conteúdo HTML da página de upload como resposta
                     send(new_socket, uploadHtmlContent.c_str(), uploadHtmlContent.length(), 0);
-                } else {
-                    // Tratar outras rotas aqui
-                    // ...
+                    if (request.getMethod() == "POST") {
+
+                        std::map<std::string, std::string> headers = request.getHeaders();
+                        if (headers.find("Content-Type") != headers.end() && headers["Content-Type"].find("multipart/form-data") != std::string::npos) {
+
+
+
+                            std::string fileContentStart = "\r\n\r\n";
+                            size_t fileContentStartPos = request.getBody().find(fileContentStart);
+
+                            if (fileContentStartPos != std::string::npos) {
+                                fileContentStartPos += fileContentStart.length();
+                // O restante do corpo da solicitação contém o conteúdo do arquivo
+                                std::string fileData = request.getBody().substr(fileContentStartPos);
+
+                // Encontre o final do conteúdo do arquivo com base no limite (boundary)
+                                std::string boundary = headers["Content-Type"];
+                                boundary = boundary.substr(boundary.find("boundary=") + 9);
+                                std::string boundaryEnd = "--" + boundary + "--";
+                                size_t fileEndPos = fileData.find(boundaryEnd);
+
+                                if (fileEndPos != std::string::npos) {
+
+
+
+                                    std::string fileName = "uploaded_file.txt";
+
+                    // Caminho onde o arquivo será salvo no servidor
+                                    std::string filePath = "sources/" + fileName;
+
+                    // Crie um fluxo de saída para gravar o conteúdo no arquivo
+                                    std::ofstream outputFile(filePath.c_str(), std::ios::binary | std::ios::app );
+                                    if (outputFile) {
+                                        outputFile.write(fileData.c_str(), fileEndPos);
+                                        outputFile.close();
+
+                                        std::string responseMessage = "Arquivo salvo com sucesso em: " + filePath;
+
+                        // Construir o cabeçalho HTTP de resposta
+                                    char responseHeader[1024];
+                                    sprintf(responseHeader, "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n", (int)responseMessage.length());
+
+                        // Enviar o cabeçalho HTTP
+                                    send(new_socket, responseHeader, strlen(responseHeader), 0);
+
+                        // Enviar a mensagem de resposta
+                                    send(new_socket, responseMessage.c_str(), responseMessage.length(), 0);
+                                } else {
+                                    std::string responseMessage = "Erro ao salvar o arquivo.";
+
+                        // Construir o cabeçalho HTTP de resposta
+                                    char responseHeader[1024];
+                                    sprintf(responseHeader, "HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n", (int)responseMessage.length());
+
+                        // Enviar o cabeçalho HTTP
+                                    send(new_socket, responseHeader, strlen(responseHeader), 0);
+
+                        // Enviar a mensagem de resposta de erro
+                                    send(new_socket, responseMessage.c_str(), responseMessage.length(), 0);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -120,5 +181,6 @@ int main() {
         close(new_socket);
     }
 
+    }
     return 0;
 }

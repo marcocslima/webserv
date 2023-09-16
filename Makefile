@@ -6,7 +6,7 @@
 #    By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/08 18:49:05 by jefernan         ###   ########.fr        #
+#    Updated: 2023/09/14 16:08:15 by jefernan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,7 @@ VPATH = $(SRC_DIR)\
 
 FILES =		main \
 			sources/request/Request
+
 INCLUDE = Request.hpp
 SOURCES =	$(FILES:=.cpp)
 
