@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:48:07 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 04:32:26 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/16 04:58:01 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 # include <unistd.h>
 
 # include "Logger.hpp"
+
+# include <algorithm>
+
 
 class Poll
 {
@@ -39,6 +42,9 @@ class Poll
 		void	addFdToClose(int fd);
 		void	removeMarkedElements(void);
 		void	closePoll(void);
+
+		void	removeListeningSocket(int socketFd);
+		void	removePollFd(int socketFd);
 
 		size_t	getSize(void) const;
 		int		getListeningSocket(size_t i) const;

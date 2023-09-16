@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:48:24 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 04:42:37 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/16 05:01:50 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ bool	Poll::isReadable(size_t i)
 
 bool	Poll::isListeningSocketMatch(size_t i)
 {
-	Logger::warning << i << " < " << this->_listeningSockets.size() << std::endl;
-	Logger::warning << this->_pollFds[i].fd << " == " << this->_listeningSockets[i] << std::endl;
 	return (i < this->_listeningSockets.size() &&
 		this->_pollFds[i].fd == this->_listeningSockets[i]);
 }
@@ -59,11 +57,35 @@ void	Poll::addFdToClose(int socket)
 	this->_fdToClose.push_back(socket);
 }
 
+void Poll::removeListeningSocket(int socketFd)
+{
+	// Encontre e remova o socketFd do vetor _listeningSockets
+	std::vector<int>::iterator it = std::find(_listeningSockets.begin(), _listeningSockets.end(), socketFd);
+	if (it != _listeningSockets.end()) {
+		_listeningSockets.erase(it);
+	}
+}
+
+void Poll::removePollFd(int socketFd)
+{
+	// Encontre e remova o socketFd do vetor _pollFds
+	std::vector<struct pollfd>::iterator it = _pollFds.begin();
+	while (it != _pollFds.end()) {
+		if (it->fd == socketFd) {
+			it = _pollFds.erase(it);
+		} else {
+			++it;
+		}
+	}
+}
+
 void	Poll::removeMarkedElements(void)
 {
 	for (std::vector<int>::iterator it = this->_fdToClose.begin(); it != this->_fdToClose.end(); ++it) {
 		int fdToRemove = *it;
-		Logger::error << "Remove fd : " << fdToRemove << std::endl;
+
+		removeListeningSocket(fdToRemove);
+		removePollFd(fdToRemove);
 		close(fdToRemove);
 	}
 	this->_fdToClose.clear();

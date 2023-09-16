@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 04:39:24 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/16 05:02:14 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,6 @@ int	Server::run(void)
 						Logger::error << "Index out of bounds of vector _pollFds" << std::endl;
 						continue;
 					}
-					Logger::warning << "i = " << i << " | socket = " << clientSocket << std::endl;
 					processClientData(clientSocket);
 				}
 			}
