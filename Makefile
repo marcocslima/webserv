@@ -6,7 +6,7 @@
 #    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/16 04:00:30 by pmitsuko         ###   ########.fr        #
+#    Updated: 2023/09/16 15:32:22 by pmitsuko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ HEADER = -I includes
 # COMPILATION #
 
 CC = c++
-FLAGS = -g -std=c++98 -Werror -Wextra -Wall
+FLAGS = -g3 -std=c++98 -Werror -Wextra -Wall
 
 # DELETE #
 
@@ -49,7 +49,8 @@ FILES = main.cpp\
 		Socket.cpp\
 		Poll.cpp\
 		Server.cpp\
-		Logger.cpp
+		Logger.cpp\
+		Parser.cpp
 
 # COMPILED_SOURCES #
 
@@ -84,7 +85,7 @@ fclean: clean
 re: fclean all
 
 val: all
-	valgrind --leak-check=full --show-leak-kinds=all ./$(NAME)
+	valgrind --leak-check=full --show-leak-kinds=all ./$(NAME) ./config/default.conf
 
 run: all
 	./$(NAME)
