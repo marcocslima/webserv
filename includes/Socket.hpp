@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 20:59:33 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/15 23:39:28 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/16 03:31:12 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ class Socket
 		struct addrinfo*	_serverInfo;
 
 	public:
-		Socket(std::string port, std::string ip);
+		Socket(std::string port = "8080", std::string ip = "127.0.0.1");
 		~Socket(void);
 
 		void	createSocket(void);
