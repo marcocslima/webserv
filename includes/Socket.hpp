@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 20:59:33 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 03:31:12 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/17 11:54:41 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#ifndef SOCKET_H
-# define SOCKET_H
 
 # include "Logger.hpp"
 
@@ -64,5 +62,3 @@ class Socket
 				virtual const char* what() const throw();
 		};
 };
-
-#endif

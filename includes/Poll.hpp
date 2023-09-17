@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Poll.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:48:07 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 04:58:01 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/17 11:54:41 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#ifndef POLL_H
-# define POLL_H
 
 # include <vector>
 # include <poll.h>
@@ -50,5 +48,3 @@ class Poll
 		int		getListeningSocket(size_t i) const;
 		int		getPollFd(size_t i) const;
 };
-
-#endif

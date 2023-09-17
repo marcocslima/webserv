@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 16:43:15 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/14 16:59:13 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/17 11:54:41 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef REQUEST_HPP
-#define REQUEST_HPP
+#pragma once
 
 #include <iostream>
 #include <sstream>
@@ -48,5 +47,3 @@ class HttpRequest {
 		std::vector<std::string>			_methods;
         std::map<std::string, std::string>	_headers;
 };
-
-#endif

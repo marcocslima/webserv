@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:12:47 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 05:09:57 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/17 11:54:41 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#ifndef SERVER_H
-# define SERVER_H
 
 # include "Socket.hpp"
 # include "Poll.hpp"
@@ -54,4 +52,3 @@ class Server
 		void	setVerbose(bool verbose);
 };
 
-#endif

@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 23:49:52 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 05:15:40 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/17 11:54:41 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#ifndef LOGGER_H
-# define LOGGER_H
 
 # include <iostream>
 # include <string>
@@ -66,4 +64,3 @@ class Logger {
 		static const std::string	_levelStrings[4];
 };
 
-#endif
