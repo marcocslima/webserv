@@ -6,19 +6,20 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 16:43:15 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/14 16:59:13 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/18 09:00:51 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REQUEST_HPP
-#define REQUEST_HPP
+# define REQUEST_HPP
 
-#include <iostream>
-#include <sstream>
-#include <algorithm>
-#include <string>
-#include <vector>
-#include <map>
+# include <iostream>
+# include <sstream>
+# include <algorithm>
+# include <string>
+# include <vector>
+# include <map>
+# include "Logger.hpp"
 
 class HttpRequest {
 	public:

@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/16 15:36:51 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/18 10:26:31 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,16 +71,16 @@ bool	HttpRequest::_checkFirstLine(std::string& requestLine) {
     std::string line;
 
     if (!(iss >> this->_method >> this->_uri >> this->_httpVersion)) {
-        std::cout << "400 Bad Request." << std::endl;
+        Logger::error << "Failed to parse method, URI, or HTTP version." << std::endl;
         return false;
     }
     if (std::count(requestLine.begin(), requestLine.end(), ' ') != 2 ||
         std::find(_methods.begin(), _methods.end(), _method) == _methods.end()) {
-        std::cout << "400 Bad Request." << std::endl;
+        Logger::error << "Invalid method or number of spaces." << std::endl;
         return false;
     }
     if (this->_uri[0] != '/' || this->_httpVersion != "HTTP/1.1"){
-        std::cout << "400 Bad Request." << std::endl;
+        Logger::error << "Invalid URI or Unsupported HTTP version." << std::endl;
         return (false);
     }
     return (true);
@@ -118,7 +118,8 @@ void	HttpRequest::requestHttp(std::string request) {
         }
         std::cout << std::endl;
         _findBody(request);
+        _findQuery();
     } else {
-        std::cerr << "Error parsing HTTP request." << std::endl << std::endl;
+        Logger::error << "Error parsing HTTP request." << std::endl;
     }
 }
