@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 16:43:15 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/18 09:00:51 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/18 19:24:27 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,14 @@
 # include <vector>
 # include <map>
 # include "Logger.hpp"
+# include "Parser.hpp"
 
 class HttpRequest {
 	public:
 		HttpRequest();
 		~HttpRequest();
 
-		void	requestHttp(std::string request);
+		void	requestHttp(std::string request, Parser& parser);
 		void    initMethods();
 
 		std::string getMethod( void ) const;
@@ -37,6 +38,7 @@ class HttpRequest {
 	private:
 		bool	_parseHttpRequest(const std::string& request, std::map<std::string, std::string>& headers);
 		bool	_checkFirstLine(std::string& requestLine);
+		void	_checkLocations(Parser& parser);
 		void    _findBody(std::string& request);
 		void    _findQuery();
 
@@ -46,7 +48,8 @@ class HttpRequest {
 		std::string							_httpVersion;
 		std::string							_query;
 		std::string							_body;
-		std::vector<std::string>			_methods;
+		int									_port;
+		std::vector<std::string>			_allowMethods;
         std::map<std::string, std::string>	_headers;
 };
 

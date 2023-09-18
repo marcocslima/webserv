@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/16 00:30:50 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/18 15:12:07 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void Parser::populateConfs(std::vector<std::vector<std::string> > servers, std::
 
     _servers = servers.size();
     _cservers = new conf_servers[_servers];
-    
+
     for (size_t i = 0; i < servers.size(); i++) {
         allocateServers(&_cservers[i], locations[i].size());
         _cservers[i].server = setParams(servers[i][0], _cservers[i].server);
@@ -99,10 +99,10 @@ std::vector<int> Parser::getSizeServers () {
         std::cout << sizeServers[i] << " - ";
     std::cout << std::endl;
     return sizeServers;
-} 
+}
 
 void Parser::setConfs(const char* fileconf) {
-    
+
     std::string                             line;
     std::vector<std::vector<std::string> >  servers;
     std::vector<std::vector<std::string> >  locations;
@@ -133,7 +133,7 @@ void Parser::setConfs(const char* fileconf) {
 
         if (line.find("location ") != std::string::npos)
             insideLocationBlock = true;
-        
+
         if(insideServerBlock && !insideLocationBlock)
             currentServerBlock += line + "\n";
 
@@ -167,7 +167,7 @@ void Parser::setConfs(const char* fileconf) {
 }
 
 std::vector<std::string> splitTokens(const std::string str) {
-    
+
     std::vector<std::string>    vtokens;
     std::istringstream          iss(str);
     std::string                 token;
@@ -203,7 +203,7 @@ std::string removeExtraSpaces(const std::string& input) {
 }
 
 params* setParams(const std::string str, params* vconfs) {
- 
+
     std::vector<std::string>    tokens;
     std::string                 tmp_str = str;
     std::string                 token;
@@ -223,17 +223,17 @@ params* setParams(const std::string str, params* vconfs) {
             if (key != "server")
                 (*vconfs)[key] = value;
         }
-    } 
+    }
     return vconfs;
 }
 
 bool verifyBlockEnd(const std::string& text) {
-    
+
     std::string::size_type  pos = 0;
     bool                    onlyClosingBrace = true;
     int                     countBrace = 0;
     int                     countSpace = 0;
-        
+
     while (pos < text.length() && text[pos] != '\n') {
         if (text[pos] != '}' && text[pos] != ' ') {
             onlyClosingBrace = false;

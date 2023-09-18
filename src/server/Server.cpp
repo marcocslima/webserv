@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 18:16:54 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/18 15:09:46 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ bool	Server::acceptNewConnection(size_t i)
 	}
 }
 
-void	Server::processClientData(int clientSocket)
+void	Server::processClientData(int clientSocket, Parser& parser)
 {
 	HttpRequest req;
 	char buffer[1024] = {0};
@@ -96,7 +96,7 @@ void	Server::processClientData(int clientSocket)
 	{
 		std::string	request(buffer, bytesRead);
 
-		req.requestHttp(request);
+		req.requestHttp(request, parser);
 		size_t		start = request.find(req.getMethod());
 		size_t		end = request.find(req.getHttp());
 
@@ -127,7 +127,7 @@ void	Server::processClientData(int clientSocket)
 	}
 }
 
-int	Server::run(void)
+int	Server::run(Parser& parser)
 {
 	while (true)
 	{
@@ -153,7 +153,7 @@ int	Server::run(void)
 						Logger::error << "Index out of bounds of vector _pollFds" << std::endl;
 						continue;
 					}
-					processClientData(clientSocket);
+					processClientData(clientSocket, parser);
 				}
 			}
 		}

@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/18 10:26:31 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/18 19:29:49 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ std::string HttpRequest::getBody() const {
 }
 
 void    HttpRequest::initMethods(){
-    _methods.push_back("GET");
-    _methods.push_back("HEAD");
-    _methods.push_back("POST");
-    _methods.push_back("DELETE");
+    _allowMethods.push_back("GET");
+    _allowMethods.push_back("HEAD");
+    _allowMethods.push_back("POST");
+    _allowMethods.push_back("DELETE");
 }
 
 void    HttpRequest::_findQuery(){
@@ -66,6 +66,23 @@ void    HttpRequest::_findBody(std::string& request){
     }
 }
 
+void	HttpRequest::_checkLocations(Parser& parser){
+    std::vector<int> sizeServers = parser.getSizeServers();
+    bool    foundLocation = false;
+
+    int loc = 1;
+    for (int i = 0; i < sizeServers[0]; i++){
+        for (int j = 0; j < sizeServers[loc]; j++){
+            std::vector<std::string> location = parser.getLocationParam(i, j, "location");
+            if (!location.empty() && _uri.find(location[0]) == 0)
+                foundLocation = true;
+        }
+        loc++;
+    }
+    if (foundLocation == false)
+        Logger::error << "Invalid location" << std::endl;
+}
+
 bool	HttpRequest::_checkFirstLine(std::string& requestLine) {
     std::istringstream iss(requestLine);
     std::string line;
@@ -75,7 +92,7 @@ bool	HttpRequest::_checkFirstLine(std::string& requestLine) {
         return false;
     }
     if (std::count(requestLine.begin(), requestLine.end(), ' ') != 2 ||
-        std::find(_methods.begin(), _methods.end(), _method) == _methods.end()) {
+        std::find(_allowMethods.begin(), _allowMethods.end(), _method) == _allowMethods.end()) {
         Logger::error << "Invalid method or number of spaces." << std::endl;
         return false;
     }
@@ -103,12 +120,19 @@ bool HttpRequest::_parseHttpRequest(const std::string& request, std::map<std::st
             std::string key = headerLine.substr(0, colonPos);
             std::string value = headerLine.substr(colonPos + 1);
             headers[key] = value;
+            if (key == "Host"){
+                size_t pos = value.find(":");
+                if (pos != std::string::npos){
+                    std::string tmp = value.substr(pos + 1);
+                    this->_port = atoi(tmp.c_str());
+                }
+            }
         }
     }
     return true;
 }
 
-void	HttpRequest::requestHttp(std::string request) {
+void	HttpRequest::requestHttp(std::string request, Parser& parser) {
     if (_parseHttpRequest(request, _headers)) {
         std::cout << this->_requestLine << std::endl;
         std::cout << "Headers:" << std::endl;
@@ -117,6 +141,7 @@ void	HttpRequest::requestHttp(std::string request) {
             std::cout << it->first << ": " << it->second << std::endl;
         }
         std::cout << std::endl;
+        _checkLocations(parser);
         _findBody(request);
         _findQuery();
     } else {
