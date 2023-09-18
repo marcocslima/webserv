@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 16:43:15 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/18 19:24:27 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/18 19:49:23 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class HttpRequest {
 		bool	_parseHttpRequest(const std::string& request, std::map<std::string, std::string>& headers);
 		bool	_checkFirstLine(std::string& requestLine);
 		void	_checkLocations(Parser& parser);
+		void	_checkPorts(Parser& parser);
 		void    _findBody(std::string& request);
 		void    _findQuery();
 
@@ -48,7 +49,7 @@ class HttpRequest {
 		std::string							_httpVersion;
 		std::string							_query;
 		std::string							_body;
-		int									_port;
+		std::string							_port;
 		std::vector<std::string>			_allowMethods;
         std::map<std::string, std::string>	_headers;
 };

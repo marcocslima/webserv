@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/18 15:12:16 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/18 19:41:55 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class Parser
         std::vector<std::string> getServerParam (int server, std::string param);
         std::vector<std::string> getLocationParam (int server, int location, std::string param);
         std::vector<int> getSizeServers ();
+        int getServers( void ) const;
 };
 
 std::vector<std::string> splitTokens(const std::string str);

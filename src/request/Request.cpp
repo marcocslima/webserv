@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/18 19:29:49 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/18 19:50:31 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,20 @@ void	HttpRequest::_checkLocations(Parser& parser){
         Logger::error << "Invalid location" << std::endl;
 }
 
+void	HttpRequest::_checkPorts(Parser& parser){
+    int servers = parser.getServers();
+    bool    foundPort = false;
+
+    for (int i = 0; i < servers; i++){
+        std::vector<std::string> listen = parser.getServerParam(i, "listen");
+        if (!_port.empty() && _port.find(listen[0]) == 0)
+                foundPort = true;
+    }
+    if (foundPort == false)
+        Logger::error << "Invalid Port." << std::endl;
+
+}
+
 bool	HttpRequest::_checkFirstLine(std::string& requestLine) {
     std::istringstream iss(requestLine);
     std::string line;
@@ -124,7 +138,7 @@ bool HttpRequest::_parseHttpRequest(const std::string& request, std::map<std::st
                 size_t pos = value.find(":");
                 if (pos != std::string::npos){
                     std::string tmp = value.substr(pos + 1);
-                    this->_port = atoi(tmp.c_str());
+                    this->_port = tmp;
                 }
             }
         }
@@ -142,6 +156,7 @@ void	HttpRequest::requestHttp(std::string request, Parser& parser) {
         }
         std::cout << std::endl;
         _checkLocations(parser);
+        _checkPorts(parser);
         _findBody(request);
         _findQuery();
     } else {

@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/18 15:12:07 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/18 19:41:22 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,10 @@ Parser::~Parser() {
         deallocateServers(&_cservers[i], _locs[i]);
     }
     delete [] _cservers;
+}
+
+int Parser::getServers( void ) const{
+	return (this->_servers);
 }
 
 void Parser::allocateServers(conf_servers* server, int locs) {
