@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 05:16:04 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/18 05:12:15 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,12 @@ void	Server::processClientData(int clientSocket)
 		std::string	request(buffer, bytesRead);
 		size_t		start = request.find("GET ");
 		size_t		end = request.find(" HTTP/1.1");
+
+		//std::cout << "Start: " << start << std::endl;
+		//std::cout << "End: " << end << std::endl;
+		std::cout << request << std::endl;
+		std::cout << request.substr(start + 4, end - start - 4) << std::endl;
+		std::cout << request.find("-Agent: ") << std::endl;
 
 		if (start != std::string::npos && end != std::string::npos)
 		{
