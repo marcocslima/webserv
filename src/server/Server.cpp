@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/18 11:38:47 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/19 16:11:49 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,12 +97,17 @@ void	Server::processClientData(int clientSocket)
 		std::string method = request.substr(0, request.find(" "));
 		std::string route = request.substr(request.find(" ") + 1, request.find(" HTTP") - 4);
 
-		std::cout << "Method: " << method << std::endl;
-		std::cout << "Route: " << route << std::endl;
+		// std::cout << "Method: " << method << std::endl;
+		// std::cout << "Route: " << route << std::endl;
+		std::cout << "Request: " << request << std::endl;
+
+		HttpResponse response;
 
 		if (route == "/")
 		{
 			char	responseHeader[1024];
+
+			response.handleDelete();
 
 			sprintf(responseHeader,
 				"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",

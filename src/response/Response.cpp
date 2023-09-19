@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 15:19:17 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/19 01:59:57 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/19 15:11:31 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,20 @@ HttpResponse::HttpResponse() {}
 HttpResponse::HttpResponse(Parser *parser): _parser(parser) {}
 
 HttpResponse::~HttpResponse() {}
+
+std::string HttpResponse::assembleResponse() {
+    std::string response;
+
+    response += _response.version + " ";
+    response += _response.status_code + " ";
+    response += _response.status_message + "\r\n";
+    response += "Content-Type: " + _response.content_type + "\r\n";
+    response += "Content-Length: " + _response.content_length + "\r\n";
+    response += "\r\n";
+    response += _response.body;
+
+    return response;
+}
 
 std::string HttpResponse::getPath(int serverIndex, int locIndex, std::string uri) {
     
