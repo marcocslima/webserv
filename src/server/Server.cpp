@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/18 05:12:15 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/18 11:38:47 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,38 +94,30 @@ void	Server::processClientData(int clientSocket)
 	else
 	{
 		std::string	request(buffer, bytesRead);
-		size_t		start = request.find("GET ");
-		size_t		end = request.find(" HTTP/1.1");
+		std::string method = request.substr(0, request.find(" "));
+		std::string route = request.substr(request.find(" ") + 1, request.find(" HTTP") - 4);
 
-		//std::cout << "Start: " << start << std::endl;
-		//std::cout << "End: " << end << std::endl;
-		std::cout << request << std::endl;
-		std::cout << request.substr(start + 4, end - start - 4) << std::endl;
-		std::cout << request.find("-Agent: ") << std::endl;
+		std::cout << "Method: " << method << std::endl;
+		std::cout << "Route: " << route << std::endl;
 
-		if (start != std::string::npos && end != std::string::npos)
+		if (route == "/")
 		{
-			std::string route = request.substr(start + 4, end - start - 4);
+			char	responseHeader[1024];
 
-			if (route == "/")
+			sprintf(responseHeader,
+				"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
+				(int)_defaultHtmlContent.length());
+
+			send(clientSocket, responseHeader, strlen(responseHeader), 0);
+
+			send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
+
+			Logger::info << "Serving the default page." << std::endl;
+
+			if (this->_verbose)
 			{
-				char	responseHeader[1024];
-
-				sprintf(responseHeader,
-					"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
-					(int)_defaultHtmlContent.length());
-
-				send(clientSocket, responseHeader, strlen(responseHeader), 0);
-
-				send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
-
-				Logger::info << "Serving the default page." << std::endl;
-
-				if (this->_verbose)
-				{
-					Logger::verbose << "Request: " << request << std::endl;
-					Logger::verbose << "Response: " << responseHeader << _defaultHtmlContent << std::endl;
-				}
+				Logger::verbose << "Request: " << request << std::endl;
+				Logger::verbose << "Response: " << responseHeader << _defaultHtmlContent << std::endl;
 			}
 		}
 	}

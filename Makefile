@@ -6,7 +6,7 @@
 #    By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/18 04:33:44 by mcl              ###   ########.fr        #
+#    Updated: 2023/09/18 15:55:16 by mcl              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,6 +43,7 @@ SRC_DIR = ./src/
 VPATH = $(SRC_DIR)\
 		$(SRC_DIR)parser\
 		$(SRC_DIR)request\
+		$(SRC_DIR)response\
 		$(SRC_DIR)server\
 		$(SRC_DIR)utils\
 
@@ -54,7 +55,8 @@ FILES = main.cpp\
 		Server.cpp\
 		Logger.cpp\
 		Parser.cpp\
-		Request.cpp
+		Request.cpp\
+		Response.cpp
 
 # COMPILED_SOURCES #
 

@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/16 00:30:50 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/18 16:29:38 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ std::vector<std::string> Parser::getServerParam(int serverIndex, std::string par
 }
 
 std::vector<std::string> Parser::getLocationParam (int serverIndex, int location, std::string param) {
-
+    
     if (serverIndex < 0 || serverIndex >= _servers)
         return std::vector<std::string>();
 
@@ -136,7 +136,7 @@ void Parser::setConfs(const char* fileconf) {
         
         if(insideServerBlock && !insideLocationBlock)
             currentServerBlock += line + "\n";
-
+        
         if(insideLocationBlock)
             currentLocationBlock += line + "\n";
 
