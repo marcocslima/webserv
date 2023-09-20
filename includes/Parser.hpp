@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/20 17:14:36 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/20 20:03:29 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 #include <string>
 #include <cstdlib>
 #include <sstream>
+
+#include "Logger.hpp"
 
 typedef std::map<std::string, std::vector<std::string> > params;
 

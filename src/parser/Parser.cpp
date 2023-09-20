@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/20 17:17:02 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/20 20:03:45 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,6 @@ std::vector<std::string> Parser::getServerParam(int serverIndex, std::string par
 
     if (_cservers[serverIndex].server->find(param) != _cservers[serverIndex].server->end()) {
         std::vector<std::string> vparam = (*_cservers[serverIndex].server)[param];
-        for (size_t i = 0; i < vparam.size(); i++) {
-            std::cout << vparam[i] << std::endl;
-        }
         return vparam;
     }
     return std::vector<std::string>();
@@ -108,9 +105,6 @@ std::vector<int> Parser::getSizeServers () {
     for (int i = 0; i < _servers; i++) {
         sizeServers.push_back(_locs[i]);
     }
-    for (size_t i = 0; i < sizeServers.size(); i++)
-        std::cout << sizeServers[i] << " - ";
-    std::cout << std::endl;
     return sizeServers;
 }
 
@@ -129,7 +123,7 @@ void Parser::setConfs(const char* fileconf) {
 
     std::ifstream conf(fileconf);
     if (!conf.is_open()) {
-        std::cout << "Error opening file" << std::endl;
+        Logger::error << "Error opening file" << std::endl;
         exit(1);
     }
     conf.clear();
