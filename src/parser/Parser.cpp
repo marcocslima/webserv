@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/20 20:03:45 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/20 20:25:21 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@ Parser::Parser(const char* fileconf) {
     setConfs(fileconf);
 }
 
-void Parser::init(const char* fileconf)
+void Parser::init(const char* fileconf, bool verbose)
 {
+    this->_verbose = verbose;
     setConfs(fileconf);
 }
 
@@ -61,6 +62,11 @@ std::vector<std::string> Parser::getServerParam(int serverIndex, std::string par
 
     if (_cservers[serverIndex].server->find(param) != _cservers[serverIndex].server->end()) {
         std::vector<std::string> vparam = (*_cservers[serverIndex].server)[param];
+        if (this->_verbose) {
+            for (size_t i = 0; i < vparam.size(); i++) {
+                Logger::verbose << param << ": " << vparam[i] << std::endl;
+            }
+        }
         return vparam;
     }
     return std::vector<std::string>();
@@ -76,8 +82,10 @@ std::vector<std::string> Parser::getLocationParam (int serverIndex, int location
 
     if (_cservers[serverIndex].locations[location]->find(param) != _cservers[serverIndex].locations[location]->end()) {
         std::vector<std::string> vparam = (*_cservers[serverIndex].locations[location])[param];
-        for (size_t i = 0; i < vparam.size(); i++) {
-            std::cout << vparam[i] << std::endl;
+        if (this->_verbose) {
+            for (size_t i = 0; i < vparam.size(); i++) {
+                Logger::verbose << param << "[" << location << "]" << ": " << vparam[i] << std::endl;
+            }
         }
         return vparam;
     }
@@ -104,6 +112,15 @@ std::vector<int> Parser::getSizeServers () {
     sizeServers.push_back(_servers);
     for (int i = 0; i < _servers; i++) {
         sizeServers.push_back(_locs[i]);
+    }
+    if (this->_verbose) {
+        for (size_t i = 0; i < sizeServers.size(); i++) {
+            if (i == 0) {
+                Logger::verbose << "Server size: " << sizeServers[i] << std::endl;
+            } else {
+                Logger::verbose << "Location size" << "(server[" << i - 1 << "]): " << sizeServers[i] << std::endl;
+            }
+        }
     }
     return sizeServers;
 }

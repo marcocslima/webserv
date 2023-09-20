@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/20 20:07:50 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/20 20:17:12 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ Server::~Server(void)
 
 void	Server::initParser(const char *configFile)
 {
-	this->_parser.init(configFile);
+	this->_parser.init(configFile, this->_verbose);
 }
 
 void	Server::initSockets(void)

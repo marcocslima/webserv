@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/20 20:03:29 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/20 20:16:01 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,13 @@ class Parser
         conf_servers*       _cservers;
         int                 _servers;
         std::vector<int>    _locs;
+        bool                _verbose;
     public:
         Parser();
         Parser(const char* fileconf);
         ~Parser();
 
-        void init(const char* fileconf);
+        void init(const char* fileconf, bool verbose = false);
         void setConfs(const char* fileconf);
         void allocateServers(conf_servers* server, int locs);
         void deallocateServers(conf_servers* server, int locs);
