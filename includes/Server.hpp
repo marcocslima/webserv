@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:12:47 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/17 11:54:41 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/20 16:20:02 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+# include "Parser.hpp"
 # include "Socket.hpp"
 # include "Poll.hpp"
 
@@ -30,6 +31,7 @@ struct SocketInfo {
 class Server
 {
 	private:
+		Parser					_parser;
 		std::vector<SocketInfo>	_socketsInfo;
 		std::vector<Socket*>	_sockets;
 		Poll					_poll;
@@ -42,6 +44,7 @@ class Server
 		Server(void);
 		~Server(void);
 
+		void	initParser(const char *configFile);
 		void	initSockets(void);
 		void	initPoll(void);
 		int		run(void);

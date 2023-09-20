@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 05:16:04 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/20 17:12:29 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,11 @@ std::vector<SocketInfo>	Server::initializeSocketInfo(void)
 	socketsInfo.push_back(SocketInfo("127.0.0.1", "3010"));
 	socketsInfo.push_back(SocketInfo("127.0.0.1", "3020"));
 	return socketsInfo;
+}
+
+void	Server::initParser(const char *configFile)
+{
+	this->_parser.init(configFile);
 }
 
 void	Server::initSockets(void)
@@ -166,7 +171,8 @@ void	Server::closeServer(void)
 	{
 		delete *it;
 	}
-	_sockets.clear();
+	this->_parser.clearParams();
+	this->_sockets.clear();
 	this->_poll.closePoll();
 }
 
