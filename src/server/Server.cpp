@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/19 16:11:49 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/19 20:55:03 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	Server::processClientData(int clientSocket)
 		{
 			char	responseHeader[1024];
 
-			response.handleDelete();
+			response.handleDelete("docs/test");
 
 			sprintf(responseHeader,
 				"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",

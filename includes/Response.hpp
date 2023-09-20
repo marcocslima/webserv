@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 15:14:37 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/19 20:31:45 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/19 20:56:06 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,5 @@ class HttpResponse {
 
     std::string getPath(int serverIndex, int locIndex, std::string uri);
     std::string assembleResponse();
-    void handleDelete();
+    std::string handleDelete(std::string uri);
 };
