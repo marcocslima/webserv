@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 20:59:33 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/17 11:54:41 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/20 19:57:05 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@
 # include <netinet/in.h>
 # include <netdb.h>
 
+# define IP "127.0.0.1"
+
 class Socket
 {
 	private:
@@ -37,7 +39,7 @@ class Socket
 		struct addrinfo*	_serverInfo;
 
 	public:
-		Socket(std::string port = "8080", std::string ip = "127.0.0.1");
+		Socket(std::string port = "8080", std::string ip = IP);
 		~Socket(void);
 
 		void	createSocket(void);

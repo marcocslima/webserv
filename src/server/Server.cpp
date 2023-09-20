@@ -6,14 +6,13 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/20 17:12:29 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/20 20:07:50 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server(void):
-	_socketsInfo(initializeSocketInfo())
+Server::Server(void)
 {
 	std::ifstream defaultHtmlFile("www/index.html");
 
@@ -24,15 +23,6 @@ Server::Server(void):
 Server::~Server(void)
 {}
 
-std::vector<SocketInfo>	Server::initializeSocketInfo(void)
-{
-	std::vector<SocketInfo> socketsInfo;
-	socketsInfo.push_back(SocketInfo("127.0.0.1", "3000"));
-	socketsInfo.push_back(SocketInfo("127.0.0.1", "3010"));
-	socketsInfo.push_back(SocketInfo("127.0.0.1", "3020"));
-	return socketsInfo;
-}
-
 void	Server::initParser(const char *configFile)
 {
 	this->_parser.init(configFile);
@@ -40,11 +30,29 @@ void	Server::initParser(const char *configFile)
 
 void	Server::initSockets(void)
 {
+	int					serverSize;
+	std::vector<int>	serverInfo;
+	std::vector<std::string>	port;
+
+	serverInfo = this->_parser.getSizeServers();
+	if (serverInfo.empty())
+	{
+		Logger::error << "The server was not configured correctly" << std::endl;
+		this->closeServer();
+		exit(1);
+	}
+	serverSize = serverInfo[0];
 	try
 	{
-		for (std::vector<SocketInfo>::const_iterator it = _socketsInfo.begin(); it != _socketsInfo.end(); ++it)
+		for (int i = 0; i != serverSize; ++i)
 		{
-			Socket* socket = new Socket(it->port, it->ipAddress);
+			Socket* socket;
+
+			port = this->_parser.getServerParam(i, "listen");
+			if (port.empty())
+				socket = new Socket();
+			else
+				socket = new Socket(port[0]);
 			socket->createSocket();
 			socket->bindSocket();
 			socket->listenForConnections();
@@ -171,8 +179,8 @@ void	Server::closeServer(void)
 	{
 		delete *it;
 	}
-	this->_parser.clearParams();
 	this->_sockets.clear();
+	this->_parser.clearParams();
 	this->_poll.closePoll();
 }
 
