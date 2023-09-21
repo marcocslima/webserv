@@ -6,11 +6,11 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/18 19:41:22 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/21 08:31:53 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Parser.hpp"
+#include "Parser.hpp"
 
 Parser::Parser() {}
 

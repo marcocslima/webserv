@@ -6,11 +6,11 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/18 19:50:31 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/21 08:30:54 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Request.hpp"
+#include "Request.hpp"
 
 HttpRequest::HttpRequest() {
     initMethods();
@@ -34,36 +34,11 @@ std::map<std::string, std::string> HttpRequest::getHeaders() {
         return (_headers);
 }
 
-std::string HttpRequest::getBody() const {
-    return _body;
-}
-
 void    HttpRequest::initMethods(){
     _allowMethods.push_back("GET");
     _allowMethods.push_back("HEAD");
     _allowMethods.push_back("POST");
     _allowMethods.push_back("DELETE");
-}
-
-void    HttpRequest::_findQuery(){
-    size_t pos = this->_uri.find("?");
-
-    if (pos != std::string::npos){
-        this->_query = _uri.substr(pos + 1);
-    } else {
-        this->_query = "";
-    }
-}
-
-void    HttpRequest::_findBody(std::string& request){
-    size_t bodyStart = request.find("\r\n\r\n");
-
-    if (bodyStart != std::string::npos) {
-        bodyStart += 4;
-        this->_body = request.substr(bodyStart);
-    } else {
-        this->_body = "";
-    }
 }
 
 void	HttpRequest::_checkLocations(Parser& parser){
@@ -80,7 +55,7 @@ void	HttpRequest::_checkLocations(Parser& parser){
         loc++;
     }
     if (foundLocation == false)
-        Logger::error << "Invalid location" << std::endl;
+        Logger::error << "Invalid location." << std::endl;
 }
 
 void	HttpRequest::_checkPorts(Parser& parser){
@@ -157,8 +132,6 @@ void	HttpRequest::requestHttp(std::string request, Parser& parser) {
         std::cout << std::endl;
         _checkLocations(parser);
         _checkPorts(parser);
-        _findBody(request);
-        _findQuery();
     } else {
         Logger::error << "Error parsing HTTP request." << std::endl;
     }

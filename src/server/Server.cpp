@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/18 15:09:46 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/21 08:31:57 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ bool	Server::acceptNewConnection(size_t i)
 
 void	Server::processClientData(int clientSocket, Parser& parser)
 {
-	HttpRequest req;
 	char buffer[1024] = {0};
 	int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
 
@@ -96,14 +95,13 @@ void	Server::processClientData(int clientSocket, Parser& parser)
 	{
 		std::string	request(buffer, bytesRead);
 
-		req.requestHttp(request, parser);
-		size_t		start = request.find(req.getMethod());
-		size_t		end = request.find(req.getHttp());
+		_request.requestHttp(request, parser);
+		size_t	start = request.find(_request.getMethod());
+		size_t	end = request.find(_request.getHttp());
 
 		if (start != std::string::npos && end != std::string::npos)
 		{
-
-			if (req.getUri() == "/")
+			if (_request.getUri() == "/")
 			{
 				char	responseHeader[1024];
 

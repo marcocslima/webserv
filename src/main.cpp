@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 22:12:39 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/18 15:04:03 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/21 08:18:24 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,6 @@ int	main(int argc, char* argv[])
 	}
 
 	Parser parser(argv[1]);
-
-	// parser.getSizeServers();
-	// parser.getServerParam(0, "autoindex");
-	// parser.getLocationParam(0, 1, "location");
 
 	signal(SIGINT, handleSignal);
 	server.initSockets();

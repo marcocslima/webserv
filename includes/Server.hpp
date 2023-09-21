@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:12:47 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/18 15:10:01 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/21 08:16:49 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ struct SocketInfo {
 class Server
 {
 	private:
+		HttpRequest				_request;
 		std::vector<SocketInfo>	_socketsInfo;
 		std::vector<Socket*>	_sockets;
 		Poll					_poll;
