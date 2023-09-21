@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 16:43:15 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/20 14:42:42 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/21 08:47:33 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,7 @@ class HttpRequest {
 		std::string							_method;
 		std::string							_uri;
 		std::string							_httpVersion;
-		std::string							_query;
 		std::string							_port;
-		std::string							_body;
 		std::vector<std::string>			_allowMethods;
         std::map<std::string, std::string>	_headers;
 };
