@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/16 00:25:08 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/22 11:35:06 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 #include <string>
 #include <cstdlib>
 #include <sstream>
+
+#include "Logger.hpp"
 
 typedef std::map<std::string, std::vector<std::string> > params;
 
@@ -33,18 +35,22 @@ class Parser
         conf_servers*       _cservers;
         int                 _servers;
         std::vector<int>    _locs;
+        bool                _verbose;
     public:
         Parser();
         Parser(const char* fileconf);
         ~Parser();
 
+        void init(const char* fileconf, bool verbose = false);
         void setConfs(const char* fileconf);
         void allocateServers(conf_servers* server, int locs);
         void deallocateServers(conf_servers* server, int locs);
+        void clearParams();
         void populateConfs(std::vector<std::vector<std::string> > servers, std::vector<std::vector<std::string> > locations);
         std::vector<std::string> getServerParam (int server, std::string param);
         std::vector<std::string> getLocationParam (int server, int location, std::string param);
-        std::vector<int> getSizeServers ();   
+        std::vector<int> getSizeServers ();
+        int getServers( void ) const;
 };
 
 std::vector<std::string> splitTokens(const std::string str);

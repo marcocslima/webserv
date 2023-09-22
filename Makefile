@@ -6,18 +6,21 @@
 #    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/16 16:02:10 by pmitsuko         ###   ########.fr        #
+#    Updated: 2023/09/22 11:34:21 by pmitsuko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+CHECK		=	✔
+
 ## COLORS ##
 
-DEFAULT		=	\e[39m
+RESET		=	\e[39m
 GREEN		=	\e[92m
 YELLOW		=	\e[93m
 MAGENTA		=	\e[95m
 CYAN		=	\e[96m
-LOG		:= printf "[$(CYAN)$(CHECK)$(RESET)] %s\n"
+CHECK		= \342\234\224
+LOG			= printf "[$(CYAN)$(CHECK)$(RESET)] %s\n"
 
 # **************************************************************************** #
 
@@ -45,7 +48,6 @@ VPATH = $(SRC_DIR)\
 		$(SRC_DIR)request\
 		$(SRC_DIR)server\
 		$(SRC_DIR)utils\
-
 # FILES #
 
 FILES = main.cpp\
@@ -54,7 +56,8 @@ FILES = main.cpp\
 		Server.cpp\
 		Logger.cpp\
 		Parser.cpp\
-		Request.cpp
+		Request.cpp\
+
 
 # COMPILED_SOURCES #
 

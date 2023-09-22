@@ -6,14 +6,13 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 05:16:04 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/22 11:40:35 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server(void):
-	_socketsInfo(initializeSocketInfo())
+Server::Server(void)
 {
 	std::ifstream defaultHtmlFile("www/index.html");
 
@@ -24,22 +23,36 @@ Server::Server(void):
 Server::~Server(void)
 {}
 
-std::vector<SocketInfo>	Server::initializeSocketInfo(void)
+void	Server::initParser(const char *configFile)
 {
-	std::vector<SocketInfo> socketsInfo;
-	socketsInfo.push_back(SocketInfo("127.0.0.1", "3000"));
-	socketsInfo.push_back(SocketInfo("127.0.0.1", "3010"));
-	socketsInfo.push_back(SocketInfo("127.0.0.1", "3020"));
-	return socketsInfo;
+	this->_parser.init(configFile, this->_verbose);
 }
 
 void	Server::initSockets(void)
 {
+	int					serverSize;
+	std::vector<int>	serverInfo;
+	std::vector<std::string>	port;
+
+	serverInfo = this->_parser.getSizeServers();
+	if (serverInfo.empty())
+	{
+		Logger::error << "The server was not configured correctly" << std::endl;
+		this->closeServer();
+		exit(1);
+	}
+	serverSize = serverInfo[0];
 	try
 	{
-		for (std::vector<SocketInfo>::const_iterator it = _socketsInfo.begin(); it != _socketsInfo.end(); ++it)
+		for (int i = 0; i != serverSize; ++i)
 		{
-			Socket* socket = new Socket(it->port, it->ipAddress);
+			Socket* socket;
+
+			port = this->_parser.getServerParam(i, "listen");
+			if (port.empty())
+				socket = new Socket();
+			else
+				socket = new Socket(port[0]);
 			socket->createSocket();
 			socket->bindSocket();
 			socket->listenForConnections();
@@ -80,7 +93,7 @@ bool	Server::acceptNewConnection(size_t i)
 	}
 }
 
-void	Server::processClientData(int clientSocket)
+void	Server::processClientData(int clientSocket, Parser& parser)
 {
 	char buffer[1024] = {0};
 	int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
@@ -94,14 +107,14 @@ void	Server::processClientData(int clientSocket)
 	else
 	{
 		std::string	request(buffer, bytesRead);
-		size_t		start = request.find("GET ");
-		size_t		end = request.find(" HTTP/1.1");
+
+		_request.requestHttp(request, parser);
+		size_t	start = request.find(_request.getMethod());
+		size_t	end = request.find(_request.getHttp());
 
 		if (start != std::string::npos && end != std::string::npos)
 		{
-			std::string route = request.substr(start + 4, end - start - 4);
-
-			if (route == "/")
+			if (_request.getUri() == "/")
 			{
 				char	responseHeader[1024];
 
@@ -151,7 +164,7 @@ int	Server::run(void)
 						Logger::error << "Index out of bounds of vector _pollFds" << std::endl;
 						continue;
 					}
-					processClientData(clientSocket);
+					processClientData(clientSocket, this->_parser);
 				}
 			}
 		}
@@ -166,7 +179,8 @@ void	Server::closeServer(void)
 	{
 		delete *it;
 	}
-	_sockets.clear();
+	this->_sockets.clear();
+	this->_parser.clearParams();
 	this->_poll.closePoll();
 }
 

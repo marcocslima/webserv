@@ -3,17 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/16 01:12:47 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/17 11:54:41 by mcl              ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2023/09/22 11:40:37 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #pragma once
 
+# include "Parser.hpp"
 # include "Socket.hpp"
 # include "Poll.hpp"
+# include "Request.hpp"
 
 # include <vector>
 # include <fstream>
@@ -30,23 +33,23 @@ struct SocketInfo {
 class Server
 {
 	private:
-		std::vector<SocketInfo>	_socketsInfo;
+		HttpRequest				_request;
+		Parser					_parser;
 		std::vector<Socket*>	_sockets;
 		Poll					_poll;
 		bool					_verbose;
 		std::string				_defaultHtmlContent;
 
-		std::vector<SocketInfo>	initializeSocketInfo(void);
-
 	public:
 		Server(void);
 		~Server(void);
 
+		void	initParser(const char *configFile);
 		void	initSockets(void);
 		void	initPoll(void);
 		int		run(void);
 		bool	acceptNewConnection(size_t i);
-		void	processClientData(int clientSocket);
+		void	processClientData(int clientSocket, Parser& parser);
 		void	closeServer(void);
 
 		void	setVerbose(bool verbose);

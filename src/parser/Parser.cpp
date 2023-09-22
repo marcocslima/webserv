@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/16 00:30:50 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/22 11:40:57 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Parser.hpp"
+#include "Parser.hpp"
+#include "Parser.hpp"
 
 Parser::Parser() {}
 
@@ -18,11 +19,16 @@ Parser::Parser(const char* fileconf) {
     setConfs(fileconf);
 }
 
-Parser::~Parser() {
-    for (int i = 0; i < _servers; i++) {
-        deallocateServers(&_cservers[i], _locs[i]);
-    }
-    delete [] _cservers;
+void Parser::init(const char* fileconf, bool verbose)
+{
+    this->_verbose = verbose;
+    setConfs(fileconf);
+}
+
+Parser::~Parser() {}
+
+int Parser::getServers( void ) const{
+	return (this->_servers);
 }
 
 void Parser::allocateServers(conf_servers* server, int locs) {
@@ -34,11 +40,24 @@ void Parser::allocateServers(conf_servers* server, int locs) {
 }
 
 void Parser::deallocateServers(conf_servers* server, int locs) {
+    if (server) {
+        for (int i = 0; i < locs; i++) {
+            if (server->locations[i]) {
+                delete server->locations[i];
+            }
+        }
+        if (server->locations) {
+            delete[] server->locations;
+        }
+        delete server->server;
+    }
+}
 
-    for (int i = 0; i < locs; i++)
-        delete server->locations[i];
-    delete[] server->locations;
-    delete server->server;
+void Parser::clearParams() {
+    for (int i = 0; i < _servers; i++) {
+        deallocateServers(&_cservers[i], _locs[i]);
+    }
+    delete [] _cservers;
 }
 
 std::vector<std::string> Parser::getServerParam(int serverIndex, std::string param) {
@@ -48,8 +67,10 @@ std::vector<std::string> Parser::getServerParam(int serverIndex, std::string par
 
     if (_cservers[serverIndex].server->find(param) != _cservers[serverIndex].server->end()) {
         std::vector<std::string> vparam = (*_cservers[serverIndex].server)[param];
-        for (size_t i = 0; i < vparam.size(); i++) {
-            std::cout << vparam[i] << std::endl;
+        if (this->_verbose) {
+            for (size_t i = 0; i < vparam.size(); i++) {
+                Logger::verbose << param << ": " << vparam[i] << std::endl;
+            }
         }
         return vparam;
     }
@@ -66,8 +87,10 @@ std::vector<std::string> Parser::getLocationParam (int serverIndex, int location
 
     if (_cservers[serverIndex].locations[location]->find(param) != _cservers[serverIndex].locations[location]->end()) {
         std::vector<std::string> vparam = (*_cservers[serverIndex].locations[location])[param];
-        for (size_t i = 0; i < vparam.size(); i++) {
-            std::cout << vparam[i] << std::endl;
+        if (this->_verbose) {
+            for (size_t i = 0; i < vparam.size(); i++) {
+                Logger::verbose << param << "[" << location << "]" << ": " << vparam[i] << std::endl;
+            }
         }
         return vparam;
     }
@@ -78,7 +101,8 @@ void Parser::populateConfs(std::vector<std::vector<std::string> > servers, std::
 
     _servers = servers.size();
     _cservers = new conf_servers[_servers];
-    
+
+
     for (size_t i = 0; i < servers.size(); i++) {
         allocateServers(&_cservers[i], locations[i].size());
         _cservers[i].server = setParams(servers[i][0], _cservers[i].server);
@@ -95,14 +119,21 @@ std::vector<int> Parser::getSizeServers () {
     for (int i = 0; i < _servers; i++) {
         sizeServers.push_back(_locs[i]);
     }
-    for (size_t i = 0; i < sizeServers.size(); i++)
-        std::cout << sizeServers[i] << " - ";
-    std::cout << std::endl;
+    if (this->_verbose) {
+        for (size_t i = 0; i < sizeServers.size(); i++) {
+            if (i == 0) {
+                Logger::verbose << "Server size: " << sizeServers[i] << std::endl;
+            } else {
+                Logger::verbose << "Location size" << "(server[" << i - 1 << "]): " << sizeServers[i] << std::endl;
+            }
+        }
+    }
     return sizeServers;
-} 
+}
 
 void Parser::setConfs(const char* fileconf) {
-    
+
+
     std::string                             line;
     std::vector<std::vector<std::string> >  servers;
     std::vector<std::vector<std::string> >  locations;
@@ -116,7 +147,7 @@ void Parser::setConfs(const char* fileconf) {
 
     std::ifstream conf(fileconf);
     if (!conf.is_open()) {
-        std::cout << "Error opening file" << std::endl;
+        Logger::error << "Error opening file" << std::endl;
         exit(1);
     }
     conf.clear();
@@ -133,7 +164,8 @@ void Parser::setConfs(const char* fileconf) {
 
         if (line.find("location ") != std::string::npos)
             insideLocationBlock = true;
-        
+
+
         if(insideServerBlock && !insideLocationBlock)
             currentServerBlock += line + "\n";
 
@@ -167,7 +199,7 @@ void Parser::setConfs(const char* fileconf) {
 }
 
 std::vector<std::string> splitTokens(const std::string str) {
-    
+
     std::vector<std::string>    vtokens;
     std::istringstream          iss(str);
     std::string                 token;
@@ -203,7 +235,7 @@ std::string removeExtraSpaces(const std::string& input) {
 }
 
 params* setParams(const std::string str, params* vconfs) {
- 
+
     std::vector<std::string>    tokens;
     std::string                 tmp_str = str;
     std::string                 token;
@@ -223,17 +255,17 @@ params* setParams(const std::string str, params* vconfs) {
             if (key != "server")
                 (*vconfs)[key] = value;
         }
-    } 
+    }
     return vconfs;
 }
 
 bool verifyBlockEnd(const std::string& text) {
-    
+
     std::string::size_type  pos = 0;
     bool                    onlyClosingBrace = true;
     int                     countBrace = 0;
     int                     countSpace = 0;
-        
+
     while (pos < text.length() && text[pos] != '\n') {
         if (text[pos] != '}' && text[pos] != ' ') {
             onlyClosingBrace = false;
