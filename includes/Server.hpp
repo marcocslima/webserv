@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:12:47 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/17 11:54:41 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/22 11:32:47 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 # include "Socket.hpp"
 # include "Poll.hpp"
+# include "Request.hpp"
 
 # include <vector>
 # include <fstream>
@@ -30,6 +31,7 @@ struct SocketInfo {
 class Server
 {
 	private:
+		HttpRequest				_request;
 		std::vector<SocketInfo>	_socketsInfo;
 		std::vector<Socket*>	_sockets;
 		Poll					_poll;
@@ -44,9 +46,9 @@ class Server
 
 		void	initSockets(void);
 		void	initPoll(void);
-		int		run(void);
+		int		run(Parser& parser);
 		bool	acceptNewConnection(size_t i);
-		void	processClientData(int clientSocket);
+		void	processClientData(int clientSocket, Parser& parser);
 		void	closeServer(void);
 
 		void	setVerbose(bool verbose);
