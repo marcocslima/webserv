@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Form</title>
+	<style>
+		body {
+			background-color: rgb(8, 17, 46);
+			color: white;
+			text-align: center;
+			font-family: Arial, sans-serif;
+		}
+
+		.container {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+		}
+
+		.intro-text {
+			margin-bottom: 20px;
+		}
+
+		.form-container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		form {
+			text-align: left;
+			margin-right: 20px;
+		}
+
+		input[type="text"],
+		textarea {
+			width: 100%;
+			padding: 10px;
+			margin-bottom: 10px;
+			border: none;
+			background-color: rgba(255, 255, 255, 0.1);
+			color: white;
+			font-size: 16px;
+			outline: none;
+		}
+
+		/* Estilo do botão de envio */
+		input[type="submit"] {
+			background-color: #1761a7;
+			color: white;
+			border: none;
+			padding: 15px 30px;
+			font-size: 18px;
+			cursor: pointer;
+			margin: 0 auto;
+			display: block;
+		}
+
+		/* Estilo do gif */
+		#gif {
+			width: 50%;
+			max-height: 90vh;
+			margin-left: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<p class="intro-text">Leave your message here:</p>
+		<div class="form-container">
+			<form action="/form" method="post">
+				<label for="name">Name:</label>
+				<input type="text" id="name" name="name" required><br><br>
+
+				<label for="login42">Login 42:</label>
+				<input type="text" id="login42" name="login42" required><br><br>
+
+				<label for="message">Message:</label><br>
+				<textarea id="message" name="message" rows="4" cols="50" required></textarea><br><br>
+
+				<input type="submit" value="Send">
+			</form>
+
+			<!-- Inclua o link direto para o seu GIF aqui -->
+			<img id="gif" src="https://media.tenor.com/Ejy-6sd8QicAAAAM/hi-hello.gif" alt="Saudação">
+		</div>
+	</div>
+</body>
+
+</html>
