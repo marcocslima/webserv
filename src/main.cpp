@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 22:12:39 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/21 08:18:24 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/22 11:39:42 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,13 @@ void handleSignal(int signal) {
 
 int	main(int argc, char* argv[])
 {
-	if (argc != 2) {
+	if (argc < 2)
+	{
 		Logger::error << "Error: Invalid number of arguments" << std::endl;
-		exit(1);
+		return (1);
 	}
-
-	for (int i = 1; i < argc; ++i) {
+	for (int i = 1; i < argc; ++i)
+	{
 		std::string arg(argv[i]);
 
 		if (arg == "-a") {
@@ -40,11 +41,9 @@ int	main(int argc, char* argv[])
 			break;
 		}
 	}
-
-	Parser parser(argv[1]);
-
 	signal(SIGINT, handleSignal);
+	server.initParser(argv[1]);
 	server.initSockets();
 	server.initPoll();
-	return (server.run(parser));
+	return (server.run());
 }

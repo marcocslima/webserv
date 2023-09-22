@@ -3,16 +3,18 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+         #
+#    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/21 08:31:15 by jefernan         ###   ########.fr        #
+#    Updated: 2023/09/22 11:34:21 by pmitsuko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+CHECK		=	✔
+
 ## COLORS ##
 
-DEFAULT		=	\e[39m
+RESET		=	\e[39m
 GREEN		=	\e[92m
 YELLOW		=	\e[93m
 MAGENTA		=	\e[95m

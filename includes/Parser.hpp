@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/18 19:41:55 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/22 11:35:06 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 #include <string>
 #include <cstdlib>
 #include <sstream>
+
+#include "Logger.hpp"
 
 typedef std::map<std::string, std::vector<std::string> > params;
 
@@ -33,14 +35,17 @@ class Parser
         conf_servers*       _cservers;
         int                 _servers;
         std::vector<int>    _locs;
+        bool                _verbose;
     public:
         Parser();
         Parser(const char* fileconf);
         ~Parser();
 
+        void init(const char* fileconf, bool verbose = false);
         void setConfs(const char* fileconf);
         void allocateServers(conf_servers* server, int locs);
         void deallocateServers(conf_servers* server, int locs);
+        void clearParams();
         void populateConfs(std::vector<std::vector<std::string> > servers, std::vector<std::vector<std::string> > locations);
         std::vector<std::string> getServerParam (int server, std::string param);
         std::vector<std::string> getLocationParam (int server, int location, std::string param);
