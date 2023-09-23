@@ -1,21 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ResponseDelete.cpp                                 :+:      :+:    :+:   */
+/*   DeleteMethod.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/18 15:14:58 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/19 21:01:55 by mcl              ###   ########.fr       */
+/*   Created: 2023/09/23 07:17:35 by mcl               #+#    #+#             */
+/*   Updated: 2023/09/23 07:48:44 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Response.hpp"
+#include "../includes/DeleteMethod.hpp"
+
+DeleteMethod::DeleteMethod() {}
+
+DeleteMethod::~DeleteMethod() {}
 
 std::string getDir () {
     char cwd[1024];
     if (getcwd(cwd, 1024) != NULL) {
         std::string dir(cwd);
+        size_t pos = dir.find("webserv");
+        if (pos != std::string::npos)
+            dir = dir.substr(0, pos + 7);
         return dir;
     }
     else {
@@ -24,12 +31,12 @@ std::string getDir () {
     }
 }
 
-std::string HttpResponse::handleDelete(std::string uri) {
+std::string DeleteMethod::handleMethod(std::string uri) {
 
     std::string resorcePath = getDir();
     std::string responseHeader;
-
-    resorcePath.replace(resorcePath.find("src/response"), 12, uri);
+    
+    resorcePath = resorcePath + "/" + uri;
     
     std::string indexPath = resorcePath;
     std::ifstream file(indexPath.c_str());

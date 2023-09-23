@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/19 20:55:03 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/23 07:23:15 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,21 +93,19 @@ void	Server::processClientData(int clientSocket)
 	}
 	else
 	{
-		std::string	request(buffer, bytesRead);
-		std::string method = request.substr(0, request.find(" "));
-		std::string route = request.substr(request.find(" ") + 1, request.find(" HTTP") - 4);
+		std::string	req(buffer, bytesRead);
+		std::string method = req.substr(0, req.find(" "));
+		std::string route = req.substr(req.find(" ") + 1, req.find(" HTTP") - 4);
 
-		// std::cout << "Method: " << method << std::endl;
-		// std::cout << "Route: " << route << std::endl;
-		std::cout << "Request: " << request << std::endl;
+		std::cout << "Request: " << req << std::endl;
 
-		HttpResponse response;
+		DeleteMethod	delete_method;
 
 		if (route == "/")
 		{
 			char	responseHeader[1024];
 
-			response.handleDelete("docs/test");
+			delete_method.handleMethod("docs/test");
 
 			sprintf(responseHeader,
 				"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
@@ -121,7 +119,7 @@ void	Server::processClientData(int clientSocket)
 
 			if (this->_verbose)
 			{
-				Logger::verbose << "Request: " << request << std::endl;
+				Logger::verbose << "Request: " << req << std::endl;
 				Logger::verbose << "Response: " << responseHeader << _defaultHtmlContent << std::endl;
 			}
 		}

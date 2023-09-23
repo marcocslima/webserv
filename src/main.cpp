@@ -6,13 +6,12 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 22:12:39 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/19 15:14:19 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/23 07:24:52 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "Parser.hpp"
-#include "Response.hpp"
 #include <csignal>
 
 Server	server;
@@ -43,13 +42,10 @@ int	main(int argc, char* argv[])
 	}
 
 	Parser parser(argv[1]);
-	HttpResponse response(&parser);
 
 	// parser.getSizeServers();
 	// parser.getServerParam(0, "listen");
 	//parser.getLocationParam(0, 0, "location");
-
-	response.getPath(0, 0, "/docs");
 
 	signal(SIGINT, handleSignal);
 	server.initSockets();

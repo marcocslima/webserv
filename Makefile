@@ -6,7 +6,7 @@
 #    By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/19 14:59:42 by mcl              ###   ########.fr        #
+#    Updated: 2023/09/23 07:30:18 by mcl              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -56,8 +56,8 @@ FILES = main.cpp\
 		Logger.cpp\
 		Parser.cpp\
 		Request.cpp\
-		Response.cpp\
-		ResponseDelete.cpp\
+		AResponse.cpp\
+		DeleteMethod.cpp\
 
 # COMPILED_SOURCES #
 

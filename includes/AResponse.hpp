@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Response.hpp                                       :+:      :+:    :+:   */
+/*   AResponse.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/18 15:14:37 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/19 20:56:06 by mcl              ###   ########.fr       */
+/*   Created: 2023/09/23 06:59:01 by mcl               #+#    #+#             */
+/*   Updated: 2023/09/23 07:11:30 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,16 @@ struct Response
     std::string body;
 };
 
-class HttpResponse {
-    private:
+class AHttpResponse {
+    protected:
         Parser      *_parser;
         Response    _response;
     public:
-        HttpResponse();
-        HttpResponse(Parser *parser);
-        ~HttpResponse();
+        AHttpResponse();
+        AHttpResponse(Parser *parser);
+        virtual ~AHttpResponse();
 
-    std::string getPath(int serverIndex, int locIndex, std::string uri);
-    std::string assembleResponse();
-    std::string handleDelete(std::string uri);
+    virtual std::string getPath(int serverIndex, int locIndex, std::string uri);
+    virtual std::string assembleResponse();
+    virtual std::string handleMethod(std::string uri) = 0;
 };

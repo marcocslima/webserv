@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:12:47 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/19 15:16:09 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/23 07:21:47 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 # include "Socket.hpp"
 # include "Poll.hpp"
-# include "Response.hpp"
+# include "Request.hpp"
+# include "AResponse.hpp"
+# include "DeleteMethod.hpp"
 
 # include <vector>
 # include <fstream>

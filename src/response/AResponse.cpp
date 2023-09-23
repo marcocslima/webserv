@@ -1,24 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Response.cpp                                       :+:      :+:    :+:   */
+/*   AResponse.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/18 15:19:17 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/19 15:11:31 by mcl              ###   ########.fr       */
+/*   Created: 2023/09/23 07:29:22 by mcl               #+#    #+#             */
+/*   Updated: 2023/09/23 07:29:27 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Response.hpp"
+#include "../includes/AResponse.hpp"
 
-HttpResponse::HttpResponse() {}
+AHttpResponse::AHttpResponse() {}
 
-HttpResponse::HttpResponse(Parser *parser): _parser(parser) {}
+AHttpResponse::AHttpResponse(Parser *parser): _parser(parser) {}
 
-HttpResponse::~HttpResponse() {}
+AHttpResponse::~AHttpResponse() {}
 
-std::string HttpResponse::assembleResponse() {
+std::string AHttpResponse::assembleResponse() {
     std::string response;
 
     response += _response.version + " ";
@@ -32,7 +32,7 @@ std::string HttpResponse::assembleResponse() {
     return response;
 }
 
-std::string HttpResponse::getPath(int serverIndex, int locIndex, std::string uri) {
+std::string AHttpResponse::getPath(int serverIndex, int locIndex, std::string uri) {
     
     std::vector<std::string> rootDir = _parser->getLocationParam(serverIndex, locIndex, "location");
     std::string path = rootDir[0] + uri;
