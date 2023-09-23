@@ -6,11 +6,11 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/22 17:19:06 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/23 18:39:07 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Request.hpp"
+#include "../../includes/Request.hpp"
 
 HttpRequest::HttpRequest() {
     initMethods();
