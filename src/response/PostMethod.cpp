@@ -1,27 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Response.hpp                                       :+:      :+:    :+:   */
+/*   PostMethod.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/20 13:18:47 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/21 08:52:19 by jefernan         ###   ########.fr       */
+/*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
+/*   Updated: 2023/09/23 18:37:07 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "../../includes/PostMethod.hpp"
 
-# include "Logger.hpp"
-# include "Server.hpp"
-# include "Request.hpp"
+std::string PostMethod::handleMethod(std::string uri){
 
-class HttpResponse {
-    private:
-        HttpRequest _request;
-    public:
-        HttpResponse();
-        ~HttpResponse();
-
-    void	post(char buffer[1024]);
-};
+}
