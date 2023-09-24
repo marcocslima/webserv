@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/23 07:23:15 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/24 16:40:44 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,34 +95,40 @@ void	Server::processClientData(int clientSocket)
 	{
 		std::string	req(buffer, bytesRead);
 		std::string method = req.substr(0, req.find(" "));
-		std::string route = req.substr(req.find(" ") + 1, req.find(" HTTP") - 4);
+		std::string route = req.substr(req.find(" ") + 1, req.find(" HTTP") - 7);
 
-		std::cout << "Request: " << req << std::endl;
+		//std::cout << "Request: " << req << std::endl;
 
-		DeleteMethod	delete_method;
+		// if (route == "/")
+		// {
 
-		if (route == "/")
+		char	responseHeader[1024];
+
+		if (method == "DELETE")
 		{
-			char	responseHeader[1024];
-
-			delete_method.handleMethod("docs/test");
-
+			DeleteMethod	delete_method;
+			std::string		response = delete_method.handleMethod(route);
+			strcpy(responseHeader, response.c_str());
+		}
+		else 
+		{
 			sprintf(responseHeader,
 				"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
 				(int)_defaultHtmlContent.length());
-
-			send(clientSocket, responseHeader, strlen(responseHeader), 0);
-
-			send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
-
-			Logger::info << "Serving the default page." << std::endl;
-
-			if (this->_verbose)
-			{
-				Logger::verbose << "Request: " << req << std::endl;
-				Logger::verbose << "Response: " << responseHeader << _defaultHtmlContent << std::endl;
-			}
 		}
+
+		send(clientSocket, responseHeader, strlen(responseHeader), 0);
+
+		send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
+
+		Logger::info << "Serving the default page." << std::endl;
+
+		if (this->_verbose)
+		{
+			Logger::verbose << "Request: " << req << std::endl;
+			Logger::verbose << "Response: " << responseHeader << _defaultHtmlContent << std::endl;
+		}
+		//}
 	}
 }
 

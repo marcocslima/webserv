@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 06:59:01 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/23 07:11:30 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/24 16:31:27 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ struct Response
     std::string status_code; // 200
     std::string status_message; // OK
     std::string content_type; // text/html
-    std::string content_length;
+    int         content_length;
     std::string body;
 };
 
