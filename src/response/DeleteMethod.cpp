@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 07:17:35 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/24 16:31:27 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/24 17:06:34 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,11 @@ std::string DeleteMethod::handleMethod(std::string uri) {
     
     resorcePath = resorcePath + uri;
     
-    std::string indexPath = resorcePath;
-    std::ifstream file(indexPath.c_str());
+    std::ifstream file(resorcePath.c_str());
 
     if (file.is_open()) {
         file.close();
-        if (std::remove(indexPath.c_str()) == 0) {
+        if (std::remove(resorcePath.c_str()) == 0) {
             _response.version = "HTTP/1.1";
             _response.status_code = "204";
             _response.status_message = "OK";
@@ -51,7 +50,7 @@ std::string DeleteMethod::handleMethod(std::string uri) {
             _response.content_length = 0;
             _response.body = "<html><body><h1>204 No Content</h1></body></html>";
             responseHeader = assembleResponse();
-            std::cout << "File deleted successfully" << std::endl;
+            Logger::info << "Resource deleted successfully." << std::endl;
         }
         else {
             _response.version = "HTTP/1.1";
@@ -61,7 +60,7 @@ std::string DeleteMethod::handleMethod(std::string uri) {
             _response.content_length = 0;
             _response.body = "<html><body><h1>500 Internal Server Error</h1></body></html>";
             responseHeader = assembleResponse();
-            std::cout << "Error deleting file" << std::endl;
+            Logger::info << "Error deleting resource." << std::endl;
         }
     }
     else {
@@ -72,7 +71,7 @@ std::string DeleteMethod::handleMethod(std::string uri) {
         _response.content_length = 0;
         _response.body = "<html><body><h1>404 Not Found</h1></body></html>";
         responseHeader = assembleResponse();
-        std::cout << "File not found" << std::endl;
+        Logger::info << "Resource not found." << std::endl;
     }
     return responseHeader;
 }

@@ -6,13 +6,14 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 06:59:01 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/24 16:31:27 by mcl              ###   ########.fr       */
+/*   Updated: 2023/09/24 17:04:22 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "../includes/Parser.hpp"
+#include "../includes/Logger.hpp"
 #include <iostream>
 #include <sstream>
 #include <algorithm>
