@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/25 15:42:01 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/25 15:47:39 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ void	HttpRequest::_checkPorts(Parser& parser){
     }
     if (foundPort == false){
         this->_statusError = BAD_REQUEST;
-        Logger::error << "teste" << std::endl;
         throw RequestException();
     }
 }
@@ -89,21 +88,16 @@ void	HttpRequest::_parseFirstLine(std::string& requestLine) {
         || std::find(_allowMethods.begin(), _allowMethods.end(), _method) == _allowMethods.end()
         || this->_uri[0] != '/') {
             this->_statusError = BAD_REQUEST;
-            Logger::error << "ola" << std::endl;
             throw RequestException();
         }
     if (this->_httpVersion != "HTTP/1.1"){
         this->_statusError = HTTP_VERSION_NOT_SUPPORTED;
-        Logger::error << "http." << std::endl;
         throw RequestException();
     }
     size_t pos = this->_uri.find('?');
     if (pos != std::string::npos){
         _parseQuery();
         this->_uri.erase(pos);
-    }
-    for (std::vector<std::string>::iterator it = _paramQuery.begin(); it != _paramQuery.end(); ++it) {
-        std::cout << *it << " ";
     }
 }
 
@@ -164,7 +158,6 @@ void	HttpRequest::requestHttp(std::string request, Parser& parser) {
     size_t firstLineEnd = request.find("\r\n");
     if (firstLineEnd == std::string::npos) {
         this->_statusError = BAD_REQUEST;
-        Logger::error << "Inicio" << std::endl;
         return ;
     }
 
