@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/09/22 14:27:06 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/25 15:41:37 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,16 @@ class HttpRequest {
 		HttpRequest();
 		~HttpRequest();
 
-		void	requestHttp(std::string request, Parser& parser);
-		void    initMethods();
+		std::string	req;
 
-		std::string getMethod( void ) const;
-		std::string getUri( void ) const;
-		std::string getHttp( void ) const;
-		std::string getStatusError( void ) const;
-		std::map<std::string,std::string> getHeaders(void);
+		void	requestHttp(std::string request, Parser& parser);
+		void	initMethods();
+
+		std::string							getMethod( void ) const;
+		std::string							getUri( void ) const;
+		std::string							getHttp( void ) const;
+		std::vector<std::string>			getQuery( void ) const;
+		std::map<std::string,std::string>	getHeaders(void) const;
 		class RequestException : public std::exception {
 			public:
 				virtual const char* what() const throw();
@@ -46,6 +48,7 @@ class HttpRequest {
 	private:
 		void	_parseHeaders(const std::string& request);
 		void	_parseFirstLine(std::string& requestLine);
+		void	_parseQuery(void);
 		void	_checkLocations(Parser& parser);
 		void	_checkPorts(Parser& parser);
 
@@ -55,6 +58,7 @@ class HttpRequest {
 		std::string							_httpVersion;
 		std::string							_port;
 		std::string							_statusError;
+		std::vector<std::string> 			_paramQuery;
 		std::vector<std::string>			_allowMethods;
-        std::map<std::string, std::string>	_headers;
+        std::map<std::string, std::string>	_header;
 };

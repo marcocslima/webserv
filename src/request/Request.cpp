@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/23 18:39:07 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/25 15:42:01 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ std::string HttpRequest::getHttp( void ) const{
 	return (this->_httpVersion);
 }
 
-std::string HttpRequest::getStatusError( void ) const{
-	return (this->_statusError);
+std::vector<std::string> HttpRequest::getQuery( void ) const{
+	return (this->_paramQuery);
 }
 
-std::map<std::string, std::string> HttpRequest::getHeaders() {
-        return (_headers);
+std::map<std::string, std::string> HttpRequest::getHeaders() const{
+    return (_header);
 }
 
 const char* HttpRequest::RequestException::what() const throw(){
@@ -44,7 +44,6 @@ const char* HttpRequest::RequestException::what() const throw(){
 
 void    HttpRequest::initMethods(){
     _allowMethods.push_back("GET");
-    _allowMethods.push_back("HEAD");
     _allowMethods.push_back("POST");
     _allowMethods.push_back("DELETE");
 }
@@ -77,6 +76,7 @@ void	HttpRequest::_checkPorts(Parser& parser){
     }
     if (foundPort == false){
         this->_statusError = BAD_REQUEST;
+        Logger::error << "teste" << std::endl;
         throw RequestException();
     }
 }
@@ -89,11 +89,46 @@ void	HttpRequest::_parseFirstLine(std::string& requestLine) {
         || std::find(_allowMethods.begin(), _allowMethods.end(), _method) == _allowMethods.end()
         || this->_uri[0] != '/') {
             this->_statusError = BAD_REQUEST;
+            Logger::error << "ola" << std::endl;
             throw RequestException();
         }
     if (this->_httpVersion != "HTTP/1.1"){
         this->_statusError = HTTP_VERSION_NOT_SUPPORTED;
+        Logger::error << "http." << std::endl;
         throw RequestException();
+    }
+    size_t pos = this->_uri.find('?');
+    if (pos != std::string::npos){
+        _parseQuery();
+        this->_uri.erase(pos);
+    }
+    for (std::vector<std::string>::iterator it = _paramQuery.begin(); it != _paramQuery.end(); ++it) {
+        std::cout << *it << " ";
+    }
+}
+
+void  HttpRequest::_parseQuery(){
+    size_t posQuery = this->_uri.find("?");
+    std::string query;
+
+    if (posQuery != std::string::npos){
+        query = this->_uri.substr(posQuery + 1);
+        std::string::size_type start = 0;
+        while (start < query.length()) {
+            std::string::size_type equal = query.find('=', start);
+            if (equal != std::string::npos) {
+                std::string::size_type ampersand = query.find('&', equal);
+                if (ampersand != std::string::npos) {
+                    _paramQuery.push_back(query.substr(equal + 1, ampersand - equal - 1));
+                    start = ampersand + 1;
+                } else {
+                    _paramQuery.push_back(query.substr(equal + 1));
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
     }
 }
 
@@ -110,7 +145,7 @@ void HttpRequest::_parseHeaders(const std::string& request) {
             if (colonPos != std::string::npos) {
                 std::string key = headerLine.substr(0, colonPos);
                 std::string value = headerLine.substr(colonPos + 1);
-                _headers[key] = value;
+                _header[key] = value;
                 if (key == "Host"){
                     size_t pos = value.find(":");
                     if (pos != std::string::npos){
@@ -118,18 +153,18 @@ void HttpRequest::_parseHeaders(const std::string& request) {
                         this->_port = tmp;
                     }
                 }
-            } else {
-                this->_statusError = BAD_REQUEST;
-                throw RequestException();
             }
         }
+
     }
 }
 
 void	HttpRequest::requestHttp(std::string request, Parser& parser) {
+    this->req = request;
     size_t firstLineEnd = request.find("\r\n");
     if (firstLineEnd == std::string::npos) {
         this->_statusError = BAD_REQUEST;
+        Logger::error << "Inicio" << std::endl;
         return ;
     }
 
