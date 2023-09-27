@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/22 11:40:35 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/26 14:12:06 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "../../includes/Server.hpp"
 
 Server::Server(void)
 {
@@ -134,6 +134,31 @@ void	Server::processClientData(int clientSocket, Parser& parser)
 					Logger::verbose << "Response: " << responseHeader << _defaultHtmlContent << std::endl;
 				}
 			}
+			if (_request.getUri() == "/form"){
+				std::ifstream uploadHtmlFile("www/form.html");
+				std::string uploadHtmlContent((std::istreambuf_iterator<char>(uploadHtmlFile)), std::istreambuf_iterator<char>());
+
+				char responseHeader[1024];
+                    sprintf(responseHeader, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n", (int)uploadHtmlContent.length());
+
+				send(clientSocket, responseHeader, strlen(responseHeader), 0);
+
+                send(clientSocket, uploadHtmlContent.c_str(), uploadHtmlContent.length(), 0);
+			}
+			if (_request.getUri() == "/upload"){
+				std::ifstream uploadHtmlFile("www/upload.html");
+				std::string uploadHtmlContent((std::istreambuf_iterator<char>(uploadHtmlFile)), std::istreambuf_iterator<char>());
+
+				char responseHeader[1024];
+                    sprintf(responseHeader, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n", (int)uploadHtmlContent.length());
+
+				send(clientSocket, responseHeader, strlen(responseHeader), 0);
+
+                send(clientSocket, uploadHtmlContent.c_str(), uploadHtmlContent.length(), 0);
+			}
+			PostMethod	_post(_request);
+			if (_request.getMethod() == "POST")
+				_post.handleMethod(_request.getUri());
 		}
 	}
 }

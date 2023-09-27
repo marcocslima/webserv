@@ -6,14 +6,14 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/25 15:47:39 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/27 15:34:03 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/Request.hpp"
 
 HttpRequest::HttpRequest() {
-    initMethods();
+    init();
 };
 
 HttpRequest::~HttpRequest() {};
@@ -30,6 +30,10 @@ std::string HttpRequest::getHttp( void ) const{
 	return (this->_httpVersion);
 }
 
+std::string HttpRequest::getReq( void ) const{
+	return (this->_req);
+}
+
 std::vector<std::string> HttpRequest::getQuery( void ) const{
 	return (this->_paramQuery);
 }
@@ -42,10 +46,19 @@ const char* HttpRequest::RequestException::what() const throw(){
 	return ("Error parsing HTTP request.");
 }
 
-void    HttpRequest::initMethods(){
+void    HttpRequest::init(){
     _allowMethods.push_back("GET");
     _allowMethods.push_back("POST");
     _allowMethods.push_back("DELETE");
+    _req = "";
+    _requestLine = "";
+	_method = "";
+	_uri = "";
+	_httpVersion = "";
+	_port = "";
+	_statusError = "";
+    _paramQuery.clear();
+    _header.clear();
 }
 
 void	HttpRequest::_checkLocations(Parser& parser){
@@ -154,7 +167,8 @@ void HttpRequest::_parseHeaders(const std::string& request) {
 }
 
 void	HttpRequest::requestHttp(std::string request, Parser& parser) {
-    this->req = request;
+    this->_req = request.substr(0);
+
     size_t firstLineEnd = request.find("\r\n");
     if (firstLineEnd == std::string::npos) {
         this->_statusError = BAD_REQUEST;

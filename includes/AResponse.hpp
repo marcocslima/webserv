@@ -6,13 +6,14 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:18:47 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/23 18:29:00 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/26 09:51:13 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "../includes/Parser.hpp"
+#include "Parser.hpp"
+#include "Request.hpp"
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -36,6 +37,7 @@ class AHttpResponse {
     protected:
         Parser      *_parser;
         Response    _response;
+
     public:
         AHttpResponse();
         AHttpResponse(Parser *parser);

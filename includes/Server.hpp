@@ -3,13 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/09/22 11:40:37 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/27 15:41:22 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #pragma once
 
@@ -17,6 +16,7 @@
 # include "Socket.hpp"
 # include "Poll.hpp"
 # include "Request.hpp"
+# include "PostMethod.hpp"
 
 # include <vector>
 # include <fstream>
