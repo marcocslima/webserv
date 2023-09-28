@@ -6,11 +6,11 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/27 15:39:46 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/28 08:42:02 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/PostMethod.hpp"
+#include "PostMethod.hpp"
 
 PostMethod::PostMethod() {}
 
