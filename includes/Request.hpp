@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/09/27 15:41:39 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/28 13:36:58 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@
 
 #define BAD_REQUEST                "400"
 #define HTTP_VERSION_NOT_SUPPORTED "505"
+
 class HttpRequest {
 	public:
 		HttpRequest();
 		~HttpRequest();
-
 
 		void	requestHttp(std::string request, Parser& parser);
 		void	init();
@@ -36,23 +36,32 @@ class HttpRequest {
 		std::string							getMethod( void ) const;
 		std::string							getUri( void ) const;
 		std::string							getHttp( void ) const;
-		std::string							getReq( void ) const;
+		// std::string							getReq( void ) const;
 		std::vector<std::string>			getQuery( void ) const;
+		std::string 						getBody( void ) const;
+		std::string							getBoundary( void ) const;
 		std::map<std::string,std::string>	getHeaders(void) const;
 		class RequestException : public std::exception {
 			public:
 				virtual const char* what() const throw();
 		};
 
+		bool								_has_body;
+		bool								_has_chunked;
+		bool								_has_multipart;
+		bool								_has_form;
 	private:
 		void	_parseHeaders(const std::string& request);
 		void	_parseFirstLine(std::string& requestLine);
+		void	_findHeaders(std::string key,std::string value );
 		void	_parseQuery(void);
+		void	_getMultipartData(std::string request);
+		void	_getBody(std::string request);
 		void	_checkLocations(Parser& parser);
 		void	_checkPorts(Parser& parser);
 
-		std::string							_req;
-		std::string							_requestLine;
+		std::string							_body;
+		std::string 						_boundary;
 		std::string							_method;
 		std::string							_uri;
 		std::string							_httpVersion;

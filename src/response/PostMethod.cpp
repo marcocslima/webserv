@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/28 08:42:02 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/28 13:27:08 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,8 @@ PostMethod::~PostMethod() {}
 
 PostMethod::PostMethod(HttpRequest request): _httpRequest(request) {}
 
-void    PostMethod::getBody(std::string request){
-    std::size_t bodyStart = request.find("\r\n\r\n") + 4;
-
-    if (bodyStart != std::string::npos){
-        body = request.substr(bodyStart);
-    }
-}
-
 void    PostMethod::handleForm(){
-
+    std::string body = _httpRequest.getBody();
     std::map<std::string, std::string> formData;
     std::istringstream ss(body);
     std::string pair;
@@ -64,6 +56,7 @@ void saveFile(size_t pos, const std::string& value, const std::string& data) {
 }
 
 std::map<std::string, std::string> PostMethod::parseMultipartFormData(std::map<std::string, std::string> formData, size_t pos, size_t endPos) {
+    std::string body = _httpRequest.getBody();
     std::string partData = body.substr(pos, endPos - pos);
     std::size_t bodyEnd = partData.find("\r\n\r\n") + 4;
 
@@ -92,6 +85,8 @@ std::map<std::string, std::string> PostMethod::parseMultipartFormData(std::map<s
 
 void    PostMethod::handleMultipart(){
     std::map<std::string, std::string> formData;
+    std::string boundary = _httpRequest.getBoundary();
+    std::string body = _httpRequest.getBody();
 
     size_t pos = 0;
     while ((pos = body.find(boundary, pos)) != std::string::npos) {
@@ -109,39 +104,15 @@ void    PostMethod::handleMultipart(){
     }
 }
 
-bool    PostMethod::getContentType(){
-    std::map<std::string, std::string> headers = _httpRequest.getHeaders();
-    std::map<std::string, std::string>::const_iterator it = headers.find("Content-Type");
-
-    if (it != headers.end()){
-        std::string tmp = it->second;
-        contentType = it->second;
-        size_t pos = tmp.find(";");
-        if (pos != std::string::npos){
-            contentType = tmp.substr(1, pos);
-            size_t boundaryPos = tmp.find("boundary=", pos);
-            if (boundaryPos != std::string::npos) {
-                boundary = tmp.substr(boundaryPos + 9);
-                boundary = "--" + boundary;
-            }
-        }
-        return (true);
-    } else {
-        return (false);
-    }
-}
-
 std::string PostMethod::handleMethod(std::string uri)
 {
     uri = " ";
     std::string responseHeader;
 
-    if (getContentType()) {
-        getBody(_httpRequest.getReq());
 
-        if (contentType == "multipart/form-data;")
+        if (_httpRequest._has_multipart)
             handleMultipart();
-        if (contentType ==  " application/x-www-form-urlencoded")
+        if (_httpRequest._has_form)
             handleForm();
         _response.version = "HTTP/1.1";
         _response.status_code = "200";
@@ -151,16 +122,16 @@ std::string PostMethod::handleMethod(std::string uri)
         _response.body = "<html><body><h1>200 OK</h1></body></html>";
         responseHeader = assembleResponse();
         Logger::info << "Post Successfully." << std::endl;
-    } else {
-        _response.version = "HTTP/1.1";
-        _response.status_code = "204";
-        _response.status_message = "No content";
-        _response.content_type = "text/html";
-        _response.content_length = "0";
-        _response.body = "<html><body><h1>204 No Content</h1></body></html>";
-        responseHeader = assembleResponse();
-        Logger::info << "No content." << std::endl;
-    }
+    // } else {
+    //     _response.version = "HTTP/1.1";
+    //     _response.status_code = "204";
+    //     _response.status_message = "No content";
+    //     _response.content_type = "text/html";
+    //     _response.content_length = "0";
+    //     _response.body = "<html><body><h1>204 No Content</h1></body></html>";
+    //     responseHeader = assembleResponse();
+    //     Logger::info << "No content." << std::endl;
+    // }
 
     return (responseHeader);
 }
