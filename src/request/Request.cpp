@@ -6,51 +6,62 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/28 13:36:49 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/28 16:28:51 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-HttpRequest::HttpRequest() {
+HttpRequest::HttpRequest()
+{
     init();
-};
+}
 
-HttpRequest::~HttpRequest() {};
+HttpRequest::~HttpRequest()
+{}
 
-std::string HttpRequest::getMethod( void ) const{
+std::string HttpRequest::getMethod( void ) const
+{
 	return (this->_method);
 }
 
-std::string HttpRequest::getUri( void ) const{
+std::string HttpRequest::getUri( void ) const
+{
 	return (this->_uri);
 }
 
-std::string HttpRequest::getHttp( void ) const{
+std::string HttpRequest::getHttp( void ) const
+{
 	return (this->_httpVersion);
 }
 
-std::string HttpRequest::getBody( void ) const{
+std::string HttpRequest::getBody( void ) const
+{
 	return (this->_body);
 }
 
-std::string HttpRequest::getBoundary( void ) const{
+std::string HttpRequest::getBoundary( void ) const
+{
 	return (this->_boundary);
 }
 
-std::vector<std::string> HttpRequest::getQuery( void ) const{
+std::vector<std::string> HttpRequest::getQuery( void ) const
+{
 	return (this->_paramQuery);
 }
 
-std::map<std::string, std::string> HttpRequest::getHeaders() const{
+std::map<std::string, std::string> HttpRequest::getHeaders() const
+{
     return (_header);
 }
 
-const char* HttpRequest::RequestException::what() const throw(){
+const char* HttpRequest::RequestException::what() const throw()
+{
 	return ("Error parsing HTTP request.");
 }
 
-void    HttpRequest::init(){
+void    HttpRequest::init()
+{
     _allowMethods.push_back("GET");
     _allowMethods.push_back("POST");
     _allowMethods.push_back("DELETE");
@@ -70,7 +81,8 @@ void    HttpRequest::init(){
 void	HttpRequest::requestHttp(std::string request, Parser& parser)
 {
     size_t firstLineEnd = request.find("\r\n");
-    if (firstLineEnd == std::string::npos) {
+    if (firstLineEnd == std::string::npos)
+    {
         this->_statusError = BAD_REQUEST;
         return ;
     }
@@ -83,7 +95,8 @@ void	HttpRequest::requestHttp(std::string request, Parser& parser)
         _checkLocations(parser);
         _checkPorts(parser);
 
-        if (_has_body){
+        if (_has_body)
+        {
             _has_multipart = false;
             _has_form = false;
             std::map<std::string, std::string>::const_iterator it, i;
@@ -158,7 +171,8 @@ void  HttpRequest::_parseQuery(){
     }
 }
 
-void HttpRequest::_parseHeaders(const std::string& request) {
+void HttpRequest::_parseHeaders(const std::string& request)
+{
     std::istringstream iss(request);
     std::string headerLine;
     _has_body = false;
@@ -193,7 +207,8 @@ void HttpRequest::_findHeaders(std::string key,std::string value )
             this->_port = tmp;
         }
     }
-    if (key == "Content-Length"){
+    if (key == "Content-Length")
+    {
         int length = atoi(value.c_str());
         if (length > 0)
             _has_body = true;
@@ -243,7 +258,8 @@ void    HttpRequest::_getMultipartData(std::string request)
     std::string contentType = _header["Content-Type"];
 
     size_t pos = contentType.find("boundary=");
-    if (pos != std::string::npos){
+    if (pos != std::string::npos)
+    {
         _boundary = contentType.substr(pos + 9);
         _boundary = "--" + _boundary;
     } else {
@@ -253,18 +269,19 @@ void    HttpRequest::_getMultipartData(std::string request)
 
     size_t startBody = request.find("\r\n\r\n") + 4;
 
-    if (startBody != std::string::npos) {
+    if (startBody != std::string::npos)
         _body = request.substr(startBody);
-    } else {
+    else
+    {
         this->_statusError = BAD_REQUEST;
         throw RequestException();
     }
 }
 
-void    HttpRequest::_getBody(std::string request){
+void    HttpRequest::_getBody(std::string request)
+{
     std::size_t bodyStart = request.find("\r\n\r\n") + 4;
 
-    if (bodyStart != std::string::npos){
+    if (bodyStart != std::string::npos)
         _body = request.substr(bodyStart);
-    }
 }

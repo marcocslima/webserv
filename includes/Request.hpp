@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/09/28 13:36:58 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/28 16:30:40 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@
 # include "Logger.hpp"
 # include "Parser.hpp"
 
-#define BAD_REQUEST                "400"
-#define HTTP_VERSION_NOT_SUPPORTED "505"
-
-class HttpRequest {
+# define BAD_REQUEST                "400"
+# define HTTP_VERSION_NOT_SUPPORTED "505"
+class HttpRequest
+{
 	public:
 		HttpRequest();
 		~HttpRequest();
@@ -36,7 +36,6 @@ class HttpRequest {
 		std::string							getMethod( void ) const;
 		std::string							getUri( void ) const;
 		std::string							getHttp( void ) const;
-		// std::string							getReq( void ) const;
 		std::vector<std::string>			getQuery( void ) const;
 		std::string 						getBody( void ) const;
 		std::string							getBoundary( void ) const;
@@ -50,6 +49,7 @@ class HttpRequest {
 		bool								_has_chunked;
 		bool								_has_multipart;
 		bool								_has_form;
+
 	private:
 		void	_parseHeaders(const std::string& request);
 		void	_parseFirstLine(std::string& requestLine);
