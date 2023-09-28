@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/28 16:26:15 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/28 17:02:47 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,8 @@ std::string PostMethod::handleMethod(std::string uri)
     uri = " ";
     std::string responseHeader;
 
-
+    if (_httpRequest._has_body)
+    {
         if (_httpRequest._has_multipart)
             handleMultipart();
         if (_httpRequest._has_form)
@@ -132,17 +133,30 @@ std::string PostMethod::handleMethod(std::string uri)
         _response.content_length = "0";
         _response.body = "<html><body><h1>200 OK</h1></body></html>";
         responseHeader = assembleResponse();
-        Logger::info << "Post Successfully." << std::endl;
-    // } else {
-    //     _response.version = "HTTP/1.1";
-    //     _response.status_code = "204";
-    //     _response.status_message = "No content";
-    //     _response.content_type = "text/html";
-    //     _response.content_length = "0";
-    //     _response.body = "<html><body><h1>204 No Content</h1></body></html>";
-    //     responseHeader = assembleResponse();
-    //     Logger::info << "No content." << std::endl;
-    // }
+        Logger::info << "Post request completed successfully." << std::endl;
+    }
+    else if (!_httpRequest._has_body)
+    {
+        _response.version = "HTTP/1.1";
+        _response.status_code = "204";
+        _response.status_message = "No content";
+        _response.content_type = "text/html";
+        _response.content_length = "0";
+        _response.body = "<html><body><h1>204 No Content</h1></body></html>";
+        responseHeader = assembleResponse();
+        Logger::info << "No content." << std::endl;
+    }
+    else
+    {
+        _response.version = "HTTP/1.1";
+        _response.status_code = "500";
+        _response.status_message = "Internal Server Error";
+        _response.content_type = "text/html";
+        _response.content_length = "0";
+        _response.body = "<html><body><h1>500  Internal Server Error</h1></body></html>";
+        responseHeader = assembleResponse();
+        Logger::info << "Error in post request." << std::endl;
+    }
 
     return (responseHeader);
 }
