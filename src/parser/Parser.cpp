@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/22 11:40:57 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/28 00:56:51 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,8 @@ std::vector<std::string> Parser::getLocationParam(int serverIndex, int location,
     return std::vector<std::string>();
 }
 
-void Parser::populateConfs(std::vector<std::vector<std::string>> servers,
-                           std::vector<std::vector<std::string>> locations)
+void Parser::populateConfs(std::vector<std::vector<std::string> > servers,
+                           std::vector<std::vector<std::string> > locations)
 {
 
     _servers  = servers.size();
@@ -140,16 +140,16 @@ std::vector<int> Parser::getSizeServers()
 void Parser::setConfs(const char *fileconf)
 {
 
-    std::string                           line;
-    std::vector<std::vector<std::string>> servers;
-    std::vector<std::vector<std::string>> locations;
-    std::vector<std::string>              serverBlocks;
-    std::vector<std::string>              locationBlocks;
-    std::string                           currentServerBlock;
-    std::string                           currentLocationBlock;
-    bool                                  insideServerBlock   = false;
-    bool                                  insideLocationBlock = false;
-    bool                                  blockEnd            = false;
+    std::string                            line;
+    std::vector<std::vector<std::string> > servers;
+    std::vector<std::vector<std::string> > locations;
+    std::vector<std::string>               serverBlocks;
+    std::vector<std::string>               locationBlocks;
+    std::string                            currentServerBlock;
+    std::string                            currentLocationBlock;
+    bool                                   insideServerBlock   = false;
+    bool                                   insideLocationBlock = false;
+    bool                                   blockEnd            = false;
 
     std::ifstream conf(fileconf);
     if (!conf.is_open()) {

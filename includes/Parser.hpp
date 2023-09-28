@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/22 11:35:06 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/28 00:57:12 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,17 @@
 
 #include "Logger.hpp"
 
-typedef std::map<std::string, std::vector<std::string>> params;
+typedef std::map<std::string, std::vector<std::string> > params;
 
 typedef struct
 {
-    params * server;
+    params  *server;
     params **locations;
 } conf_servers;
 
 class Parser {
     private:
-    conf_servers *   _cservers;
+    conf_servers    *_cservers;
     int              _servers;
     std::vector<int> _locs;
     bool             _verbose;
@@ -47,8 +47,8 @@ class Parser {
     void                     allocateServers(conf_servers *server, int locs);
     void                     deallocateServers(conf_servers *server, int locs);
     void                     clearParams();
-    void                     populateConfs(std::vector<std::vector<std::string>> servers,
-                                           std::vector<std::vector<std::string>> locations);
+    void                     populateConfs(std::vector<std::vector<std::string> > servers,
+                                           std::vector<std::vector<std::string> > locations);
     std::vector<std::string> getServerParam(int server, std::string param);
     std::vector<std::string> getLocationParam(int server, int location, std::string param);
     std::vector<int>         getSizeServers();
@@ -57,6 +57,6 @@ class Parser {
 
 std::vector<std::string> splitTokens(const std::string str);
 std::string              removeExtraSpaces(const std::string &input);
-params *                 setParams(const std::string str, params *vconfs);
+params                  *setParams(const std::string str, params *vconfs);
 bool                     verifyBlockEnd(const std::string &text);
 bool                     verifyLineEmpty(const std::string &text);
