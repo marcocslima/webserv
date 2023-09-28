@@ -12,55 +12,53 @@
 
 #pragma once
 
-# include "Logger.hpp"
+#include "Logger.hpp"
 
-# include <iostream>
-# include <cstring>
-# include <cstdlib>
-# include <cerrno>
-# include <stdexcept>
-# include <string>
+#include <cerrno>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <stdexcept>
+#include <string>
 
-# include <unistd.h>
-# include <arpa/inet.h>
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <netdb.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-# define IP "127.0.0.1"
+#define IP "127.0.0.1"
 
-class Socket
-{
-	private:
-		int					_socketFd;
-		std::string			_port;
-		std::string			_ip;
-		struct addrinfo*	_serverInfo;
+class Socket {
+    private:
+    int              _socketFd;
+    std::string      _port;
+    std::string      _ip;
+    struct addrinfo *_serverInfo;
 
-	public:
-		Socket(std::string port = "8080", std::string ip = IP);
-		~Socket(void);
+    public:
+    Socket(std::string port = "8080", std::string ip = IP);
+    ~Socket(void);
 
-		void	createSocket(void);
-		void	bindSocket(void);
-		void	listenForConnections(void);
-		void	*get_in_addr(struct sockaddr *sa);
-		int		acceptConnection(int socketFd);
-		void	closeSocket(void);
+    void  createSocket(void);
+    void  bindSocket(void);
+    void  listenForConnections(void);
+    void *get_in_addr(struct sockaddr *sa);
+    int   acceptConnection(int socketFd);
+    void  closeSocket(void);
 
-		int			getSocketFd(void) const;
-		std::string	getPort(void) const;
-		std::string	getIp(void) const;
+    int         getSocketFd(void) const;
+    std::string getPort(void) const;
+    std::string getIp(void) const;
 
-		class SocketException: public std::exception
-		{
-			private:
-				std::string	_msg;
+    class SocketException : public std::exception {
+        private:
+        std::string _msg;
 
-			public:
-				SocketException(const char* msg);
-				virtual ~SocketException() throw ();
-				virtual const char* what() const throw();
-		};
+        public:
+        SocketException(const char *msg);
+        virtual ~SocketException() throw();
+        virtual const char *what() const throw();
+    };
 };

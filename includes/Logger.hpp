@@ -12,55 +12,49 @@
 
 #pragma once
 
-# include <iostream>
-# include <string>
-# include <ctime>
-# include <sstream>
-# include <iomanip>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
 
-# define RESET_COLOR "\033[0m"
+#define RESET_COLOR "\033[0m"
 
 class Logger {
-	public:
-		enum LogLevel
-		{
-			INFO,
-			WARNING,
-			ERROR,
-			VERBOSE
-		};
+    public:
+    enum LogLevel { INFO, WARNING, ERROR, VERBOSE };
 
-		Logger(void);
-		~Logger(void);
+    Logger(void);
+    ~Logger(void);
 
-		class LogEntry {
-			public:
-				LogEntry(LogLevel level);
-				~LogEntry(void);
+    class LogEntry {
+        public:
+        LogEntry(LogLevel level);
+        ~LogEntry(void);
 
-				template <typename T>
-				LogEntry &operator<<(T const &value) {
-					_stream << value;
-					return (*this);
-				};
+        template <typename T>
+        LogEntry &operator<<(T const &value)
+        {
+            _stream << value;
+            return (*this);
+        };
 
-				LogEntry &operator<<(std::ostream &(*manipulator)(std::ostream &));
+        LogEntry &operator<<(std::ostream &(*manipulator)(std::ostream &));
 
-			private:
-				LogLevel			_level;
-				std::stringstream	_stream;
+        private:
+        LogLevel          _level;
+        std::stringstream _stream;
 
-				std::string	_timestamp(void);
-				std::string	_addHeader(void);
-		};
+        std::string _timestamp(void);
+        std::string _addHeader(void);
+    };
 
-		static LogEntry	info;
-		static LogEntry	warning;
-		static LogEntry	error;
-		static LogEntry	verbose;
+    static LogEntry info;
+    static LogEntry warning;
+    static LogEntry error;
+    static LogEntry verbose;
 
-	private:
-		static const std::string	_colors[4];
-		static const std::string	_levelStrings[4];
+    private:
+    static const std::string _colors[4];
+    static const std::string _levelStrings[4];
 };
-
