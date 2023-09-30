@@ -6,7 +6,7 @@
 #    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/22 11:34:21 by pmitsuko         ###   ########.fr        #
+#    Updated: 2023/09/29 22:19:39 by pmitsuko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,6 +46,7 @@ SRC_DIR = ./src/
 VPATH = $(SRC_DIR)\
 		$(SRC_DIR)parser\
 		$(SRC_DIR)request\
+		$(SRC_DIR)response\
 		$(SRC_DIR)server\
 		$(SRC_DIR)utils\
 # FILES #
@@ -57,7 +58,8 @@ FILES = main.cpp\
 		Logger.cpp\
 		Parser.cpp\
 		Request.cpp\
-
+		AResponse.cpp\
+		DeleteMethod.cpp\
 
 # COMPILED_SOURCES #
 

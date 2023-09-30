@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/22 11:40:35 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/29 22:25:25 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ bool Server::acceptNewConnection(size_t i)
     }
 }
 
-void Server::processClientData(int clientSocket, Parser &parser)
+void Server::processClientData(int clientSocket)
 {
     char buffer[1024] = {0};
     int  bytesRead    = recv(clientSocket, buffer, sizeof(buffer), 0);
@@ -96,33 +96,41 @@ void Server::processClientData(int clientSocket, Parser &parser)
         this->_poll.addFdToClose(clientSocket);
     }
     else {
-        std::string request(buffer, bytesRead);
+        std::string req(buffer, bytesRead);
 
-        _request.requestHttp(request, parser);
-        size_t start = request.find(_request.getMethod());
-        size_t end   = request.find(_request.getHttp());
+        HttpRequest request;
+        request.requestHttp(req, this->_parser);
 
-        if (start != std::string::npos && end != std::string::npos) {
-            if (_request.getUri() == "/") {
-                char responseHeader[1024];
+        std::string method = request.getMethod();
+        std::string route  = request.getUri();
 
-                sprintf(responseHeader,
-                        "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
-                        (int)_defaultHtmlContent.length());
+        // if (route == "/")
+        // {
 
-                send(clientSocket, responseHeader, strlen(responseHeader), 0);
+        char responseHeader[1024];
 
-                send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
-
-                Logger::info << "Serving the default page." << std::endl;
-
-                if (this->_verbose) {
-                    Logger::verbose << "Request: " << request << std::endl;
-                    Logger::verbose << "Response: " << responseHeader << _defaultHtmlContent
-                                    << std::endl;
-                }
-            }
+        if (method == "DELETE") {
+            DeleteMethod delete_method;
+            std::string  response = delete_method.handleMethod(route);
+            strcpy(responseHeader, response.c_str());
         }
+        else {
+            sprintf(responseHeader,
+                    "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
+                    (int)_defaultHtmlContent.length());
+        }
+
+        send(clientSocket, responseHeader, strlen(responseHeader), 0);
+
+        send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
+
+        Logger::info << "Serving the default page." << std::endl;
+
+        if (this->_verbose) {
+            Logger::verbose << "Request: " << req << std::endl;
+            Logger::verbose << "Response: " << responseHeader << _defaultHtmlContent << std::endl;
+        }
+        //}
     }
 }
 
@@ -145,7 +153,7 @@ int Server::run(void)
                         Logger::error << "Index out of bounds of vector _pollFds" << std::endl;
                         continue;
                     }
-                    processClientData(clientSocket, this->_parser);
+                    processClientData(clientSocket);
                 }
             }
         }

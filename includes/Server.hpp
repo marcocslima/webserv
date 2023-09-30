@@ -5,14 +5,15 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/09/22 11:40:37 by pmitsuko         ###   ########.fr       */
+/*   Created: 2023/09/16 01:12:47 by pmitsuko          #+#    #+#             */
+/*   Updated: 2023/09/29 22:25:16 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "Parser.hpp"
+#include "AResponse.hpp"
+#include "DeleteMethod.hpp"
 #include "Poll.hpp"
 #include "Request.hpp"
 #include "Socket.hpp"
@@ -30,12 +31,13 @@ struct SocketInfo
 
 class Server {
     private:
-    HttpRequest           _request;
-    Parser                _parser;
-    std::vector<Socket *> _sockets;
-    Poll                  _poll;
-    bool                  _verbose;
-    std::string           _defaultHtmlContent;
+    std::vector<SocketInfo> _socketsInfo;
+    HttpRequest             _request;
+    Parser                  _parser;
+    std::vector<Socket *>   _sockets;
+    Poll                    _poll;
+    bool                    _verbose;
+    std::string             _defaultHtmlContent;
 
     public:
     Server(void);
@@ -46,7 +48,7 @@ class Server {
     void initPoll(void);
     int  run(void);
     bool acceptNewConnection(size_t i);
-    void processClientData(int clientSocket, Parser &parser);
+    void processClientData(int clientSocket);
     void closeServer(void);
 
     void setVerbose(bool verbose);
