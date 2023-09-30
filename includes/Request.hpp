@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/09/28 16:33:15 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/30 12:30:27 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ class HttpRequest
 		};
 
 		bool								_has_body;
-		bool								_has_chunked;
 		bool								_has_multipart;
 		bool								_has_form;
 

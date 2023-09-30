@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/28 13:02:41 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/29 12:39:35 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ void	Server::processClientData(int clientSocket, Parser& parser)
 				std::string uploadHtmlContent((std::istreambuf_iterator<char>(uploadHtmlFile)), std::istreambuf_iterator<char>());
 
 				char responseHeader[1024];
-                    sprintf(responseHeader, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n", (int)uploadHtmlContent.length());
+                sprintf(responseHeader, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n", (int)uploadHtmlContent.length());
 
 				send(clientSocket, responseHeader, strlen(responseHeader), 0);
 

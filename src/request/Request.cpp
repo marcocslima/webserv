@@ -6,11 +6,11 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/28 16:28:51 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/30 16:44:15 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Request.hpp"
+#include "../../includes/Request.hpp"
 
 HttpRequest::HttpRequest()
 {
@@ -66,13 +66,13 @@ void    HttpRequest::init()
     _allowMethods.push_back("POST");
     _allowMethods.push_back("DELETE");
     _has_body = false;
-	_has_chunked = false;
 	_has_multipart = false;
 	_has_form = false;
 	_method = "";
 	_uri = "";
 	_httpVersion = "";
 	_port = "";
+    _boundary = "";
 	_statusError = "";
     _paramQuery.clear();
     _header.clear();
@@ -99,12 +99,11 @@ void	HttpRequest::requestHttp(std::string request, Parser& parser)
         {
             _has_multipart = false;
             _has_form = false;
-            std::map<std::string, std::string>::const_iterator it, i;
+            std::map<std::string, std::string>::const_iterator it;
             it = _header.find("Content-Type");
             if (it->second.find("multipart/form-data") != std::string::npos)
                 _has_multipart = true;
-            i = _header.find("Content-Type");
-            if (i->second.find("application/x-www-form-urlencoded") != std::string::npos)
+            if (it->second.find("application/x-www-form-urlencoded") != std::string::npos)
                 _has_form = true;
         }
 
@@ -126,10 +125,12 @@ void	HttpRequest::_parseFirstLine(std::string& requestLine)
         || requestLine != this->_method + " " + this->_uri + " " + this->_httpVersion
         || std::find(_allowMethods.begin(), _allowMethods.end(), _method) == _allowMethods.end()
         || this->_uri[0] != '/')
-        {
-            this->_statusError = BAD_REQUEST;
-            throw RequestException();
-        }
+    {
+        this->_statusError = BAD_REQUEST;
+        std::cout << "first" << "\n";
+        throw RequestException();
+    }
+
     if (this->_httpVersion != "HTTP/1.1")
     {
         this->_statusError = HTTP_VERSION_NOT_SUPPORTED;

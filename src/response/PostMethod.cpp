@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/28 17:02:47 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/09/30 16:54:31 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ PostMethod::PostMethod(HttpRequest request): _httpRequest(request)
 
 void    PostMethod::handleForm(){
     std::string body = _httpRequest.getBody();
-    std::map<std::string, std::string> formData;
     std::istringstream ss(body);
     std::string pair;
 
@@ -39,38 +38,46 @@ void    PostMethod::handleForm(){
                 if (fielddata[i] == '+')
                     fielddata[i] = ' ';
             }
-            formData[fieldName] = fielddata;
+            _formData[fieldName] = fielddata + "\r\n";
         }
     }
-    std::map<std::string, std::string>::iterator it;
-    for (it = formData.begin(); it != formData.end(); ++it)
-        std::cout << it->first << ": " << it->second << std::endl;
+    print();
 }
 
-void saveFile(size_t pos, const std::string& value, const std::string& data)
+void PostMethod::saveFile(size_t pos, const std::string& value, const std::string& data)
 {
     std::size_t filenameEnd = data.find("\"", pos);
 
     if (filenameEnd != std::string::npos)
     {
         std::string fileName = data.substr(pos, filenameEnd - pos);
+        std::string filePath = "/uploads/" + fileName;
+        for ( int i = 0; i < 10; i++ ) {
+            filePath += static_cast<char>( rand() % 26 + 97 );
+        }
 
-        std::ofstream file(fileName.c_str(), std::ios::binary);
-        file.write(value.c_str(), value.length());
-        file.close();
+        std::ofstream file(filePath.c_str(), std::ios::binary);
+        if (file.is_open()){
+
+            file.write(value.c_str(), value.length());
+            file.close();
+            created = true;
+        } else {
+            created = false;
+        }
     }
 }
 
-std::map<std::string, std::string> PostMethod::parseMultipartFormData(std::map<std::string, std::string> formData, size_t pos, size_t endPos)
+void    PostMethod::parseMultipartFormData(size_t pos, size_t endPos)
 {
     std::string body = _httpRequest.getBody();
     std::string partData = body.substr(pos, endPos - pos);
-    std::size_t bodyEnd = partData.find("\r\n\r\n") + 4;
+    std::size_t bodyEnd = partData.find("\r\n\r\n");
 
     if (bodyEnd != std::string::npos)
     {
         std::string data = partData.substr(0, bodyEnd);
-        std::string value = partData.substr(bodyEnd);
+        std::string value = partData.substr(bodyEnd + 4);
 
         std::size_t namePos = data.find("name=\"");
         if (namePos != std::string::npos)
@@ -80,39 +87,54 @@ std::map<std::string, std::string> PostMethod::parseMultipartFormData(std::map<s
             if (nameEnd != std::string::npos)
             {
                 std::string name = data.substr(namePos, nameEnd - namePos);
+                _formData[name] = value;
+            }
 
-                formData[name] = value;
-                // std::size_t filenamePos = data.find("filename=\"");
-                // if (filenamePos != std::string::npos) {
-                //     filenamePos += 10;
-                //     saveFile(filenamePos, value, data);
-                // }
+            size_t contentPos = data.find("Content-Type: ");
+            size_t contendEnd = data.find("\r\n", contentPos + 14);
+            if (contentPos != std::string::npos && contendEnd != std::string::npos){
+                _contentType = data.substr(contentPos + 14, contendEnd - (contentPos - 14));
+            }
+
+            std::size_t filenamePos = data.find("filename=\"");
+            if (filenamePos != std::string::npos && _contentType == "text/plain")
+            {
+                filenamePos += 10;
+                saveFile(filenamePos, value, data);
             }
         }
     }
-    return(formData);
 }
 
 void    PostMethod::handleMultipart()
 {
-    std::map<std::string, std::string> formData;
     std::string boundary = _httpRequest.getBoundary();
     std::string body = _httpRequest.getBody();
 
+    _formData.clear();
     size_t pos = 0;
     while ((pos = body.find(boundary, pos)) != std::string::npos)
     {
         pos += boundary.length();
         size_t endPos = body.find(boundary, pos);
         if (endPos != std::string::npos)
-            formData = parseMultipartFormData(formData, pos, endPos);
+            parseMultipartFormData(pos, endPos);
     }
+    print();
+}
+
+void    PostMethod::print()
+{
+    std::cout << P_BLUE << std::endl;
+    std::cout <<  "      ------------ Content Form ------------" << std::endl;
+    std::cout << std::left << std::setw(20) << "Key" << std::setw(30) << "| Value" << std::endl;
+    std::cout << std::setfill('-') << std::setw(50) << "-" << std::setfill(' ') << std::endl;
+
     std::map<std::string, std::string>::iterator it;
-    for (it = formData.begin(); it != formData.end(); ++it)
-    {
-        std::cout << "Field: " << it->first << std::endl;
-        std::cout << "data: " << it->second << std::endl;
-    }
+    for (it = _formData.begin(); it != _formData.end(); ++it)
+        std::cout << std::left << std::setw(19) << it->first << " | " << it->second ;
+    std::cout << std::setfill('-') << std::setw(50) << "-" << std::setfill(' ') << std::endl;
+    std::cout << RESET << std::endl;
 }
 
 std::string PostMethod::handleMethod(std::string uri)
@@ -120,8 +142,7 @@ std::string PostMethod::handleMethod(std::string uri)
     uri = " ";
     std::string responseHeader;
 
-    if (_httpRequest._has_body)
-    {
+    if (_httpRequest._has_body){
         if (_httpRequest._has_multipart)
             handleMultipart();
         if (_httpRequest._has_form)
