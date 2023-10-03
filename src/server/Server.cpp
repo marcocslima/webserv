@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/22 11:40:35 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/03 01:06:45 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,20 @@ bool Server::acceptNewConnection(size_t i)
     }
 }
 
+bool isCssRequest(const std::string &request)
+{
+    size_t found = request.find("Accept: text/css");
+    return found != std::string::npos;
+}
+
 void Server::processClientData(int clientSocket, Parser &parser)
 {
-    char buffer[1024] = {0};
-    int  bytesRead    = recv(clientSocket, buffer, sizeof(buffer), 0);
+    char                     buffer[1024] = {0};
+    int                      bytesRead    = recv(clientSocket, buffer, sizeof(buffer), 0);
+    std::vector<int>         serverSize   = parser.getSizeServers();
+    std::vector<std::string> port;
+    std::vector<std::string> location;
+    std::vector<std::string> confRoot;
 
     if (bytesRead <= 0) {
         Logger::info << "Client connection closed"
@@ -103,6 +113,188 @@ void Server::processClientData(int clientSocket, Parser &parser)
         size_t end   = request.find(_request.getHttp());
 
         if (start != std::string::npos && end != std::string::npos) {
+
+            Logger::warning << "Port: " << _request.getPort() << std::endl;
+
+            // * Busca o index do servidor que corresponde a porta
+            int i = 0;
+            for (i = 0; i != serverSize[0]; ++i) {
+                port = this->_parser.getServerParam(i, "listen");
+                if (port.empty()) {
+                    continue;
+                }
+                if (this->_request.getPort() == port[0]) {
+                    break;
+                }
+            }
+            Logger::warning << "Server index: " << i << std::endl;
+
+            confRoot = this->_parser.getServerParam(i, "root");
+
+            // * Definindo root
+            std::string root = "/var/www/html";
+            if (!confRoot.empty()) {
+                root = confRoot[0];
+            }
+            Logger::warning << "Server root: " << root << std::endl;
+
+            // * Verificar se é um CSS
+            // TODO: aplicar essa regra para JS, e arquivos como imagem...
+            if (isCssRequest(request)) {
+                std::stringstream fullPathStream;
+                fullPathStream << root << "/" << _request.getUri();
+
+                std::string fullPath = fullPathStream.str();
+
+                const char *fullPathCStr = fullPath.c_str();
+
+                std::ifstream cssFile(fullPathCStr);
+
+                if (cssFile.is_open()) {
+                    std::string cssContent((std::istreambuf_iterator<char>(cssFile)),
+                                           std::istreambuf_iterator<char>());
+
+                    char responseHeader[1024];
+                    sprintf(
+                        responseHeader,
+                        "HTTP/1.1 200 OK\r\nContent-Type: text/css\r\nContent-Length: %d\r\n\r\n",
+                        (int)cssContent.length());
+
+                    send(clientSocket, responseHeader, strlen(responseHeader), 0);
+
+                    send(clientSocket, cssContent.c_str(), cssContent.length(), 0);
+
+                    Logger::info << "Serving the css." << std::endl;
+
+                    cssFile.close();
+                }
+                else {
+                    Logger::error << "Erro ao abrir o arquivo CSS." << std::endl;
+                }
+
+                return;
+            }
+
+            // * Verifica se existe o location igual ao URI
+            int locationSize = serverSize[i + 1];
+            int j;
+            for (j = 0; j < locationSize; j++) {
+                location = this->_parser.getLocationParam(i, j, "location");
+
+                std::vector<std::string>::iterator it
+                    = std::find(location.begin(), location.end(), _request.getUri());
+
+                if (it != location.end()) {
+                    break;
+                }
+            }
+
+            Logger::warning << "Location size: " << locationSize << std::endl;
+            Logger::warning << "Location index: " << j << std::endl;
+
+            Logger::warning << "URI: " << _request.getUri() << std::endl;
+
+            // * Se locationSize == j, significa que a URI não corresponde a nenhum location!
+            if (locationSize == j) {
+                std::vector<std::string> serverIndex;
+                serverIndex = this->_parser.getServerParam(i, "index");
+
+                // * Se não tiver index global exibe 404
+                if (serverIndex.empty()) {
+                    std::vector<std::string> serverErrorPage;
+                    serverErrorPage = this->_parser.getServerParam(i, "error_page");
+
+                    if (serverErrorPage.size() == 2) {
+                        if (serverErrorPage[0] == "404") {
+                            std::stringstream fullPathStream;
+                            fullPathStream << root << "/" << serverErrorPage[1];
+
+                            std::string fullPath = fullPathStream.str();
+
+                            const char *fullPathCStr = fullPath.c_str();
+
+                            std::ifstream htmlFile(fullPathCStr);
+
+                            if (htmlFile.is_open()) {
+                                std::string htmlContent((std::istreambuf_iterator<char>(htmlFile)),
+                                                        std::istreambuf_iterator<char>());
+
+                                char responseHeader[1024];
+                                sprintf(responseHeader,
+                                        "HTTP/1.1 404 Not Found\r\nContent-Type: "
+                                        "text/html\r\nContent-Length: %d\r\n\r\n",
+                                        (int)htmlContent.length());
+
+                                send(clientSocket, responseHeader, strlen(responseHeader), 0);
+
+                                send(clientSocket, htmlContent.c_str(), htmlContent.length(), 0);
+
+                                Logger::info << "Serving the server index page." << std::endl;
+
+                                htmlFile.close();
+                            }
+                            else {
+                                char responseHeader[1024];
+                                // Corpo da resposta no formato JSON
+                                std::string body = "{\"error\": \"Recurso não encontrado\"}";
+
+                                sprintf(responseHeader,
+                                        "HTTP/1.1 404 Not Found\r\n"
+                                        "Content-Type: application/json\r\n"
+                                        "Content-Length: %ld\r\n"
+                                        "\r\n",
+                                        body.size());
+
+                                send(clientSocket, responseHeader, strlen(responseHeader), 0);
+                                send(clientSocket, body.c_str(), body.size(), 0);
+
+                                Logger::error << "Erro ao abrir o arquivo HTML." << std::endl;
+                            }
+                        }
+                    }
+
+                    Logger::error << "404" << std::endl;
+                    return;
+                }
+
+                // * servir o index geral
+                std::stringstream fullPathStream;
+                fullPathStream << root << "/" << serverIndex[0];
+
+                std::string fullPath = fullPathStream.str();
+
+                const char *fullPathCStr = fullPath.c_str();
+
+                std::ifstream htmlFile(fullPathCStr);
+
+                if (htmlFile.is_open()) {
+                    std::string htmlContent((std::istreambuf_iterator<char>(htmlFile)),
+                                            std::istreambuf_iterator<char>());
+
+                    char responseHeader[1024];
+                    sprintf(
+                        responseHeader,
+                        "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
+                        (int)htmlContent.length());
+
+                    send(clientSocket, responseHeader, strlen(responseHeader), 0);
+
+                    send(clientSocket, htmlContent.c_str(), htmlContent.length(), 0);
+
+                    Logger::info << "Serving the server index page." << std::endl;
+
+                    htmlFile.close();
+                }
+                else {
+                    Logger::error << "Erro ao abrir o arquivo HTML." << std::endl;
+                }
+            }
+
+            if (this->_verbose) {
+                Logger::verbose << "Request: " << request << std::endl;
+            }
+            return;
+
             if (_request.getUri() == "/") {
                 char responseHeader[1024];
 

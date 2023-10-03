@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/28 00:56:51 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/28 01:32:01 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,6 +192,13 @@ void Parser::setConfs(const char *fileconf)
         }
 
         if (!insideServerBlock && !insideLocationBlock && blockEnd) {
+            for (size_t i = 0; i < serverBlocks.size(); i++) {
+                Logger::warning << "serverBlocks: " << serverBlocks[i] << std::endl;
+            }
+            for (size_t i = 0; i < locationBlocks.size(); i++) {
+                Logger::warning << "locationBlocks: " << locationBlocks[i] << std::endl;
+            }
+
             servers.push_back(serverBlocks);
             locations.push_back(locationBlocks);
             serverBlocks.clear();

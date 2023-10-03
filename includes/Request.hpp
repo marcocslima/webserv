@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/09/22 11:35:51 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/09/28 01:09:52 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class HttpRequest {
     void initMethods();
 
     std::string                        getMethod(void) const;
+    std::string                        getPort(void) const;
     std::string                        getUri(void) const;
     std::string                        getHttp(void) const;
     std::map<std::string, std::string> getHeaders(void);
