@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
+#    By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/29 22:19:39 by pmitsuko         ###   ########.fr        #
+#    Updated: 2023/10/04 17:20:16 by mcl              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,6 +44,7 @@ RM = rm -rf
 SRC_DIR = ./src/
 
 VPATH = $(SRC_DIR)\
+		$(SRC_DIR)cgi\
 		$(SRC_DIR)parser\
 		$(SRC_DIR)request\
 		$(SRC_DIR)response\
@@ -60,6 +61,8 @@ FILES = main.cpp\
 		Request.cpp\
 		AResponse.cpp\
 		DeleteMethod.cpp\
+		Cgi.cpp\
+		Utils.cpp
 
 # COMPILED_SOURCES #
 

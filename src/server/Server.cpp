@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/29 22:25:25 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/04 17:29:22 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,28 +101,37 @@ void Server::processClientData(int clientSocket)
         HttpRequest request;
         request.requestHttp(req, this->_parser);
 
+        CGI cgi;
+		cgi.executeCGI(request);
+
         std::string method = request.getMethod();
         std::string route  = request.getUri();
-
-        // if (route == "/")
-        // {
 
         char responseHeader[1024];
 
         if (method == "DELETE") {
-            DeleteMethod delete_method;
-            std::string  response = delete_method.handleMethod(route);
-            strcpy(responseHeader, response.c_str());
-        }
-        else {
-            sprintf(responseHeader,
-                    "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
-                    (int)_defaultHtmlContent.length());
-        }
-
-        send(clientSocket, responseHeader, strlen(responseHeader), 0);
-
-        send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
+			DeleteMethod	delete_method;
+			std::string		response = delete_method.handleMethod(route);
+			strcpy(responseHeader, response.c_str());
+			send(clientSocket, responseHeader, strlen(responseHeader), 0);
+			send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
+		}
+		else if (route == "/cgi") {
+			CGI cgi;
+			std::string cgi_response = cgi.executeCGI(_request);
+			sprintf(responseHeader,
+				"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
+				(int)cgi_response.length());
+			send(clientSocket, responseHeader, strlen(responseHeader), 0);
+			send(clientSocket, cgi_response.c_str(), cgi_response.length(), 0);
+		} else {
+			sprintf(responseHeader,
+				"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
+				(int)_defaultHtmlContent.length());
+			
+			send(clientSocket, responseHeader, strlen(responseHeader), 0);
+			send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
+		}
 
         Logger::info << "Serving the default page." << std::endl;
 
@@ -130,7 +139,6 @@ void Server::processClientData(int clientSocket)
             Logger::verbose << "Request: " << req << std::endl;
             Logger::verbose << "Response: " << responseHeader << _defaultHtmlContent << std::endl;
         }
-        //}
     }
 }
 

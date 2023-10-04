@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:12:47 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/29 22:25:16 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/04 17:24:55 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "Poll.hpp"
 #include "Request.hpp"
 #include "Socket.hpp"
+#include "Cgi.hpp"
 
 #include <fstream>
 #include <vector>

@@ -1,26 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   DeleteMethod.hpp                                   :+:      :+:    :+:   */
+/*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/23 07:12:53 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/04 17:22:10 by mcl              ###   ########.fr       */
+/*   Created: 2023/10/04 01:53:02 by mcl               #+#    #+#             */
+/*   Updated: 2023/10/04 17:23:27 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+# pragma once
 
-#include "AResponse.hpp"
-#include "Utils.hpp"
+#include "Parser.hpp"
+#include "Logger.hpp"
+#include <iostream>
+#include <sstream>
+#include <algorithm>
+#include <string>
+#include <vector>
+#include <map>
+#include <cstdio>
+#include <unistd.h>
 
+std::string getDir ();
+std::string getPath(int serverIndex, int locIndex, std::string uri);
 
-class DeleteMethod : public AHttpResponse {
-
-    public:
-        DeleteMethod();
-        ~DeleteMethod();
-
-    std::string handleMethod(std::string uri);
-};
