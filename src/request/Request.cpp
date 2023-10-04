@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/28 01:10:11 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/04 01:22:58 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,17 +121,8 @@ bool HttpRequest::_parseHttpRequest(const std::string                  &request,
 void HttpRequest::requestHttp(std::string request, Parser &parser)
 {
     if (_parseHttpRequest(request, _headers)) {
-        // std::cout << this->_requestLine << std::endl;
-        // std::cout << "Headers:" << std::endl;
-        // std::map<std::string, std::string>::iterator it;
-        // for (it = _headers.begin(); it != _headers.end(); ++it) {
-        //     std::cout << it->first << ": " << it->second << std::endl;
-        // }
-        // std::cout << std::endl;
-        _checkLocations(parser);
         _checkPorts(parser);
-    }
-    else {
+    } else {
         Logger::error << "Error parsing HTTP request." << std::endl;
     }
 }
