@@ -6,22 +6,20 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/09/22 11:40:37 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/04 01:00:21 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include "Location.hpp"
 #include "Parser.hpp"
 #include "Poll.hpp"
 #include "Request.hpp"
 #include "Socket.hpp"
+#include "libs.hpp"
 
-#include <fstream>
-#include <vector>
-
-struct SocketInfo
-{
+struct SocketInfo {
     std::string ipAddress;
     std::string port;
 
@@ -30,12 +28,12 @@ struct SocketInfo
 
 class Server {
     private:
-    HttpRequest           _request;
     Parser                _parser;
     std::vector<Socket *> _sockets;
     Poll                  _poll;
+    HttpRequest           _request;
+    Location              _location;
     bool                  _verbose;
-    std::string           _defaultHtmlContent;
 
     public:
     Server(void);
@@ -46,7 +44,7 @@ class Server {
     void initPoll(void);
     int  run(void);
     bool acceptNewConnection(size_t i);
-    void processClientData(int clientSocket, Parser &parser);
+    void processClientData(int clientSocket);
     void closeServer(void);
 
     void setVerbose(bool verbose);

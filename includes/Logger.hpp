@@ -3,22 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 23:49:52 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/17 11:54:41 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/03 22:15:50 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <ctime>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
-#include <string>
-
-#define RESET_COLOR "\033[0m"
+#include "libs.hpp"
 
 class Logger {
     public:
