@@ -81,26 +81,10 @@ h2 {
 	transform: translateX(100%) rotate(45deg);
 }
 
-#astronaut {
-	width: 142px;
-	position: absolute;
-	top: -10px;
-	right: 200px;
-	animation: moveRotate 8.5s infinite linear;
-}
-
-@keyframes moveRotate {
-	0% {
-		transform: translateX(0) translateY(0) rotate(0deg);
-	}
-
-	50% {
-		transform: translateX(200px) translateY(200px) rotate(360deg);
-	}
-
-	100% {
-		transform: translateX(0) translateY(0) rotate(0deg);
-	}
+#ufo {
+	width: 140px;
+	display: block;
+	margin: 0 auto;
 }
 
 @media (max-width: 600px) {
@@ -117,9 +101,5 @@ h2 {
 		min-width: 240px;
 		min-height: 60px;
 		font-size: 18px;
-	}
-
-	#astronaut {
-		width: 100px;
 	}
 }
