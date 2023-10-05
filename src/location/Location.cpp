@@ -6,11 +6,13 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:09:25 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/04 01:14:59 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/04 21:01:54 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Location.hpp"
+
+const std::map<std::string, std::string> Location::_mimeTypes = Constants::getMimeTypes();
 
 Location::Location(void) : _root(DEFAULT_ROOT)
 {
@@ -30,6 +32,8 @@ void Location::setup(Parser &parser, std::string port, std::string uri)
     this->_setRoot(parser);
     this->_locationSize               = serverSize[this->_serverIndex + 1];
     this->_locationIndex              = this->_findLocationIndex(parser, uri);
+    this->_uri                        = uri;
+    this->_extension                  = this->_extractFileExtension(uri);
     this->_serverIndexPage            = parser.getServerParam(this->_serverIndex, "index");
     this->_serverErrorPage            = parser.getServerParam(this->_serverIndex, "error_page");
     this->_responseData.content       = "";
@@ -71,6 +75,17 @@ int Location::_findLocationIndex(Parser &parser, std::string uri)
     return (i);
 }
 
+std::string Location::_extractFileExtension(std::string uri)
+{
+    size_t dotPos = uri.rfind('.');
+
+    if (dotPos != std::string::npos) {
+        std::string extension = uri.substr(dotPos);
+        return extension;
+    }
+    return "";
+}
+
 void Location::_setRoot(Parser &parser)
 {
     std::vector<std::string> rootParam;
@@ -85,10 +100,30 @@ void Location::_setRoot(Parser &parser)
 
 responseData Location::getLocationContent(void)
 {
-    if (this->_locationSize == this->_locationIndex) {
+    if (this->_extension.length()) {
+        this->_getFileContent();
+    } else if (this->_locationSize == this->_locationIndex) {
         this->_getServerIndexContent();
     }
     return (this->_responseData);
+}
+
+void Location::_getFileContent(void)
+{
+    std::map<std::string, std::string>::const_iterator it;
+
+    this->_getContent(this->_uri);
+    this->_responseData.statusCode = "200 OK";
+    it                             = this->_mimeTypes.find(this->_extension);
+    if (it != this->_mimeTypes.end()) {
+        this->_responseData.contentType = it->second;
+    } else {
+        this->_responseData.contentType = "application/octet-stream";
+    }
+    if (!this->_responseData.contentLength) {
+        this->_getServerErrorPageContent();
+    }
+    // TODO: verificar o que acontece se o navegador não suporta aquele mimetype
 }
 
 void Location::_getServerIndexContent(void)
@@ -106,6 +141,8 @@ void Location::_getServerIndexContent(void)
     }
 }
 
+// TODO: verificar o status code
+// TODO: ajustar o status code para usar o valor da constante
 void Location::_getServerErrorPageContent(void)
 {
     this->_responseData.statusCode = "404 Not Found";
