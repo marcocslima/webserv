@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/05 11:03:20 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/05 16:26:58 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@ PostMethod::PostMethod(HttpRequest request): _httpRequest(request)
 std::string PostMethod::handleMethod(std::string uri)
 {
     static_cast<void>(uri);
+    created = false;
 
-    if (_httpRequest._has_body)
+    if (_httpRequest._has_body && _httpRequest._tooLarge == false)
     {
         if (_httpRequest._has_multipart)
         {
@@ -39,7 +40,7 @@ std::string PostMethod::handleMethod(std::string uri)
             else if (!created && _file == true)
             {
                 setResponse("500", "Internal Server Error", "<html><body><h1>500  Internal Server Error</h1></body></html>");
-                Logger::info << "Unable to create file." << std::endl;
+                Logger::error << "Unable to create file." << std::endl;
                 return (_responseHeader);
             }
         }
@@ -57,7 +58,7 @@ std::string PostMethod::handleMethod(std::string uri)
     else
     {
         setResponse("500", "Internal Server Error", "<html><body><h1>500  Internal Server Error</h1></body></html>");
-        Logger::info << "Error in post request." << std::endl;
+        Logger::error << "Internal Server Error." << std::endl;
     }
     return (_responseHeader);
 }
@@ -169,7 +170,33 @@ void PostMethod::saveFile(std::string& fileName, const std::string& value)
     }
 }
 
-void    PostMethod::handleForm(){
+std::string replaceChar(const std::string& input)
+{
+    std::string output;
+    size_t pos = 0;
+
+    while (pos < input.length())
+    {
+        if (input[pos] == '%')
+        {
+            if (pos + 2 < input.length())
+            {
+                char hex[3] = { input[pos + 1], input[pos + 2], '\0' };
+                int decodedChar = strtol(hex, NULL, 16);
+                output.push_back(static_cast<char>(decodedChar));
+                pos += 2;
+            }
+        } else if (input[pos] == '+')
+            output.push_back(' ');
+        else
+            output.push_back(input[pos]);
+        pos++;
+    }
+    return output;
+}
+
+void PostMethod::handleForm()
+{
     std::string body = _httpRequest.getBody();
     std::istringstream ss(body);
     std::string pair;
@@ -179,13 +206,8 @@ void    PostMethod::handleForm(){
         size_t equal = pair.find('=');
         if (equal != std::string::npos)
         {
-            std::string fieldName = pair.substr(0, equal);
-            std::string fielddata = pair.substr(equal + 1);
-            for (size_t i = 0; i < fielddata.length(); ++i)
-            {
-                if (fielddata[i] == '+')
-                    fielddata[i] = ' ';
-            }
+            std::string fieldName = replaceChar(pair.substr(0, equal));
+            std::string fielddata = replaceChar(pair.substr(equal + 1));
             _formData[fieldName] = fielddata + "\r\n";
         }
     }

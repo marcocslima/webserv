@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/05 09:47:37 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/05 15:52:24 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,14 +66,16 @@ void    HttpRequest::init()
     _allowMethods.push_back("POST");
     _allowMethods.push_back("DELETE");
     _has_body = false;
-	_has_multipart = false;
 	_has_form = false;
-	_method = "";
+	_has_multipart = false;
+    _tooLarge = false;
 	_uri = "";
-	_httpVersion = "";
 	_port = "";
+	_method = "";
     _boundary = "";
+	_httpVersion = "";
 	_statusError = "";
+    _contentLength = 0;
     _paramQuery.clear();
     _header.clear();
 }
@@ -109,12 +111,12 @@ void	HttpRequest::requestHttp(std::string request, Parser& parser)
 
         if (_has_multipart)
             _getMultipartData(request);
-
         else if (_has_body)
-            _getBody(request);
+           _getBody(request);
 
     } catch (RequestException const &e) {
         Logger::error << e.what() << " " << this->_statusError << std::endl;
+        return ;
     }
 }
 
@@ -214,8 +216,10 @@ void HttpRequest::_findHeaders(std::string key,std::string value )
     if (key == "Content-Length")
     {
         int length = atoi(value.c_str());
-        if (length > 0)
+        if (length > 0){
             _has_body = true;
+            _contentLength = length;
+        }
     }
 }
 
@@ -253,6 +257,7 @@ void	HttpRequest::_checkPorts(Parser& parser)
     if (foundPort == false)
     {
         this->_statusError = BAD_REQUEST;
+        std::cout << "port" << "\n";
         throw RequestException();
     }
 }
@@ -286,6 +291,12 @@ void    HttpRequest::_getBody(std::string request)
 {
     std::size_t bodyStart = request.find("\r\n\r\n") + 4;
 
+    _tooLarge = false;
     if (bodyStart != std::string::npos)
         _body = request.substr(bodyStart);
+    if (_contentLength > (MAX_BODY_SIZE)){
+        this->_statusError = ENTITY_TOO_LARGE;
+        Logger::error << "Entity too large" << std::endl;
+        _tooLarge = true;
+    }
 }

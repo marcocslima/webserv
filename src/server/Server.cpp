@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/05 11:04:50 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/05 15:56:08 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void	Server::processClientData(int clientSocket, Parser& parser)
 	while ((bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0)) > 0){
 		request.append(buffer, bytesRead);
         if (request.find("Expect: 100-continue") != std::string::npos) {
-            sleep(2);
+            sleep(4);
             continue;
         }
 		buffer[bytesRead] = '\0';
