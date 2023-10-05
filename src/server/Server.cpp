@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/29 12:39:35 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/05 11:04:50 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,40 @@ bool	Server::acceptNewConnection(size_t i)
 void	Server::processClientData(int clientSocket, Parser& parser)
 {
 	char buffer[1024] = {0};
-	int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
+	int bytesRead, bytes = 0;
+	std::string	request;
 
-	if (bytesRead <= 0)
+	while ((bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0)) > 0){
+		request.append(buffer, bytesRead);
+        if (request.find("Expect: 100-continue") != std::string::npos) {
+            sleep(2);
+            continue;
+        }
+		buffer[bytesRead] = '\0';
+        bytes += bytesRead;
+        if (request.find("multipart/form-data") != std::string::npos) {
+            std::string boundary;
+            size_t      contentTypePos = request.find("Content-Type: ");
+
+            if (contentTypePos != std::string::npos) {
+                size_t lineEnd = request.find("\r\n", contentTypePos);
+                if (lineEnd != std::string::npos) {
+                    std::string contentTypeLine
+                        = request.substr(contentTypePos, lineEnd - contentTypePos);
+                    size_t boundaryPos = contentTypeLine.find("boundary=");
+                    if (boundaryPos != std::string::npos) {
+                        boundary = contentTypeLine.substr(boundaryPos + 9);
+                    }
+                }
+            }
+            std::string boundaryEnd = "\r\n--" + boundary + "--";
+            if (request.find(boundaryEnd) != std::string::npos)
+                break;
+        } else if (request.find("\r\n\r\n") != std::string::npos) {
+            break;
+        }
+	}
+	if (bytesRead == -1)
 	{
 		Logger::info << "Client connection closed" << " on socket "
 			<< clientSocket << std::endl;
@@ -106,9 +137,8 @@ void	Server::processClientData(int clientSocket, Parser& parser)
 	}
 	else
 	{
-		std::string	request(buffer, bytesRead);
-
 		_request.requestHttp(request, parser);
+
 		size_t	start = request.find(_request.getMethod());
 		size_t	end = request.find(_request.getHttp());
 

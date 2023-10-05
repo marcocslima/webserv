@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/30 16:44:15 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/05 09:47:37 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ void	HttpRequest::requestHttp(std::string request, Parser& parser)
 
         if (_has_multipart)
             _getMultipartData(request);
+
         else if (_has_body)
             _getBody(request);
 
@@ -127,7 +128,6 @@ void	HttpRequest::_parseFirstLine(std::string& requestLine)
         || this->_uri[0] != '/')
     {
         this->_statusError = BAD_REQUEST;
-        std::cout << "first" << "\n";
         throw RequestException();
     }
 
@@ -181,6 +181,9 @@ void HttpRequest::_parseHeaders(const std::string& request)
     while (std::getline(iss, headerLine, '\r'))
     {
         headerLine.erase(std::remove(headerLine.begin(), headerLine.end(), '\n'), headerLine.end());
+
+        if (headerLine.empty())
+            break;
 
         if (!headerLine.empty())
         {

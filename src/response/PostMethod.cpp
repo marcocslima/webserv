@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/09/30 17:21:58 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/05 11:03:20 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,29 @@ PostMethod::PostMethod(HttpRequest request): _httpRequest(request)
 
 std::string PostMethod::handleMethod(std::string uri)
 {
-    uri = " ";
+    static_cast<void>(uri);
 
-    if (_httpRequest._has_body){
+    if (_httpRequest._has_body)
+    {
         if (_httpRequest._has_multipart)
+        {
             handleMultipart();
+            if (created && _file == true)
+            {
+                setResponse("201", "Created", "<html><body><h1>201 Created</h1></body></html>");
+                Logger::info << "File created." << std::endl;
+                return (_responseHeader);
+            }
+            else if (!created && _file == true)
+            {
+                setResponse("500", "Internal Server Error", "<html><body><h1>500  Internal Server Error</h1></body></html>");
+                Logger::info << "Unable to create file." << std::endl;
+                return (_responseHeader);
+            }
+        }
         if (_httpRequest._has_form)
             handleForm();
+
         setResponse("200", "OK", "<html><body><h1>200 OK</h1></body></html>");
         Logger::info << "Post request completed successfully." << std::endl;
     }
@@ -43,7 +59,6 @@ std::string PostMethod::handleMethod(std::string uri)
         setResponse("500", "Internal Server Error", "<html><body><h1>500  Internal Server Error</h1></body></html>");
         Logger::info << "Error in post request." << std::endl;
     }
-
     return (_responseHeader);
 }
 
@@ -53,6 +68,7 @@ void    PostMethod::handleMultipart()
     std::string body = _httpRequest.getBody();
 
     _formData.clear();
+    _file = false;
     size_t pos = 0;
     while ((pos = body.find(boundary, pos)) != std::string::npos)
     {
@@ -61,7 +77,27 @@ void    PostMethod::handleMultipart()
         if (endPos != std::string::npos)
             parseMultipartFormData(pos, endPos);
     }
-    print();
+    if (_file == false)
+        print();
+}
+
+std::string setFileName(size_t pos, std::string data)
+{
+    std::srand(static_cast<unsigned int>(std::time(NULL)));
+    int randomNumber = std::rand() % 500;
+
+    std::ostringstream oss;
+    oss << "file" << randomNumber;
+
+    std::size_t filenameEnd = data.find("\"", pos);
+    std::string aux = data.substr(pos, filenameEnd - pos);
+    size_t dot = aux.find(".");
+    std::string extension = aux.substr(dot);
+
+    oss << extension;
+
+    std::string fileName = oss.str();
+    return (fileName);
 }
 
 void    PostMethod::parseMultipartFormData(size_t pos, size_t endPos)
@@ -83,46 +119,53 @@ void    PostMethod::parseMultipartFormData(size_t pos, size_t endPos)
             if (nameEnd != std::string::npos)
             {
                 std::string name = data.substr(namePos, nameEnd - namePos);
-                _formData[name] = value;
-            }
+                std::size_t filenamePos = data.find("filename=\"");
 
-            size_t contentPos = data.find("Content-Type: ");
-            size_t contendEnd = data.find("\r\n", contentPos + 14);
-            if (contentPos != std::string::npos && contendEnd != std::string::npos){
-                _contentType = data.substr(contentPos + 14, contendEnd - (contentPos - 14));
-            }
-
-            std::size_t filenamePos = data.find("filename=\"");
-            if (filenamePos != std::string::npos && _contentType == "text/plain")
-            {
-                filenamePos += 10;
-                saveFile(filenamePos, value, data);
+                if (filenamePos != std::string::npos )
+                {
+                    filenamePos += 10;
+                    std::size_t filenameEnd = data.find("\"", filenamePos);
+                    if (filenameEnd != std::string::npos)
+                    {
+                        std::string fileName = setFileName(filenamePos, data);
+                        saveFile(fileName, value);
+                        _file = true;
+                    }
+                } else
+                    _formData[name] = value;
             }
         }
     }
 }
 
-void PostMethod::saveFile(size_t pos, const std::string& value, const std::string& data)
+void PostMethod::saveFile(std::string& fileName, const std::string& value)
 {
-    std::size_t filenameEnd = data.find("\"", pos);
-
-    if (filenameEnd != std::string::npos)
+    char cwd[1024];
+    if (getcwd(cwd, sizeof(cwd)) != NULL)
     {
-        std::string fileName = data.substr(pos, filenameEnd - pos);
-        std::string filePath = "/uploads/" + fileName;
-        for ( int i = 0; i < 10; i++ ) {
-            filePath += static_cast<char>( rand() % 26 + 97 );
+        std::string filePath = cwd;
+        filePath += "/uploads/" + fileName;
+
+        std::ifstream checkFile(filePath.c_str());
+        if (checkFile.good())
+        {
+           created = false;
+           Logger::error << "The file already exists." << std::endl;
+           return;
         }
-
         std::ofstream file(filePath.c_str(), std::ios::binary);
-        if (file.is_open()){
-
+        if (file.is_open())
+        {
             file.write(value.c_str(), value.length());
             file.close();
             created = true;
-        } else {
-            created = false;
         }
+        else
+            created = false;
+    } else
+    {
+        Logger::error << "Error getting current working directory." << std::endl;
+        created = false;
     }
 }
 
