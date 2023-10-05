@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 11:38:53 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/04 21:20:45 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/05 05:24:47 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,13 +65,13 @@ std::string CGI::executeCGI(const HttpRequest& request) {
     std::string body;
 
     std::string rootTmp = getDir();
-    _cgi_path = rootTmp + "/www/cgi-bin" + request.getUri();
+    _cgi_path = rootTmp + "/www" + request.getUri();
 
     std::string bin = getBin(request.getUri());
 
     if (bin.empty()) {
         throw std::runtime_error("bin is empty");
-    } else if (bin != "php") {
+    } else if (bin == "php") {
         bin = "/usr/bin/" + bin;
     } else if (bin == "py") {
         bin = "/usr/bin/python3";
@@ -95,7 +95,7 @@ std::string CGI::executeCGI(const HttpRequest& request) {
         dup2(pipe_fd[1], STDOUT_FILENO);
 
         char* argv[] = {cbin, pathBin, NULL};
-        execve("/usr/bin/php", argv, _envs);
+        execve(cbin, argv, _envs);
         std::cerr << " execve() failed " << std::endl;
         write(STDOUT_FILENO, "Status: 500 Internal Server Error\r\n\r\n", 38);
     } else {
