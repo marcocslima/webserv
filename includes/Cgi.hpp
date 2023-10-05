@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 11:36:29 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/04 17:22:56 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/04 20:39:38 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@
 
 class CGI : public HttpRequest {
     private:
-        char** _envs;
+        char**      _envs;
+        std::string _cgi_path;
     public:
         CGI();
         ~CGI();

@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 01:59:27 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/04 17:18:15 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/04 21:16:34 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,23 @@ std::string getDir () {
         return "";
     }
 }
+
+std::string getBin(const std::string& url) {
+    std::string::size_type pos_slash = url.find_last_of('/');
+    std::string::size_type pos_query = url.find_first_of('?');
+
+    if(pos_slash != std::string::npos && pos_slash < url.length() -1) {
+        std::string bin_tmp = url.substr(pos_slash + 1, pos_query - pos_slash - 1);
+        std::string::size_type pos_dot = bin_tmp.find_last_of('.');
+        std::string bin = bin_tmp.substr(pos_dot + 1, bin_tmp.length() - 1);
+        std::cout << "bin: " << bin << std::endl;
+        return bin;
+    } else {
+        std::cout << "Error getting binary name" << std::endl;
+        return "Error getting binary name";
+    }
+}
+
 
 // std::string getPath(int serverIndex, int locIndex, std::string uri) {
     
