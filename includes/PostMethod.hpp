@@ -6,13 +6,14 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 18:31:10 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/05 16:08:35 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/06 19:27:20 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 # include "AResponse.hpp"
+# include "Request.hpp"
 # include <iomanip>
 
 # define P_BLUE			"\e[0;38;5;24m"

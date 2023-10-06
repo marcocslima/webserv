@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 06:59:01 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/06 19:13:05 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/06 19:24:44 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ struct Response
     std::string status_code; // 200
     std::string status_message; // OK
     std::string content_type; // text/html
-    int         content_length;
+    std::string content_length;
     std::string body;
 };
 

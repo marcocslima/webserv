@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DeleteMethod.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 07:17:35 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/24 17:06:34 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/06 19:28:24 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ std::string DeleteMethod::handleMethod(std::string uri) {
 
     std::string resorcePath = getDir();
     std::string responseHeader;
-    
+
     resorcePath = resorcePath + uri;
-    
+
     std::ifstream file(resorcePath.c_str());
 
     if (file.is_open()) {
@@ -47,7 +47,7 @@ std::string DeleteMethod::handleMethod(std::string uri) {
             _response.status_code = "204";
             _response.status_message = "OK";
             _response.content_type = "text/html";
-            _response.content_length = 0;
+            _response.content_length = "0";
             _response.body = "<html><body><h1>204 No Content</h1></body></html>";
             responseHeader = assembleResponse();
             Logger::info << "Resource deleted successfully." << std::endl;
@@ -57,7 +57,7 @@ std::string DeleteMethod::handleMethod(std::string uri) {
             _response.status_code = "500";
             _response.status_message = "Internal Server Error";
             _response.content_type = "text/html";
-            _response.content_length = 0;
+            _response.content_length = "0";
             _response.body = "<html><body><h1>500 Internal Server Error</h1></body></html>";
             responseHeader = assembleResponse();
             Logger::info << "Error deleting resource." << std::endl;
@@ -68,7 +68,7 @@ std::string DeleteMethod::handleMethod(std::string uri) {
         _response.status_code = "404";
         _response.status_message = "Not Found";
         _response.content_type = "text/html";
-        _response.content_length = 0;
+        _response.content_length = "0";
         _response.body = "<html><body><h1>404 Not Found</h1></body></html>";
         responseHeader = assembleResponse();
         Logger::info << "Resource not found." << std::endl;

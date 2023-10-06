@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/06 19:22:15 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/06 19:23:30 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ void Server::processClientData(int clientSocket)
 	}
 	else
 	{
-		_request.requestHttp(request, parser);
+		_request.requestHttp(request, _parser);
 
 		size_t	start = request.find(_request.getMethod());
 		size_t	end = request.find(_request.getHttp());
