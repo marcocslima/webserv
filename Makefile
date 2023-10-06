@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
+#    By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/09/29 22:19:39 by pmitsuko         ###   ########.fr        #
+#    Updated: 2023/10/06 19:11:00 by jefernan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,6 +49,7 @@ VPATH = $(SRC_DIR)\
 		$(SRC_DIR)response\
 		$(SRC_DIR)server\
 		$(SRC_DIR)utils\
+		$(SRC_DIR)response\
 # FILES #
 
 FILES = main.cpp\
@@ -59,6 +60,7 @@ FILES = main.cpp\
 		Parser.cpp\
 		Request.cpp\
 		AResponse.cpp\
+		PostMethod.cpp\
 		DeleteMethod.cpp\
 
 # COMPILED_SOURCES #
