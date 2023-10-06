@@ -22,6 +22,9 @@
     $requestBody = getenv('REQUEST_BODY');
     parse_str($requestBody, $requestData);
 
+    $len = getenv('CONTENT_LENGTH');
+    echo '<p>Tamanho: ' . $len . '</p>';
+
     $num1 = $requestData['num1'];
     $num2 = $requestData['num2'];
     $operator = $requestData['operator'];

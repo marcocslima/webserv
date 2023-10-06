@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 11:38:53 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/06 05:10:05 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/06 16:50:35 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@ std::string queryToString(std::vector<std::string> query) {
     return (resp);
 }
 
-
-
 std::map<std::string, std::string> CGI::assembleCGIHeaders(const HttpRequest& request) {
     
     std::map<std::string, std::string> map_envs;
@@ -45,7 +43,7 @@ std::map<std::string, std::string> CGI::assembleCGIHeaders(const HttpRequest& re
     map_envs["SCRIPT_NAME"] = _cgi_path; // cgi path
     map_envs["SCRIPT_FILENAME"] = _cgi_path; // cgi path
     map_envs["REQUEST_METHOD"] = request.getMethod(); // request method
-    map_envs["CONTENT_LENGTH"] = "";//strlen(len); // body converted to char*
+    map_envs["CONTENT_LENGTH"] = request.getBody().length();//strlen(len); // body converted to char*
     map_envs["CONTENT_TYPE"] = "text/html"; // content type
     map_envs["PATH_INFO"] = _cgi_path; // cgi path
     map_envs["PATH_TRANSLATED"] = _cgi_path; // cgi path
@@ -132,7 +130,5 @@ std::string CGI::executeCGI(const HttpRequest& request) {
         delete [] _envs;
         exit (0);
     }
-
-    std::cout << body << std::endl;
     return (body);
 }
