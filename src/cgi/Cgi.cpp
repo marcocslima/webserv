@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 11:38:53 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/05 05:24:47 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/06 05:10:05 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,29 @@ CGI::CGI() {}
 
 CGI::~CGI() {}
 
+std::string queryToString(std::vector<std::string> query) {
+    
+    std::string resp;
+
+    if (query.empty()) {
+        return (resp);
+    }
+    
+    for (std::vector<std::string>::iterator it = query.begin(); it != query.end(); it++) {
+        resp += *it;
+        if (it != query.end() - 1) {
+            resp += "&";
+        }
+    }
+    return (resp);
+}
+
+
+
 std::map<std::string, std::string> CGI::assembleCGIHeaders(const HttpRequest& request) {
     
     std::map<std::string, std::string> map_envs;
-    
+
     map_envs["AUTH_TYPE"] = "";
     map_envs["REDIRECT_STATUS"] = "200";
     map_envs["GATEWAY_INTERFACE"] = "CGI/1.1";
@@ -30,11 +49,12 @@ std::map<std::string, std::string> CGI::assembleCGIHeaders(const HttpRequest& re
     map_envs["CONTENT_TYPE"] = "text/html"; // content type
     map_envs["PATH_INFO"] = _cgi_path; // cgi path
     map_envs["PATH_TRANSLATED"] = _cgi_path; // cgi path
-    map_envs["QUERY_STRING"] = "name=value"; // query
-    map_envs["REMOTE_ADDR"] = "80"; // request port
+    map_envs["QUERY_STRING"] = queryToString(request.getQuery()); // query
+    map_envs["REQUEST_BODY"] = request.getBody(); // request body
+    map_envs["REMOTE_ADDR"] = ""; // request port
     map_envs["REMOTE_IDENT"] = ""; // request authorization
     map_envs["REMOTE_USER"] = ""; // request authorization
-    map_envs["REQUEST_URI"] = _cgi_path + "/name=value"; // request cgi path + resquest query
+    map_envs["REQUEST_URI"] = _cgi_path; // request cgi path + resquest query
     map_envs["SERVER_NAME"] = "localhost"; // request host
     map_envs["SERVER_PROTOCOL"] = "HTTP/1.1";
     map_envs["SERVER_SOFTWARE"] = "Webserv/1.0";
@@ -69,13 +89,8 @@ std::string CGI::executeCGI(const HttpRequest& request) {
 
     std::string bin = getBin(request.getUri());
 
-    if (bin.empty()) {
-        throw std::runtime_error("bin is empty");
-    } else if (bin == "php") {
-        bin = "/usr/bin/" + bin;
-    } else if (bin == "py") {
-        bin = "/usr/bin/python3";
-    }
+    if (bin.empty())
+        Logger::info << "There are not this program." << std::endl;
 
     _envs = assembleCGIEnv(assembleCGIHeaders(request));
     
@@ -96,7 +111,6 @@ std::string CGI::executeCGI(const HttpRequest& request) {
 
         char* argv[] = {cbin, pathBin, NULL};
         execve(cbin, argv, _envs);
-        std::cerr << " execve() failed " << std::endl;
         write(STDOUT_FILENO, "Status: 500 Internal Server Error\r\n\r\n", 38);
     } else {
         close(pipe_fd[1]);
@@ -119,5 +133,6 @@ std::string CGI::executeCGI(const HttpRequest& request) {
         exit (0);
     }
 
+    std::cout << body << std::endl;
     return (body);
 }

@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 11:36:29 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/04 20:39:38 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/06 03:20:34 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,4 @@ class CGI : public HttpRequest {
         std::map<std::string, std::string> assembleCGIHeaders(const HttpRequest& request);
         char** assembleCGIEnv(std::map<std::string, std::string> map_envs);
         std::string executeCGI(const HttpRequest& request);
-
 };

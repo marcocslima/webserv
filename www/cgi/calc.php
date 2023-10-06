@@ -55,6 +55,6 @@
 
   ?>
 <br>
-<a href="http://localhost:3007/cgi/what_is_cgi.html">Return</a>
+<a href="http://localhost:3007/cgi/calc.php">Return</a>
 </body>
 </html>

@@ -6,11 +6,11 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/05 05:13:53 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/06 05:29:50 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "../includes/Server.hpp"
 
 Server::Server(void)
 {
@@ -100,11 +100,6 @@ void Server::processClientData(int clientSocket)
 
         HttpRequest request;
         request.requestHttp(req, this->_parser);
-
-        std::cout << request.getUri() << std::endl;
-        
-        //CGI cgi;
-		//cgi.executeCGI(request);
 
         std::string method = request.getMethod();
         std::string route  = request.getUri();

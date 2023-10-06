@@ -6,13 +6,14 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 01:53:02 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/04 21:16:55 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/06 04:57:05 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # pragma once
 
 #include "Parser.hpp"
+#include "Request.hpp"
 #include "Logger.hpp"
 #include <iostream>
 #include <sstream>
@@ -25,5 +26,3 @@
 
 std::string getDir ();
 std::string getBin(const std::string& url);
-std::string getPath(int serverIndex, int locIndex, std::string uri);
-
