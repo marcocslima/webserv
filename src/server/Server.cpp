@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/06 16:30:52 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/07 05:17:59 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,25 @@ void Server::processClientData(int clientSocket)
 			send(clientSocket, responseHeader, strlen(responseHeader), 0);
 			send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
 		}
+		else if (route == "/cgi/bad_cgi.php") {
+			CGI cgi;
+			std::string cgi_response = cgi.executeCGI(request);
+			sprintf(responseHeader,
+				"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
+				(int)cgi_response.length());
+			send(clientSocket, responseHeader, strlen(responseHeader), 0);
+			send(clientSocket, cgi_response.c_str(), cgi_response.length(), 0);
+        }
 		else if (route == "/cgi/calc.php") {
+			CGI cgi;
+			std::string cgi_response = cgi.executeCGI(request);
+			sprintf(responseHeader,
+				"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
+				(int)cgi_response.length());
+			send(clientSocket, responseHeader, strlen(responseHeader), 0);
+			send(clientSocket, cgi_response.c_str(), cgi_response.length(), 0);
+        }
+		else if (route == "/cgi/script.py") {
 			CGI cgi;
 			std::string cgi_response = cgi.executeCGI(request);
 			sprintf(responseHeader,

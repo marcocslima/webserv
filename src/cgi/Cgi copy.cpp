@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Cgi.cpp                                            :+:      :+:    :+:   */
+/*   Cgi copy.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 11:38:53 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/07 05:23:18 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/07 04:20:38 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,6 @@ std::string CGI::executeCGI(const HttpRequest& request) {
     pid_t       pid;
     int         pipe_fd[2];
     std::string body;
-    unsigned int timeout = 10000; // 10 seconds before timeout
-    struct timespec startTime;
-    clock_gettime(CLOCK_MONOTONIC, &startTime);
 
     std::string rootTmp = getDir();
     _cgi_path = rootTmp + "/www" + request.getUri();
@@ -115,26 +112,13 @@ std::string CGI::executeCGI(const HttpRequest& request) {
         write(STDOUT_FILENO, "Status: 500 Internal Server Error\r\n\r\n", 38);
     } else {
         close(pipe_fd[1]);
-        struct timespec currentTime;
-        
-        while (true) {
-            if (waitpid(pid, NULL, WNOHANG) == pid) {
-                break;
-            }
-            clock_gettime(CLOCK_MONOTONIC, &currentTime);
-            if (currentTime.tv_sec - startTime.tv_sec > timeout / 1000) {
-                kill(pid, SIGTERM);
-                break;
-            }
-            usleep(500);
-        }
-        
         char buffer[8192] = {0};
         int n = 0;
         while ((n = read(pipe_fd[0], buffer, 8191)) > 0) {
             body.append(buffer, n);
         }
         close(pipe_fd[0]);
+        waitpid(pid, NULL, 0);
     }
 
     if ( !pid ) {
