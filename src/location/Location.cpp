@@ -6,13 +6,11 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:09:25 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/04 21:01:54 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/07 22:07:28 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Location.hpp"
-
-const std::map<std::string, std::string> Location::_mimeTypes = Constants::getMimeTypes();
 
 Location::Location(void) : _root(DEFAULT_ROOT)
 {
@@ -28,18 +26,18 @@ void Location::setup(Parser &parser, std::string port, std::string uri)
 {
     std::vector<int> serverSize = parser.getSizeServers();
 
-    this->_serverIndex = this->_findServerIndex(parser, serverSize[0], port);
-    this->_setRoot(parser);
-    this->_locationSize               = serverSize[this->_serverIndex + 1];
-    this->_locationIndex              = this->_findLocationIndex(parser, uri);
     this->_uri                        = uri;
-    this->_extension                  = this->_extractFileExtension(uri);
-    this->_serverIndexPage            = parser.getServerParam(this->_serverIndex, "index");
-    this->_serverErrorPage            = parser.getServerParam(this->_serverIndex, "error_page");
     this->_responseData.content       = "";
     this->_responseData.statusCode    = "";
     this->_responseData.contentType   = "";
     this->_responseData.contentLength = 0;
+    this->_serverIndex                = this->_findServerIndex(parser, serverSize[0], port);
+    this->_locationSize               = serverSize[this->_serverIndex + 1];
+    this->_locationIndex              = this->_findLocationIndex(parser, uri);
+    this->_extension                  = this->_extractFileExtension(uri);
+    this->_setRoot(parser);
+    this->_setIndexPage(parser);
+    this->_setErrorPage(parser);
 }
 
 int Location::_findServerIndex(Parser &parser, int serverSize, std::string port)
@@ -64,15 +62,34 @@ int Location::_findLocationIndex(Parser &parser, std::string uri)
     std::vector<std::string>           locationParam;
     std::vector<std::string>::iterator it;
     int                                i = 0;
+    std::string                        found, path;
 
+    path  = this->_extractPathFromURI(uri);
+    found = path.empty() ? uri : path;
     for (i = 0; i < this->_locationSize; i++) {
         locationParam = parser.getLocationParam(this->_serverIndex, i, "location");
-        it            = std::find(locationParam.begin(), locationParam.end(), uri);
+        it            = std::find(locationParam.begin(), locationParam.end(), found);
         if (it != locationParam.end()) {
             break;
         }
     }
     return (i);
+}
+
+std::string Location::_extractPathFromURI(std::string uri)
+{
+    size_t      pos;
+    std::string path;
+
+    if (uri.length() == 1)
+        return ("");
+    pos = uri.find("/", 1);
+    if (pos == std::string::npos) {
+        path = uri;
+    } else {
+        path = uri.substr(0, pos);
+    }
+    return (path);
 }
 
 std::string Location::_extractFileExtension(std::string uri)
@@ -90,74 +107,104 @@ void Location::_setRoot(Parser &parser)
 {
     std::vector<std::string> rootParam;
 
-    rootParam = parser.getServerParam(this->_serverIndex, "root");
+    this->_root = DEFAULT_ROOT;
+    rootParam   = parser.getServerParam(this->_serverIndex, "root");
     if (!rootParam.empty()) {
         this->_root = rootParam[0];
-        return;
     }
-    this->_root = DEFAULT_ROOT;
+    if (this->_locationSize != this->_locationIndex) {
+        rootParam = parser.getLocationParam(this->_serverIndex, this->_locationIndex, "root");
+        if (!rootParam.empty()) {
+            this->_root = rootParam[0];
+        }
+    }
+    return;
 }
 
-responseData Location::getLocationContent(void)
+void Location::_setIndexPage(Parser &parser)
+{
+    std::vector<std::string> indexParam;
+
+    if (this->_locationSize != this->_locationIndex) {
+        indexParam = parser.getLocationParam(this->_serverIndex, this->_locationIndex, "index");
+        if (!indexParam.empty()) {
+            this->_indexPage = indexParam[0];
+            return;
+        }
+    }
+    indexParam       = parser.getServerParam(this->_serverIndex, "index");
+    this->_indexPage = indexParam.empty() ? "index.html" : indexParam[0];
+    return;
+}
+
+void Location::_setErrorPage(Parser &parser)
+{
+    if (this->_locationSize != this->_locationIndex) {
+        this->_errorPage
+            = parser.getLocationParam(this->_serverIndex, this->_locationIndex, "error_page");
+        if (!this->_errorPage.empty()) {
+            return;
+        }
+    }
+    this->_errorPage = parser.getServerParam(this->_serverIndex, "error_page");
+    return;
+}
+
+responseData Location::getLocationContent(Constants &constants)
 {
     if (this->_extension.length()) {
-        this->_getFileContent();
-    } else if (this->_locationSize == this->_locationIndex) {
-        this->_getServerIndexContent();
+        this->_getFileContent(constants);
+    } else {
+        this->_getIndexContent(constants);
     }
     return (this->_responseData);
 }
 
-void Location::_getFileContent(void)
+void Location::_getFileContent(Constants &constants)
 {
-    std::map<std::string, std::string>::const_iterator it;
-
     this->_getContent(this->_uri);
-    this->_responseData.statusCode = "200 OK";
-    it                             = this->_mimeTypes.find(this->_extension);
-    if (it != this->_mimeTypes.end()) {
-        this->_responseData.contentType = it->second;
-    } else {
-        this->_responseData.contentType = "application/octet-stream";
-    }
+    this->_responseData.statusCode  = constants.getStatusCodes("200");
+    this->_responseData.contentType = constants.getMimeTypes(this->_extension);
     if (!this->_responseData.contentLength) {
-        this->_getServerErrorPageContent();
+        this->_getErrorPageContent(constants);
     }
-    // TODO: verificar o que acontece se o navegador não suporta aquele mimetype
 }
 
-void Location::_getServerIndexContent(void)
+void Location::_getIndexContent(Constants &constants)
 {
-    if (this->_serverIndexPage.empty()) {
-        this->_getServerErrorPageContent();
+    std::string indexPath;
+
+    if (this->_indexPage.empty()) {
+        this->_getErrorPageContent(constants);
         return;
     }
-    this->_getContent(this->_serverIndexPage[0]);
-    this->_responseData.statusCode  = "200 OK";
+    if (this->_uri[this->_uri.length() - 1] != '/') {
+        this->_uri += '/';
+    }
+    indexPath = this->_uri + this->_indexPage;
+    this->_getContent(indexPath);
+    this->_responseData.statusCode  = constants.getStatusCodes("200");
     this->_responseData.contentType = "text/html";
     if (!this->_responseData.contentLength) {
-        this->_responseData.statusCode = "500 Internal Server Error";
-        this->_getJson("{\"error\": \"Request Failed\"}");
+        this->_getErrorPageContent(constants);
     }
 }
 
-// TODO: verificar o status code
-// TODO: ajustar o status code para usar o valor da constante
-void Location::_getServerErrorPageContent(void)
+void Location::_getErrorPageContent(Constants &constants)
 {
-    this->_responseData.statusCode = "404 Not Found";
-    if (this->_serverErrorPage.size() != 2) {
+    this->_responseData.statusCode = constants.getStatusCodes("404");
+    if (this->_errorPage.size() != 2) {
         this->_getJson("{\"error\": \"Resource not found\"}");
         return;
     }
-    if (this->_serverErrorPage[0] != "404") {
+    if (this->_errorPage[0] != "404") {
         this->_getJson("{\"error\": \"404 error page not configured\"}");
         return;
     }
-    this->_getContent(this->_serverErrorPage[1]);
+    // this->_getContent(this->_errorPage[1]);
     this->_responseData.contentType = "text/html";
     if (!this->_responseData.contentLength) {
-        this->_getJson("{\"error\": \"Unable to open 404 error page\"}");
+        this->_getJson("{\"error\": \"Error page\"}");
     }
 }
 
@@ -174,7 +221,7 @@ void Location::_getContent(std::string file)
     std::string       fullPath;
     const char       *fullPathCStr;
 
-    fullPathStream << this->_root << "/" << file;
+    fullPathStream << this->_root << file;
     fullPath     = fullPathStream.str();
     fullPathCStr = fullPath.c_str();
     std::ifstream ifs(fullPathCStr);

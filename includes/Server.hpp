@@ -6,12 +6,13 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/04 01:00:21 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/05 23:08:15 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include "Constants.hpp"
 #include "Location.hpp"
 #include "Parser.hpp"
 #include "Poll.hpp"
@@ -28,6 +29,7 @@ struct SocketInfo {
 
 class Server {
     private:
+    Constants             _const;
     Parser                _parser;
     std::vector<Socket *> _sockets;
     Poll                  _poll;
