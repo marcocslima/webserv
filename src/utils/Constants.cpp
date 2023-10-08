@@ -6,17 +6,44 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 18:56:35 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/04 20:01:43 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/05 23:07:19 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Constants.hpp"
 
+const std::map<std::string, std::string> Constants::_mimeTypes   = Constants::setMimeTypes();
+const std::map<std::string, std::string> Constants::_statusCodes = Constants::setStatusCodes();
+
 Constants::Constants() {}
 
 Constants::~Constants() {}
 
-std::map<std::string, std::string> Constants::getMimeTypes()
+std::string Constants::getStatusCodes(std::string status)
+{
+    std::map<std::string, std::string>::const_iterator it = Constants::_statusCodes.find(status);
+    std::string                                        statusText;
+    std::string                                        statusCode = "";
+
+    if (it != Constants::_statusCodes.end()) {
+        statusText = it->second;
+        statusCode = status + " " + statusText;
+    }
+    return (statusCode);
+}
+
+std::string Constants::getMimeTypes(std::string extension)
+{
+    std::map<std::string, std::string>::const_iterator it = Constants::_mimeTypes.find(extension);
+
+    if (it != Constants::_mimeTypes.end()) {
+        return (it->second);
+    } else {
+        return ("application/octet-stream");
+    }
+}
+
+std::map<std::string, std::string> Constants::setMimeTypes()
 {
     std::map<std::string, std::string> mimeTypes;
 
@@ -100,7 +127,7 @@ std::map<std::string, std::string> Constants::getMimeTypes()
     return (mimeTypes);
 }
 
-std::map<std::string, std::string> Constants::getStatusCodes()
+std::map<std::string, std::string> Constants::setStatusCodes()
 {
     std::map<std::string, std::string> statusCodes;
 
