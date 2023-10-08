@@ -6,7 +6,7 @@
 #    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/10/03 22:11:06 by pmitsuko         ###   ########.fr        #
+#    Updated: 2023/10/04 19:04:03 by pmitsuko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,6 +58,7 @@ FILES = main.cpp\
 		Parser.cpp\
 		Request.cpp\
 		Location.cpp\
+		Constants.cpp\
 
 
 # COMPILED_SOURCES #
