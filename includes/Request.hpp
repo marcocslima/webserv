@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/03 22:16:25 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/10 05:42:55 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 #include "Logger.hpp"
 #include "Parser.hpp"
-#include "libs.hpp"
+#include "Libs.hpp"
 
 class HttpRequest {
     public:
