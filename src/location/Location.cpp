@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:09:25 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/07 22:07:28 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/10 18:26:42 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,96 +140,59 @@ void Location::_setIndexPage(Parser &parser)
 void Location::_setErrorPage(Parser &parser)
 {
     if (this->_locationSize != this->_locationIndex) {
-        this->_errorPage
+        this->_errorPageConfig
             = parser.getLocationParam(this->_serverIndex, this->_locationIndex, "error_page");
-        if (!this->_errorPage.empty()) {
+        if (!this->_errorPageConfig.empty()) {
             return;
         }
     }
-    this->_errorPage = parser.getServerParam(this->_serverIndex, "error_page");
+    this->_errorPageConfig = parser.getServerParam(this->_serverIndex, "error_page");
     return;
 }
 
-responseData Location::getLocationContent(Constants &constants)
+responseData Location::getLocationContent(void)
 {
     if (this->_extension.length()) {
-        this->_getFileContent(constants);
+        this->_getFileContent();
     } else {
-        this->_getIndexContent(constants);
+        this->_getIndexContent();
     }
     return (this->_responseData);
 }
 
-void Location::_getFileContent(Constants &constants)
+void Location::_getFileContent(void)
 {
-    this->_getContent(this->_uri);
-    this->_responseData.statusCode  = constants.getStatusCodes("200");
-    this->_responseData.contentType = constants.getMimeTypes(this->_extension);
+    this->_responseData             = getContent(this->_root, this->_uri);
+    this->_responseData.statusCode  = Constants::getStatusCodes("200");
+    this->_responseData.contentType = Constants::getMimeTypes(this->_extension);
     if (!this->_responseData.contentLength) {
-        this->_getErrorPageContent(constants);
+        this->_responseData = this->_errorPage.getErrorPageContent(
+            this->_errorPageConfig, "404", this->_uri, this->_root);
+        return;
     }
+    return;
 }
 
-void Location::_getIndexContent(Constants &constants)
+void Location::_getIndexContent(void)
 {
-    std::string indexPath;
+    std::string indexPath, extension;
 
     if (this->_indexPage.empty()) {
-        this->_getErrorPageContent(constants);
+        this->_responseData = this->_errorPage.getErrorPageContent(
+            this->_errorPageConfig, "404", this->_uri, this->_root);
         return;
     }
     if (this->_uri[this->_uri.length() - 1] != '/') {
         this->_uri += '/';
     }
-    indexPath = this->_uri + this->_indexPage;
-    this->_getContent(indexPath);
-    this->_responseData.statusCode  = constants.getStatusCodes("200");
-    this->_responseData.contentType = "text/html";
+    indexPath                       = this->_uri + this->_indexPage;
+    this->_responseData             = getContent(this->_root, indexPath);
+    this->_responseData.statusCode  = Constants::getStatusCodes("200");
+    extension                       = this->_extractFileExtension(indexPath);
+    this->_responseData.contentType = Constants::getMimeTypes(extension);
     if (!this->_responseData.contentLength) {
-        this->_getErrorPageContent(constants);
+        this->_responseData = this->_errorPage.getErrorPageContent(
+            this->_errorPageConfig, "403", this->_uri, this->_root);
     }
-}
-
-void Location::_getErrorPageContent(Constants &constants)
-{
-    this->_responseData.statusCode = constants.getStatusCodes("404");
-    if (this->_errorPage.size() != 2) {
-        this->_getJson("{\"error\": \"Resource not found\"}");
-        return;
-    }
-    if (this->_errorPage[0] != "404") {
-        this->_getJson("{\"error\": \"404 error page not configured\"}");
-        return;
-    }
-    // this->_getContent(this->_errorPage[1]);
-    this->_responseData.contentType = "text/html";
-    if (!this->_responseData.contentLength) {
-        this->_getJson("{\"error\": \"Error page\"}");
-    }
-}
-
-void Location::_getJson(std::string body)
-{
-    this->_responseData.content       = body;
-    this->_responseData.contentLength = (int)body.length();
-    this->_responseData.contentType   = "application/json";
-}
-
-void Location::_getContent(std::string file)
-{
-    std::stringstream fullPathStream;
-    std::string       fullPath;
-    const char       *fullPathCStr;
-
-    fullPathStream << this->_root << file;
-    fullPath     = fullPathStream.str();
-    fullPathCStr = fullPath.c_str();
-    std::ifstream ifs(fullPathCStr);
-    if (ifs.is_open()) {
-        std::string content((std::istreambuf_iterator<char>(ifs)),
-                            std::istreambuf_iterator<char>());
-        this->_responseData.content       = content;
-        this->_responseData.contentLength = (int)content.length();
-        ifs.close();
-    }
+    return;
 }
