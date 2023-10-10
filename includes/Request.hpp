@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/06 19:15:11 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/10 17:51:04 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@
 # define HTTP_VERSION_NOT_SUPPORTED "505"
 # define ENTITY_TOO_LARGE           "413"
 
-# define MAX_BODY_SIZE 100
 class HttpRequest
 {
 	public:
@@ -44,10 +43,10 @@ class HttpRequest
 		std::vector<std::string>			getQuery( void ) const;
 		std::map<std::string,std::string>	getHeaders(void) const;
 
-		bool	_has_body;
-		bool	_has_form;
-		bool	_tooLarge;
-		bool	_has_multipart;
+		bool	has_body;
+		bool	has_form;
+		bool	tooLarge;
+		bool	has_multipart;
 		class RequestException : public std::exception {
 			public:
 				virtual const char* what() const throw();
@@ -59,12 +58,13 @@ class HttpRequest
 		void	_findHeaders(std::string key,std::string value );
 		void	_parseQuery(void);
 		void	_getMultipartData(std::string request);
-		void	_getMaxBody(Parser& parser);
+		void    _getMaxBody(Parser& parser);
 		void	_checkLocations(Parser& parser);
 		void	_checkPorts(Parser& parser);
 		void	_getBody(std::string request);
 
 		size_t								_contentLength;
+		size_t								_maxBodySize;
 		std::string							_uri;
 		std::string							_body;
 		std::string							_port;

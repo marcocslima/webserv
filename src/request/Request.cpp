@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/06 19:20:13 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/10 19:04:33 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,10 @@ void    HttpRequest::init()
     _allowMethods.push_back("GET");
     _allowMethods.push_back("POST");
     _allowMethods.push_back("DELETE");
-    _has_body = false;
-	_has_form = false;
-	_has_multipart = false;
-    _tooLarge = false;
+    has_body = false;
+	has_form = false;
+	has_multipart = false;
+    tooLarge = false;
 	_uri = "";
 	_port = "";
 	_method = "";
@@ -67,6 +67,7 @@ void    HttpRequest::init()
 	_httpVersion = "";
 	_statusError = "";
     _contentLength = 0;
+    _maxBodySize = 0;
     _paramQuery.clear();
     _header.clear();
 }
@@ -87,22 +88,23 @@ void	HttpRequest::requestHttp(std::string request, Parser& parser)
         _parseHeaders(headersPart);
         _checkLocations(parser);
         _checkPorts(parser);
+        _getMaxBody(parser);
 
-        if (_has_body)
+        if (has_body)
         {
-            _has_multipart = false;
-            _has_form = false;
+            has_multipart = false;
+            has_form = false;
             std::map<std::string, std::string>::const_iterator it;
             it = _header.find("Content-Type");
             if (it->second.find("multipart/form-data") != std::string::npos)
-                _has_multipart = true;
+                has_multipart = true;
             if (it->second.find("application/x-www-form-urlencoded") != std::string::npos)
-                _has_form = true;
+                has_form = true;
         }
 
-        if (_has_multipart)
+        if (has_multipart)
             _getMultipartData(request);
-        else if (_has_body)
+        else if (has_body)
            _getBody(request);
 
     } catch (RequestException const &e) {
@@ -169,7 +171,7 @@ void HttpRequest::_parseHeaders(const std::string& request)
 {
     std::istringstream iss(request);
     std::string headerLine;
-    _has_body = false;
+    has_body = false;
 
     while (std::getline(iss, headerLine, '\r'))
     {
@@ -208,7 +210,7 @@ void HttpRequest::_findHeaders(std::string key,std::string value )
     {
         int length = atoi(value.c_str());
         if (length > 0){
-            _has_body = true;
+            has_body = true;
             _contentLength = length;
         }
     }
@@ -248,8 +250,29 @@ void	HttpRequest::_checkPorts(Parser& parser)
     if (foundPort == false)
     {
         this->_statusError = BAD_REQUEST;
-        std::cout << "port" << "\n";
         throw RequestException();
+    }
+}
+
+void    HttpRequest::_getMaxBody(Parser& parser){
+    int servers = parser.getServers();
+
+   for (int i = 0; i < servers; i++) {
+        std::vector<std::string> listen = parser.getServerParam(i, "listen");
+
+        if (!listen.empty() && !listen[0].empty() && _port == listen[0])
+        {
+            std::vector<std::string> maxBody = parser.getServerParam(i, "client_max_body_size");
+            if (!maxBody.empty() && !maxBody[0].empty())
+            {
+                try {
+                    _maxBodySize = std::atoi(maxBody[0].c_str());
+                } catch (const std::exception& e) {
+                    std::cerr << "Error converting client_max_body_size to int: " << e.what() << std::endl;
+                }
+            }
+            break;
+        }
     }
 }
 
@@ -282,12 +305,16 @@ void    HttpRequest::_getBody(std::string request)
 {
     std::size_t bodyStart = request.find("\r\n\r\n") + 4;
 
-    _tooLarge = false;
+    tooLarge = false;
     if (bodyStart != std::string::npos)
         _body = request.substr(bodyStart);
-    if (_contentLength > (MAX_BODY_SIZE)){
-        this->_statusError = ENTITY_TOO_LARGE;
-        Logger::error << "Entity too large" << std::endl;
-        _tooLarge = true;
+    if (_maxBodySize != 0)
+    {
+        if (_contentLength > _maxBodySize)
+        {
+            this->_statusError = ENTITY_TOO_LARGE;
+            Logger::error << "Entity too large" << std::endl;
+            tooLarge = true;
+        }
     }
 }
