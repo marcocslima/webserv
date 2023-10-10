@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/10 17:51:04 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/10 20:08:17 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,8 @@ class HttpRequest
 		void	_checkPorts(Parser& parser);
 		void	_getBody(std::string request);
 
-		size_t								_contentLength;
-		size_t								_maxBodySize;
+		int								_contentLength;
+		int								_maxBodySize;
 		std::string							_uri;
 		std::string							_body;
 		std::string							_port;

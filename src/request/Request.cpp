@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/10 19:18:35 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/10 20:20:11 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,20 +257,16 @@ void	HttpRequest::_checkPorts(Parser& parser)
 void    HttpRequest::_getMaxBody(Parser& parser){
     int servers = parser.getServers();
 
-   for (int i = 0; i < servers; i++) {
+    std::cout << _maxBodySize << "\n";
+    for (int i = 0; i < servers; i++)
+    {
         std::vector<std::string> listen = parser.getServerParam(i, "listen");
 
         if (!listen.empty() && !listen[0].empty() && _port == listen[0])
         {
             std::vector<std::string> maxBody = parser.getServerParam(i, "client_max_body_size");
             if (!maxBody.empty() && !maxBody[0].empty())
-            {
-                try {
-                    _maxBodySize = std::atoi(maxBody[0].c_str());
-                } catch (const std::exception& e) {
-                    Logger::error << "Error converting client_max_body_size to int: " << e.what() << std::endl;
-                }
-            }
+                _maxBodySize = std::atoi(maxBody[0].c_str());
             break;
         }
     }
@@ -308,7 +304,7 @@ void    HttpRequest::_getBody(std::string request)
     tooLarge = false;
     if (bodyStart != std::string::npos)
         _body = request.substr(bodyStart);
-    if (_maxBodySize != 0)
+    if (_maxBodySize > 0)
     {
         if (_contentLength > _maxBodySize)
         {
@@ -316,5 +312,8 @@ void    HttpRequest::_getBody(std::string request)
             Logger::error << "Entity too large" << std::endl;
             tooLarge = true;
         }
+    } else if (_maxBodySize < 0)
+    {
+        Logger::error << "Invalid client_max_body_size." << std::endl;
     }
 }
