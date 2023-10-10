@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/07 20:54:46 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/10 05:53:57 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void Server::processClientData(int clientSocket)
     }
 
     this->_location.setup(this->_parser, this->_request.getPort(), this->_request.getUri());
-    res = this->_location.getLocationContent(this->_const);
+    res = this->_location.getLocationContent();
 
     char responseHeader[1024];
     sprintf(responseHeader,

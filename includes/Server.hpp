@@ -6,19 +6,18 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/05 23:08:15 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/10 05:53:49 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "Constants.hpp"
+#include "Libs.hpp"
 #include "Location.hpp"
 #include "Parser.hpp"
 #include "Poll.hpp"
 #include "Request.hpp"
 #include "Socket.hpp"
-#include "libs.hpp"
 
 struct SocketInfo {
     std::string ipAddress;
@@ -29,7 +28,6 @@ struct SocketInfo {
 
 class Server {
     private:
-    Constants             _const;
     Parser                _parser;
     std::vector<Socket *> _sockets;
     Poll                  _poll;
