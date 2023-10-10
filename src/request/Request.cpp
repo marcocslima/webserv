@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/10 19:04:33 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/10 19:18:35 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,7 +268,7 @@ void    HttpRequest::_getMaxBody(Parser& parser){
                 try {
                     _maxBodySize = std::atoi(maxBody[0].c_str());
                 } catch (const std::exception& e) {
-                    std::cerr << "Error converting client_max_body_size to int: " << e.what() << std::endl;
+                    Logger::error << "Error converting client_max_body_size to int: " << e.what() << std::endl;
                 }
             }
             break;
