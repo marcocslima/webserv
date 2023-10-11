@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/11 19:47:01 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/11 19:49:09 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,12 +81,12 @@ void HttpRequest::requestHttp(std::string request, Parser &parser)
             std::map<std::string, std::string>::const_iterator it;
             it = _header.find("Content-Type");
             if (it->second.find("multipart/form-data") != std::string::npos)
-                has_multipart = true;
+                _has_multipart = true;
             if (it->second.find("application/x-www-form-urlencoded") != std::string::npos)
-                has_form = true;
+                _has_form = true;
         }
 
-        if (has_multipart)
+        if (_has_multipart)
             _getMultipartData(request);
         else if (_has_body)
             _getBody(request);
@@ -266,14 +266,14 @@ void HttpRequest::_getBody(std::string request)
 {
     std::size_t bodyStart = request.find("\r\n\r\n") + 4;
 
-    tooLarge = false;
+    _tooLarge = false;
     if (bodyStart != std::string::npos)
         _body = request.substr(bodyStart);
     if (_maxBodySize > 0) {
         if (_contentLength > _maxBodySize) {
             this->_statusError = ENTITY_TOO_LARGE;
             Logger::error << "Entity too large" << std::endl;
-            tooLarge = true;
+            _tooLarge = true;
         }
     } else if (_maxBodySize < 0) {
         Logger::error << "Invalid client_max_body_size." << std::endl;
