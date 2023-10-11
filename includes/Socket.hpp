@@ -6,29 +6,14 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 20:59:33 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/20 19:57:05 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/10 05:42:55 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "Logger.hpp"
-
-#include <cerrno>
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <stdexcept>
-#include <string>
-
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-#define IP "127.0.0.1"
+#include "Libs.hpp"
 
 class Socket {
     private:

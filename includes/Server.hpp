@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/06 19:17:09 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/11 16:06:33 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,14 @@
 
 #include "AResponse.hpp"
 #include "DeleteMethod.hpp"
+#include "Libs.hpp"
+#include "Location.hpp"
 #include "Poll.hpp"
+#include "PostMethod.hpp"
 #include "Request.hpp"
 #include "Socket.hpp"
-# include "PostMethod.hpp"
 
-#include <fstream>
-#include <vector>
-
-struct SocketInfo
-{
+struct SocketInfo {
     std::string ipAddress;
     std::string port;
 
@@ -39,6 +37,7 @@ class Server {
     Poll                    _poll;
     bool                    _verbose;
     std::string             _defaultHtmlContent;
+    Location                _location;
 
     public:
     Server(void);

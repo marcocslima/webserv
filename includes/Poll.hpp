@@ -3,22 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Poll.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:48:07 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/17 11:54:41 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/10 05:42:55 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <poll.h>
-#include <unistd.h>
-#include <vector>
-
 #include "Logger.hpp"
-
-#include <algorithm>
+#include "Libs.hpp"
 
 class Poll {
     private:

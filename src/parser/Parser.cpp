@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:49:31 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/29 22:22:44 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/11 16:06:58 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,8 +127,7 @@ std::vector<int> Parser::getSizeServers()
         for (size_t i = 0; i < sizeServers.size(); i++) {
             if (i == 0) {
                 Logger::verbose << "Server size: " << sizeServers[i] << std::endl;
-            }
-            else {
+            } else {
                 Logger::verbose << "Location size"
                                 << "(server[" << i - 1 << "]): " << sizeServers[i] << std::endl;
             }
@@ -182,8 +181,7 @@ void Parser::setConfs(const char *fileconf)
                 locationBlocks.push_back(currentLocationBlock);
                 currentLocationBlock.clear();
                 insideLocationBlock = false;
-            }
-            else if (insideServerBlock && !insideLocationBlock) {
+            } else if (insideServerBlock && !insideLocationBlock) {
                 serverBlocks.push_back(currentServerBlock);
                 currentServerBlock.clear();
                 insideServerBlock = false;
@@ -228,8 +226,7 @@ std::string removeExtraSpaces(const std::string &input)
         if (input[i] != ' ') {
             result += input[i];
             previousCharWasSpace = false;
-        }
-        else if (!previousCharWasSpace) {
+        } else if (!previousCharWasSpace) {
             result += ' ';
             previousCharWasSpace = true;
         }

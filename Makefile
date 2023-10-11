@@ -3,14 +3,14 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+         #
+#    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/10/06 19:11:00 by jefernan         ###   ########.fr        #
+#    Updated: 2023/10/11 16:01:52 by pmitsuko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CHECK		=	✔
+CHECK		=	\342\234\224
 
 ## COLORS ##
 
@@ -19,7 +19,6 @@ GREEN		=	\e[92m
 YELLOW		=	\e[93m
 MAGENTA		=	\e[95m
 CYAN		=	\e[96m
-CHECK		= \342\234\224
 LOG			= printf "[$(CYAN)$(CHECK)$(RESET)] %s\n"
 
 # **************************************************************************** #
@@ -44,6 +43,7 @@ RM = rm -rf
 SRC_DIR = ./src/
 
 VPATH = $(SRC_DIR)\
+		$(SRC_DIR)location\
 		$(SRC_DIR)parser\
 		$(SRC_DIR)request\
 		$(SRC_DIR)response\
@@ -62,6 +62,11 @@ FILES = main.cpp\
 		AResponse.cpp\
 		PostMethod.cpp\
 		DeleteMethod.cpp\
+		Location.cpp\
+		Constants.cpp\
+		ErrorPage.cpp\
+		utils.cpp\
+
 
 # COMPILED_SOURCES #
 

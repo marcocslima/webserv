@@ -6,26 +6,18 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 03:18:36 by mcl               #+#    #+#             */
-/*   Updated: 2023/09/29 22:19:57 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/11 16:02:06 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <sstream>
-#include <string>
-#include <vector>
-
+#include "Libs.hpp"
 #include "Logger.hpp"
 
 typedef std::map<std::string, std::vector<std::string> > params;
 
-typedef struct
-{
+typedef struct {
     params  *server;
     params **locations;
 } conf_servers;
