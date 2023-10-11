@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/11 16:07:45 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/11 19:10:58 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,30 @@ std::string HttpRequest::getMethod(void) const { return (this->_method); }
 
 std::string HttpRequest::getPort(void) const { return (this->_port); }
 
-std::string HttpRequest::getUri(void) const { return (this->_uri); }
+std::string HttpRequest::getUri( void ) const
+{
+	return (this->_uri);
+}
 
-std::string HttpRequest::getHttp(void) const { return (this->_httpVersion); }
+std::string HttpRequest::getHttp( void ) const
+{
+	return (this->_httpVersion);
+}
+
+std::string HttpRequest::getBody( void ) const
+{
+	return (this->_body);
+}
+
+std::string HttpRequest::getBoundary( void ) const
+{
+	return (this->_boundary);
+}
+
+std::vector<std::string> HttpRequest::getQuery( void ) const
+{
+	return (this->_paramQuery);
+}
 
 std::string HttpRequest::getBody(void) const { return (this->_body); }
 
@@ -186,14 +207,154 @@ void HttpRequest::_findHeaders(std::string key, std::string value)
     }
 }
 
-void HttpRequest::_checkLocations(Parser &parser)
+void	HttpRequest::requestHttp(std::string request, Parser& parser)
 {
-    std::vector<int> sizeServers   = parser.getSizeServers();
-    bool             foundLocation = false;
+    size_t firstLineEnd = request.find("\r\n");
+    if (firstLineEnd == std::string::npos)
+    {
+        this->_statusError = BAD_REQUEST;
+        return ;
+    }
+
+    std::string requestLine = request.substr(0, firstLineEnd);
+    std::string headersPart = request.substr(firstLineEnd + 2);
+    try {
+        _parseFirstLine(requestLine);
+        _parseHeaders(headersPart);
+        _checkLocations(parser);
+        _checkPorts(parser);
+
+        if (_has_body)
+        {
+            _has_multipart = false;
+            _has_form = false;
+            std::map<std::string, std::string>::const_iterator it;
+            it = _header.find("Content-Type");
+            if (it->second.find("multipart/form-data") != std::string::npos)
+                _has_multipart = true;
+            if (it->second.find("application/x-www-form-urlencoded") != std::string::npos)
+                _has_form = true;
+        }
+
+        if (_has_multipart)
+            _getMultipartData(request);
+        else if (_has_body)
+            _getBody(request);
+
+    } catch (RequestException const &e) {
+        Logger::error << e.what() << " " << this->_statusError << std::endl;
+    }
+}
+
+void	HttpRequest::_parseFirstLine(std::string& requestLine)
+{
+    std::istringstream iss(requestLine);
+
+    if (!(iss >> this->_method >> this->_uri >> this->_httpVersion)
+        || requestLine != this->_method + " " + this->_uri + " " + this->_httpVersion
+        || std::find(_allowMethods.begin(), _allowMethods.end(), _method) == _allowMethods.end()
+        || this->_uri[0] != '/')
+    {
+        this->_statusError = BAD_REQUEST;
+        std::cout << "first" << "\n";
+        throw RequestException();
+    }
+
+    if (this->_httpVersion != "HTTP/1.1")
+    {
+        this->_statusError = HTTP_VERSION_NOT_SUPPORTED;
+        throw RequestException();
+    }
+    size_t pos = this->_uri.find('?');
+    if (pos != std::string::npos)
+    {
+        _parseQuery();
+        this->_uri.erase(pos);
+    }
+}
+
+void  HttpRequest::_parseQuery(){
+    size_t posQuery = this->_uri.find("?");
+    std::string query;
+
+    if (posQuery != std::string::npos)
+    {
+        query = this->_uri.substr(posQuery + 1);
+        std::string::size_type start = 0;
+        while (start < query.length())
+        {
+            std::string::size_type equal = query.find('=', start);
+            if (equal != std::string::npos)
+            {
+                std::string::size_type ampersand = query.find('&', equal);
+                if (ampersand != std::string::npos)
+                {
+                    _paramQuery.push_back(query.substr(equal + 1, ampersand - equal - 1));
+                    start = ampersand + 1;
+                } else {
+                    _paramQuery.push_back(query.substr(equal + 1));
+                    break;
+                }
+            } else
+                break;
+        }
+    }
+}
+
+void HttpRequest::_parseHeaders(const std::string& request)
+{
+    std::istringstream iss(request);
+    std::string headerLine;
+    _has_body = false;
+
+    while (std::getline(iss, headerLine, '\r'))
+    {
+        headerLine.erase(std::remove(headerLine.begin(), headerLine.end(), '\n'), headerLine.end());
+
+        if (!headerLine.empty())
+        {
+            size_t colonPos = headerLine.find(": ");
+
+            if (colonPos != std::string::npos)
+            {
+                std::string key = headerLine.substr(0, colonPos);
+                std::string value = headerLine.substr(colonPos + 1);
+                _header[key] = value;
+                _findHeaders(key, value);
+            }
+        }
+    }
+}
+
+void HttpRequest::_findHeaders(std::string key,std::string value )
+{
+    if (key == "Host")
+    {
+        size_t pos = value.find(":");
+        if (pos != std::string::npos)
+        {
+            std::string tmp = value.substr(pos + 1);
+            this->_port = tmp;
+        }
+    }
+    if (key == "Content-Length")
+    {
+        int length = atoi(value.c_str());
+        if (length > 0)
+            _has_body = true;
+    }
+}
+
+void	HttpRequest::_checkLocations(Parser& parser)
+{
+    std::vector<int> sizeServers = parser.getSizeServers();
+    bool    foundLocation = false;
 
     int loc = 1;
-    for (int i = 0; i < sizeServers[0]; i++) {
-        for (int j = 0; j < sizeServers[loc]; j++) {
+    for (int i = 0; i < sizeServers[0]; i++)
+    {
+        for (int j = 0; j < sizeServers[loc]; j++)
+        {
             std::vector<std::string> location = parser.getLocationParam(i, j, "location");
             if (!location.empty() && _uri.find(location[0]) == 0)
                 foundLocation = true;
@@ -204,15 +365,16 @@ void HttpRequest::_checkLocations(Parser &parser)
         Logger::error << "Invalid location." << std::endl;
 }
 
-void HttpRequest::_checkPorts(Parser &parser)
+void	HttpRequest::_checkPorts(Parser& parser)
 {
-    int  servers   = parser.getServers();
-    bool foundPort = false;
+    int servers = parser.getServers();
+    bool    foundPort = false;
 
-    for (int i = 0; i < servers; i++) {
+    for (int i = 0; i < servers; i++)
+    {
         std::vector<std::string> listen = parser.getServerParam(i, "listen");
         if (!_port.empty() && _port.find(listen[0]) == 0)
-            foundPort = true;
+                foundPort = true;
     }
     if (foundPort == false) {
         this->_statusError = BAD_REQUEST;

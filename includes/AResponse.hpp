@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   AResponse.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 06:59:01 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/06 19:24:44 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/11 19:02:34 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "../includes/Parser.hpp"
-#include "../includes/Logger.hpp"
+#include "Parser.hpp"
+#include "Request.hpp"
 #include <iostream>
 #include <sstream>
 #include <algorithm>

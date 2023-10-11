@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/11 16:06:33 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/11 19:07:58 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@
 #include "Request.hpp"
 #include "Socket.hpp"
 
-struct SocketInfo {
+struct SocketInfo
+{
     std::string ipAddress;
     std::string port;
 

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
+#    By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/10/11 16:01:52 by pmitsuko         ###   ########.fr        #
+#    Updated: 2023/10/11 19:01:56 by mcl              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,6 +44,7 @@ SRC_DIR = ./src/
 
 VPATH = $(SRC_DIR)\
 		$(SRC_DIR)location\
+		$(SRC_DIR)cgi\
 		$(SRC_DIR)parser\
 		$(SRC_DIR)request\
 		$(SRC_DIR)response\
@@ -66,7 +67,8 @@ FILES = main.cpp\
 		Constants.cpp\
 		ErrorPage.cpp\
 		utils.cpp\
-
+		Cgi.cpp\
+		Utils.cpp
 
 # COMPILED_SOURCES #
 
