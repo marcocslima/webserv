@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/11 19:29:21 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/11 19:47:01 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ void HttpRequest::init()
     _httpVersion   = "";
     _statusError   = "";
     _contentLength = 0;
+    _maxBodySize   = 0;
     _paramQuery.clear();
     _header.clear();
 }
@@ -72,6 +73,7 @@ void HttpRequest::requestHttp(std::string request, Parser &parser)
         _parseHeaders(headersPart);
         _checkLocations(parser);
         _checkPorts(parser);
+        _getMaxBody(parser);
 
         if (_has_body) {
             _has_multipart = false;
@@ -79,12 +81,12 @@ void HttpRequest::requestHttp(std::string request, Parser &parser)
             std::map<std::string, std::string>::const_iterator it;
             it = _header.find("Content-Type");
             if (it->second.find("multipart/form-data") != std::string::npos)
-                _has_multipart = true;
+                has_multipart = true;
             if (it->second.find("application/x-www-form-urlencoded") != std::string::npos)
-                _has_form = true;
+                has_form = true;
         }
 
-        if (_has_multipart)
+        if (has_multipart)
             _getMultipartData(request);
         else if (_has_body)
             _getBody(request);
@@ -216,9 +218,24 @@ void HttpRequest::_checkPorts(Parser &parser)
     }
     if (foundPort == false) {
         this->_statusError = BAD_REQUEST;
-        std::cout << "port"
-                  << "\n";
         throw RequestException();
+    }
+}
+
+void HttpRequest::_getMaxBody(Parser &parser)
+{
+    int servers = parser.getServers();
+
+    std::cout << _maxBodySize << "\n";
+    for (int i = 0; i < servers; i++) {
+        std::vector<std::string> listen = parser.getServerParam(i, "listen");
+
+        if (!listen.empty() && !listen[0].empty() && _port == listen[0]) {
+            std::vector<std::string> maxBody = parser.getServerParam(i, "client_max_body_size");
+            if (!maxBody.empty() && !maxBody[0].empty())
+                _maxBodySize = std::atoi(maxBody[0].c_str());
+            break;
+        }
     }
 }
 
@@ -249,12 +266,16 @@ void HttpRequest::_getBody(std::string request)
 {
     std::size_t bodyStart = request.find("\r\n\r\n") + 4;
 
-    _tooLarge = false;
+    tooLarge = false;
     if (bodyStart != std::string::npos)
         _body = request.substr(bodyStart);
-    if (_contentLength > (MAX_BODY_SIZE)) {
-        this->_statusError = ENTITY_TOO_LARGE;
-        Logger::error << "Entity too large" << std::endl;
-        _tooLarge = true;
+    if (_maxBodySize > 0) {
+        if (_contentLength > _maxBodySize) {
+            this->_statusError = ENTITY_TOO_LARGE;
+            Logger::error << "Entity too large" << std::endl;
+            tooLarge = true;
+        }
+    } else if (_maxBodySize < 0) {
+        Logger::error << "Invalid client_max_body_size." << std::endl;
     }
 }

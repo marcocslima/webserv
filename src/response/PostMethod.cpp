@@ -6,29 +6,26 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/05 16:26:58 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/10 17:55:29 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PostMethod.hpp"
 
-PostMethod::PostMethod()
-{}
+PostMethod::PostMethod() {}
 
-PostMethod::~PostMethod()
-{}
+PostMethod::~PostMethod() {}
 
-PostMethod::PostMethod(HttpRequest request): _httpRequest(request)
-{}
+PostMethod::PostMethod(HttpRequest request): _httpRequest(request) {}
 
 std::string PostMethod::handleMethod(std::string uri)
 {
     static_cast<void>(uri);
     created = false;
 
-    if (_httpRequest._has_body && _httpRequest._tooLarge == false)
+    if (_httpRequest.has_body && _httpRequest.tooLarge == false)
     {
-        if (_httpRequest._has_multipart)
+        if (_httpRequest.has_multipart)
         {
             handleMultipart();
             if (created && _file == true)
@@ -44,13 +41,13 @@ std::string PostMethod::handleMethod(std::string uri)
                 return (_responseHeader);
             }
         }
-        if (_httpRequest._has_form)
+        if (_httpRequest.has_form)
             handleForm();
 
         setResponse("200", "OK", "<html><body><h1>200 OK</h1></body></html>");
         Logger::info << "Post request completed successfully." << std::endl;
     }
-    else if (!_httpRequest._has_body)
+    else if (!_httpRequest.has_body)
     {
         setResponse("204", "No content","<html><body><h1>204 No Content</h1></body></html>");
         Logger::info << "No content." << std::endl;

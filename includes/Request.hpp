@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/11 19:04:57 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/11 19:43:36 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,8 @@ class HttpRequest {
     void _checkPorts(Parser &parser);
     void _getBody(std::string request);
 
-    size_t                             _contentLength;
+    int                                _contentLength;
+    int                                _maxBodySize;
     std::string                        _uri;
     std::string                        _body;
     std::string                        _port;
