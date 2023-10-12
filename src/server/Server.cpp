@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/12 11:19:11 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/12 14:57:40 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,29 +19,7 @@ Server::~Server(void) {}
 std::string Server::handleMethod(std::string uri)
 {
     (void)uri;
-    std::string resorcePath = getDir();
-    std::string responseHeader;
-
-    if (verifyServerNames(this->_request, this->_parser) == 0) {
-        _response.version        = "HTTP/1.1";
-        _response.status_code    = "404";
-        _response.status_message = "Not Found";
-        _response.content_type   = "text/html";
-        _response.content_length = "0";
-        _response.body           = "<html><body><h1>404 Not Found</h1></body></html>";
-        responseHeader           = assembleResponse();
-        Logger::info << "Host not found!" << std::endl;
-    } else {
-        _response.version        = "HTTP/1.1";
-        _response.status_code    = "500";
-        _response.status_message = "Internal Server Error";
-        _response.content_type   = "text/html";
-        _response.content_length = "0";
-        _response.body           = "<html><body><h1>500 Internal Server Error</h1></body></html>";
-        responseHeader           = assembleResponse();
-        Logger::info << "Internal Server Error." << std::endl;
-    }
-    return responseHeader;
+    return NULL;
 }
 
 void Server::initParser(const char *configFile) { this->_parser.init(configFile, this->_verbose); }
@@ -149,13 +127,20 @@ void Server::processClientData(int clientSocket)
                      << " on socket " << clientSocket << std::endl;
         this->_poll.addFdToClose(clientSocket);
     } else if (verifyServerNames(this->_request, this->_parser) == 0) {
-        char       *responseHeader;
-        std::string responseBase = handleMethod(_request.getUri());
-        responseHeader           = const_cast<char *>(responseBase.c_str());
+
+        std::ifstream uploadHtmlFile("www/error/400.html");
+        std::string   uploadHtmlContent((std::istreambuf_iterator<char>(uploadHtmlFile)),
+                                      std::istreambuf_iterator<char>());
+
+        char responseHeader[1024];
+        sprintf(responseHeader,
+                "HTTP/1.1 400 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
+                (int)uploadHtmlContent.length());
 
         send(clientSocket, responseHeader, strlen(responseHeader), 0);
 
-        Logger::info << "Serving the 404 default page." << std::endl;
+        send(clientSocket, uploadHtmlContent.c_str(), uploadHtmlContent.length(), 0);
+
     } else {
 
         size_t start = request.find(_request.getMethod());
