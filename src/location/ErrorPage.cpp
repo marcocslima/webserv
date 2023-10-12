@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 05:34:14 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/10 18:13:13 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/12 14:18:24 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ responseData ErrorPage::getErrorPageContent(std::vector<std::string> errorPage,
     std::string standardErrorFile = "/";
     standardErrorFile += statusCode;
     standardErrorFile += ".html";
-    Logger::warning << "Standard File: " << standardErrorFile << std::endl;
     res             = getContent(DEFAULT_ERROR_ROOT, standardErrorFile);
     res.statusCode  = statusCode;
     res.contentType = "text/html";
