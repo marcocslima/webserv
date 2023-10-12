@@ -6,7 +6,7 @@
 #    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/10/12 14:15:04 by pmitsuko         ###   ########.fr        #
+#    Updated: 2023/10/12 16:44:10 by pmitsuko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,14 +43,13 @@ RM = rm -rf
 SRC_DIR = ./src/
 
 VPATH = $(SRC_DIR)\
-		$(SRC_DIR)location\
 		$(SRC_DIR)cgi\
 		$(SRC_DIR)parser\
 		$(SRC_DIR)request\
 		$(SRC_DIR)response\
 		$(SRC_DIR)server\
 		$(SRC_DIR)utils\
-		$(SRC_DIR)response\
+
 # FILES #
 
 FILES = main.cpp\
