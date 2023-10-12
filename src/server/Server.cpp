@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/11 19:47:13 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/12 15:25:54 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,27 +79,29 @@ bool Server::acceptNewConnection(size_t i)
 
 void Server::processClientData(int clientSocket)
 {
-    char        buffer[1024] = {0};
-    int         bytesRead, bytes = 0;
-    std::string request;
+    char         buffer[1024] = {0};
+    int          bytesRead, bytes = 0;
+    std::string  clientReq;
+    responseData res;
 
+    // TODO: essa lógica de leitura não poderia estar em outra função?
     while ((bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0)) > 0) {
-        request.append(buffer, bytesRead);
-        if (request.find("Expect: 100-continue") != std::string::npos) {
+        clientReq.append(buffer, bytesRead);
+        if (clientReq.find("Expect: 100-continue") != std::string::npos) {
             sleep(4);
             continue;
         }
         buffer[bytesRead] = '\0';
         bytes += bytesRead;
-        if (request.find("multipart/form-data") != std::string::npos) {
+        if (clientReq.find("multipart/form-data") != std::string::npos) {
             std::string boundary;
-            size_t      contentTypePos = request.find("Content-Type: ");
+            size_t      contentTypePos = clientReq.find("Content-Type: ");
 
             if (contentTypePos != std::string::npos) {
-                size_t lineEnd = request.find("\r\n", contentTypePos);
+                size_t lineEnd = clientReq.find("\r\n", contentTypePos);
                 if (lineEnd != std::string::npos) {
                     std::string contentTypeLine
-                        = request.substr(contentTypePos, lineEnd - contentTypePos);
+                        = clientReq.substr(contentTypePos, lineEnd - contentTypePos);
                     size_t boundaryPos = contentTypeLine.find("boundary=");
                     if (boundaryPos != std::string::npos) {
                         boundary = contentTypeLine.substr(boundaryPos + 9);
@@ -107,9 +109,9 @@ void Server::processClientData(int clientSocket)
                 }
             }
             std::string boundaryEnd = "\r\n--" + boundary + "--";
-            if (request.find(boundaryEnd) != std::string::npos)
+            if (clientReq.find(boundaryEnd) != std::string::npos)
                 break;
-        } else if (request.find("\r\n\r\n") != std::string::npos) {
+        } else if (clientReq.find("\r\n\r\n") != std::string::npos) {
             break;
         }
     }
@@ -117,65 +119,31 @@ void Server::processClientData(int clientSocket)
         Logger::info << "Client connection closed"
                      << " on socket " << clientSocket << std::endl;
         this->_poll.addFdToClose(clientSocket);
-    } else {
-        _request.requestHttp(request, _parser);
-
-        size_t start = request.find(_request.getMethod());
-        size_t end   = request.find(_request.getHttp());
-
-        if (start != std::string::npos && end != std::string::npos) {
-            if (_request.getUri() == "/") {
-                char responseHeader[1024];
-
-                sprintf(responseHeader,
-                        "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
-                        (int)_defaultHtmlContent.length());
-
-                send(clientSocket, responseHeader, strlen(responseHeader), 0);
-
-                send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
-
-                Logger::info << "Serving the default page." << std::endl;
-
-                if (this->_verbose) {
-                    Logger::verbose << "Request: " << request << std::endl;
-                    Logger::verbose << "Response: " << responseHeader << _defaultHtmlContent
-                                    << std::endl;
-                }
-            }
-            if (_request.getUri() == "/form") {
-                std::ifstream uploadHtmlFile("www/form.html");
-                std::string   uploadHtmlContent((std::istreambuf_iterator<char>(uploadHtmlFile)),
-                                              std::istreambuf_iterator<char>());
-
-                char responseHeader[1024];
-                sprintf(responseHeader,
-                        "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
-                        (int)uploadHtmlContent.length());
-
-                send(clientSocket, responseHeader, strlen(responseHeader), 0);
-
-                send(clientSocket, uploadHtmlContent.c_str(), uploadHtmlContent.length(), 0);
-            }
-            if (_request.getUri() == "/upload") {
-                std::ifstream uploadHtmlFile("www/upload.html");
-                std::string   uploadHtmlContent((std::istreambuf_iterator<char>(uploadHtmlFile)),
-                                              std::istreambuf_iterator<char>());
-
-                char responseHeader[1024];
-                sprintf(responseHeader,
-                        "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n",
-                        (int)uploadHtmlContent.length());
-
-                send(clientSocket, responseHeader, strlen(responseHeader), 0);
-
-                send(clientSocket, uploadHtmlContent.c_str(), uploadHtmlContent.length(), 0);
-            }
-            PostMethod _post(_request);
-            if (_request.getMethod() == "POST")
-                _post.handleMethod(_request.getUri());
-        }
+        return;
     }
+    this->_request.requestHttp(clientReq, this->_parser);
+
+    size_t methodPosition = clientReq.find(this->_request.getMethod());
+    size_t httpPosition   = clientReq.find(this->_request.getHttp());
+    if (methodPosition == std::string::npos || httpPosition == std::string::npos) {
+        return;
+    }
+    if (this->_verbose) {
+        Logger::verbose << clientReq << std::endl;
+    }
+    res = this->_responseHandlers.exec(this->_parser, this->_request);
+    if (res.contentLength < 0) {
+        return;
+    }
+    char responseHeader[1024];
+    sprintf(responseHeader,
+            "HTTP/1.1 %s\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n",
+            res.statusCode.c_str(),
+            res.contentType.c_str(),
+            res.contentLength);
+    send(clientSocket, responseHeader, strlen(responseHeader), 0);
+    send(clientSocket, res.content.c_str(), res.contentLength, 0);
+    return;
 }
 
 int Server::run(void)
