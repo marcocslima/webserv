@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Libs.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:12:50 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/11 16:04:17 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/12 04:43:28 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 #include <poll.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #define IP "127.0.0.1"

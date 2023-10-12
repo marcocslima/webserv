@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/11 19:07:58 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/12 03:20:40 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,14 @@
 #include "Request.hpp"
 #include "Socket.hpp"
 
-struct SocketInfo
-{
+struct SocketInfo {
     std::string ipAddress;
     std::string port;
 
     SocketInfo(const std::string &ip, std::string p) : ipAddress(ip), port(p) {}
 };
 
-class Server {
+class Server : public AHttpResponse {
     private:
     std::vector<SocketInfo> _socketsInfo;
     HttpRequest             _request;
@@ -44,13 +43,14 @@ class Server {
     Server(void);
     ~Server(void);
 
-    void initParser(const char *configFile);
-    void initSockets(void);
-    void initPoll(void);
-    int  run(void);
-    bool acceptNewConnection(size_t i);
-    void processClientData(int clientSocket);
-    void closeServer(void);
+    void        initParser(const char *configFile);
+    void        initSockets(void);
+    void        initPoll(void);
+    int         run(void);
+    bool        acceptNewConnection(size_t i);
+    void        processClientData(int clientSocket);
+    void        closeServer(void);
+    std::string handleMethod(std::string uri);
 
     void setVerbose(bool verbose);
 };

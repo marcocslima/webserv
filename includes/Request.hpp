@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/11 19:43:36 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/12 05:17:31 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ class HttpRequest {
 
     std::string                        getMethod(void) const;
     std::string                        getPort(void) const;
+    std::string                        getHost(void) const;
     std::string                        getUri(void) const;
     std::string                        getHttp(void) const;
     std::string                        getBody(void) const;
@@ -52,12 +53,14 @@ class HttpRequest {
     void _checkLocations(Parser &parser);
     void _checkPorts(Parser &parser);
     void _getBody(std::string request);
+    void _getHost();
 
     int                                _contentLength;
     int                                _maxBodySize;
     std::string                        _uri;
     std::string                        _body;
     std::string                        _port;
+    std::string                        _host;
     std::string                        _method;
     std::string                        _boundary;
     std::string                        _httpVersion;

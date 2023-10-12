@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/11 19:49:09 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/12 05:19:22 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ HttpRequest::~HttpRequest() {}
 std::string HttpRequest::getMethod(void) const { return (this->_method); }
 
 std::string HttpRequest::getPort(void) const { return (this->_port); }
+
+std::string HttpRequest::getHost(void) const { return (this->_host); }
 
 std::string HttpRequest::getUri(void) const { return (this->_uri); }
 
@@ -74,6 +76,7 @@ void HttpRequest::requestHttp(std::string request, Parser &parser)
         _checkLocations(parser);
         _checkPorts(parser);
         _getMaxBody(parser);
+        _getHost();
 
         if (_has_body) {
             _has_multipart = false;
@@ -278,4 +281,15 @@ void HttpRequest::_getBody(std::string request)
     } else if (_maxBodySize < 0) {
         Logger::error << "Invalid client_max_body_size." << std::endl;
     }
+}
+
+void HttpRequest::_getHost()
+{
+    std::string       uri = _header["Host"];
+    std::stringstream ss(uri);
+
+    std::string host;
+    if (std::getline(ss, host, ':'))
+        host.erase(std::remove_if(host.begin(), host.end(), ::isspace), host.end());
+    _host = host;
 }
