@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/12 05:19:22 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/12 11:26:46 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,7 +229,6 @@ void HttpRequest::_getMaxBody(Parser &parser)
 {
     int servers = parser.getServers();
 
-    std::cout << _maxBodySize << "\n";
     for (int i = 0; i < servers; i++) {
         std::vector<std::string> listen = parser.getServerParam(i, "listen");
 

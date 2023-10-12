@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/12 05:03:49 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/12 11:19:11 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,12 +152,12 @@ void Server::processClientData(int clientSocket)
         char       *responseHeader;
         std::string responseBase = handleMethod(_request.getUri());
         responseHeader           = const_cast<char *>(responseBase.c_str());
+
         send(clientSocket, responseHeader, strlen(responseHeader), 0);
-        send(clientSocket, _defaultHtmlContent.c_str(), _defaultHtmlContent.length(), 0);
+
         Logger::info << "Serving the 404 default page." << std::endl;
     } else {
 
-        std::cout << "Request host: " << _request.getHost() << std::endl;
         size_t start = request.find(_request.getMethod());
         size_t end   = request.find(_request.getHttp());
 
