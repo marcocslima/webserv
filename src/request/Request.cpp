@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/11 19:49:09 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/12 15:35:03 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ const char *HttpRequest::RequestException::what() const throw()
 
 void HttpRequest::init()
 {
-    _allowMethods.push_back("GET");
-    _allowMethods.push_back("POST");
-    _allowMethods.push_back("DELETE");
+    // _allowMethods.push_back("GET");
+    // _allowMethods.push_back("POST");
+    // _allowMethods.push_back("DELETE");
     _has_body      = false;
     _has_form      = false;
     _has_multipart = false;
@@ -71,8 +71,8 @@ void HttpRequest::requestHttp(std::string request, Parser &parser)
     try {
         _parseFirstLine(requestLine);
         _parseHeaders(headersPart);
-        _checkLocations(parser);
-        _checkPorts(parser);
+        // _checkLocations(parser);
+        // _checkPorts(parser);
         _getMaxBody(parser);
 
         if (_has_body) {
@@ -103,7 +103,6 @@ void HttpRequest::_parseFirstLine(std::string &requestLine)
 
     if (!(iss >> this->_method >> this->_uri >> this->_httpVersion)
         || requestLine != this->_method + " " + this->_uri + " " + this->_httpVersion
-        || std::find(_allowMethods.begin(), _allowMethods.end(), _method) == _allowMethods.end()
         || this->_uri[0] != '/') {
         this->_statusError = BAD_REQUEST;
         throw RequestException();
@@ -188,45 +187,44 @@ void HttpRequest::_findHeaders(std::string key, std::string value)
     }
 }
 
-void HttpRequest::_checkLocations(Parser &parser)
-{
-    std::vector<int> sizeServers   = parser.getSizeServers();
-    bool             foundLocation = false;
+// void HttpRequest::_checkLocations(Parser &parser)
+// {
+//     std::vector<int> sizeServers   = parser.getSizeServers();
+//     bool             foundLocation = false;
 
-    int loc = 1;
-    for (int i = 0; i < sizeServers[0]; i++) {
-        for (int j = 0; j < sizeServers[loc]; j++) {
-            std::vector<std::string> location = parser.getLocationParam(i, j, "location");
-            if (!location.empty() && _uri.find(location[0]) == 0)
-                foundLocation = true;
-        }
-        loc++;
-    }
-    if (foundLocation == false)
-        Logger::error << "Invalid location." << std::endl;
-}
+//     int loc = 1;
+//     for (int i = 0; i < sizeServers[0]; i++) {
+//         for (int j = 0; j < sizeServers[loc]; j++) {
+//             std::vector<std::string> location = parser.getLocationParam(i, j, "location");
+//             if (!location.empty() && _uri.find(location[0]) == 0)
+//                 foundLocation = true;
+//         }
+//         loc++;
+//     }
+//     if (foundLocation == false)
+//         Logger::error << "Invalid location." << std::endl;
+// }
 
-void HttpRequest::_checkPorts(Parser &parser)
-{
-    int  servers   = parser.getServers();
-    bool foundPort = false;
+// void HttpRequest::_checkPorts(Parser &parser)
+// {
+//     int  servers   = parser.getServers();
+//     bool foundPort = false;
 
-    for (int i = 0; i < servers; i++) {
-        std::vector<std::string> listen = parser.getServerParam(i, "listen");
-        if (!_port.empty() && _port.find(listen[0]) == 0)
-            foundPort = true;
-    }
-    if (foundPort == false) {
-        this->_statusError = BAD_REQUEST;
-        throw RequestException();
-    }
-}
+//     for (int i = 0; i < servers; i++) {
+//         std::vector<std::string> listen = parser.getServerParam(i, "listen");
+//         if (!_port.empty() && _port.find(listen[0]) == 0)
+//             foundPort = true;
+//     }
+//     if (foundPort == false) {
+//         this->_statusError = BAD_REQUEST;
+//         throw RequestException();
+//     }
+// }
 
 void HttpRequest::_getMaxBody(Parser &parser)
 {
     int servers = parser.getServers();
 
-    std::cout << _maxBodySize << "\n";
     for (int i = 0; i < servers; i++) {
         std::vector<std::string> listen = parser.getServerParam(i, "listen");
 
