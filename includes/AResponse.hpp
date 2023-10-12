@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 06:59:01 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/12 03:15:26 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/12 05:24:03 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,12 @@
 #include "Libs.hpp"
 #include "Parser.hpp"
 #include "Request.hpp"
-// #include <iostream>
-// #include <sstream>
-// #include <algorithm>
-// #include <string>
-// #include <vector>
-// #include <map>
-// #include <cstdio>
-// #include <unistd.h>
 
 struct Response {
-    std::string version;        // HTTP/1.1
-    std::string status_code;    // 200
-    std::string status_message; // OK
-    std::string content_type;   // text/html
+    std::string version;
+    std::string status_code;
+    std::string status_message;
+    std::string content_type;
     std::string content_length;
     std::string body;
 };
