@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 18:56:35 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 20:34:09 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:46:33 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,7 @@ std::map<std::string, std::string> Constants::setStatusCodes()
     return (statusCodes);
 }
 
-std::set<std::string> setCgiSupported()
+std::set<std::string> Constants::setCgiSupported()
 {
     std::set<std::string> data;
 
