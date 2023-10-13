@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/13 12:19:39 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 19:19:56 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ std::vector<std::string> HttpRequest::getErrorPageConfig(void) const
 {
     return (this->_errorPageConfig);
 }
+
+std::vector<std::string> HttpRequest::getLimitExcept(void) const { return (this->_limitExcept); }
 
 const char *HttpRequest::RequestException::what() const throw()
 {
@@ -263,6 +265,7 @@ void HttpRequest::_getServerParam(Parser &parser)
     this->_locationSize  = serverSize[this->_serverIndex + 1];
     this->_locationIndex = this->_findLocationIndex(parser);
     this->_setRoot(parser);
+    this->_setLimitExcept(parser);
     this->_setErrorPage(parser);
 }
 
@@ -346,5 +349,14 @@ void HttpRequest::_setErrorPage(Parser &parser)
         }
     }
     this->_errorPageConfig = parser.getServerParam(this->_serverIndex, "error_page");
+    return;
+}
+
+void HttpRequest::_setLimitExcept(Parser &parser)
+{
+    if (this->_locationSize != this->_locationIndex) {
+        this->_limitExcept
+            = parser.getLocationParam(this->_serverIndex, this->_locationIndex, "limit_except");
+    }
     return;
 }

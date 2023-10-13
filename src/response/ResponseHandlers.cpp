@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 17:06:17 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 19:20:00 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,11 @@ responseData ResponseHandlers::exec(Parser &parser, HttpRequest &request)
 {
     this->_res = setResponseData(0, "", "", -1);
     // TODO: check server_Name
-    // TODO: check method
+
+    if (!this->_methodAllowed(request)) {
+        return (this->_errorPage.getErrorPageContent(
+            request.getErrorPageConfig(), 405, request.getUri(), request.getRoot()));
+    }
     switch (this->_resolveOption(request.getMethod())) {
         case GET:
             this->_getHandler(request, parser);
@@ -35,6 +39,19 @@ responseData ResponseHandlers::exec(Parser &parser, HttpRequest &request)
             break;
     }
     return (this->_res);
+}
+
+bool ResponseHandlers::_methodAllowed(HttpRequest &request)
+{
+    if (request.getLimitExcept().empty()) {
+        return (true);
+    }
+    for (size_t i = 0; i < request.getLimitExcept().size(); i++) {
+        if (request.getLimitExcept()[i] == request.getMethod()) {
+            return (true);
+        }
+    }
+    return (false);
 }
 
 int ResponseHandlers::_resolveOption(std::string method)

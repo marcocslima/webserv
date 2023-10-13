@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 17:08:10 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 17:12:59 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 19:30:11 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,18 @@ setResponseData(int status, std::string contentType, std::string content, int co
     res.content       = content;
     res.contentLength = contentLength;
     return (res);
+}
+
+std::string vector_join(std::vector<std::string> vec, std::string delimiter)
+{
+    std::string                        result = "";
+    std::vector<std::string>::iterator it;
+
+    for (it = vec.begin(); it != vec.end(); ++it) {
+        result += *it;
+        result += delimiter;
+    }
+    return (result);
 }
 
 template <typename ValueType>
