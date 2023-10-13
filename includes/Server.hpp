@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/12 14:11:50 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 12:03:10 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ class Server {
     Poll                    _poll;
     bool                    _verbose;
     std::string             _defaultHtmlContent;
-    Location                _location;
     ResponseHandlers        _responseHandlers;
 
     public:

@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:42:45 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/12 14:45:06 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 12:18:02 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ class ResponseHandlers {
 
     void _initResponseData(void);
     int  _resolveOption(std::string method);
-    void _getHandler(Parser &parser, std::string port, std::string uri);
+    void _getHandler(HttpRequest &request, Parser &parser);
     void _postHandler(HttpRequest &request);
     void _deleteHandler(std::string uri);
 
