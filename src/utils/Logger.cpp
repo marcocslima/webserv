@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 23:49:57 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 05:18:12 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 16:22:37 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ Logger::~Logger(void) {}
 std::string Logger::LogEntry::_timestamp(void)
 {
     std::time_t currentTime;
-    std::tm *   localTime;
+    std::tm    *localTime;
     char        timeStr[24];
 
     currentTime = std::time(0);
