@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/12 15:25:54 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 16:48:35 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,20 +121,40 @@ void Server::processClientData(int clientSocket)
         this->_poll.addFdToClose(clientSocket);
         return;
     }
-    this->_request.requestHttp(clientReq, this->_parser);
+    if (this->_request.requestHttp(clientReq, this->_parser))
+    {
+        std::string status = _request.statusCode;
+        std::string content = _request.content;
 
-    size_t methodPosition = clientReq.find(this->_request.getMethod());
-    size_t httpPosition   = clientReq.find(this->_request.getHttp());
-    if (methodPosition == std::string::npos || httpPosition == std::string::npos) {
+        res.content = content;
+        res.statusCode = status;
+        res.contentType = "text/html";
+        res.contentLength = content.size();
+
+        setResponse(res, clientSocket);
+        return ;
+    }
+    else
+    {
+        size_t methodPosition = clientReq.find(this->_request.getMethod());
+        size_t httpPosition   = clientReq.find(this->_request.getHttp());
+        if (methodPosition == std::string::npos || httpPosition == std::string::npos) {
+            return;
+        }
+        if (this->_verbose) {
+            Logger::verbose << clientReq << std::endl;
+        }
+        res = this->_responseHandlers.exec(this->_parser, this->_request);
+        if (res.contentLength < 0) {
+            return;
+        }
+        setResponse(res, clientSocket);
         return;
     }
-    if (this->_verbose) {
-        Logger::verbose << clientReq << std::endl;
-    }
-    res = this->_responseHandlers.exec(this->_parser, this->_request);
-    if (res.contentLength < 0) {
-        return;
-    }
+}
+
+void    Server::setResponse(responseData res, int clientSocket)
+{
     char responseHeader[1024];
     sprintf(responseHeader,
             "HTTP/1.1 %s\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n",
@@ -143,7 +163,6 @@ void Server::processClientData(int clientSocket)
             res.contentLength);
     send(clientSocket, responseHeader, strlen(responseHeader), 0);
     send(clientSocket, res.content.c_str(), res.contentLength, 0);
-    return;
 }
 
 int Server::run(void)

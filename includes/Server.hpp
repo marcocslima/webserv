@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/13 12:03:10 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 15:42:49 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ class Server {
     int  run(void);
     bool acceptNewConnection(size_t i);
     void processClientData(int clientSocket);
+    void setResponse(responseData res, int clientSocket);
     void closeServer(void);
 
     void setVerbose(bool verbose);

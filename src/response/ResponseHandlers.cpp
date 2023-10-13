@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseHandlers.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 12:04:42 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 16:47:57 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void ResponseHandlers::_postHandler(HttpRequest &request)
     PostMethod post_method(request);
 
     // TODO: chamar cgi
-    post_method.handleMethod(request.getUri());
+    this->_res = post_method.handlePost();
     // TODO: preciso que retorne o responseData
 }
 

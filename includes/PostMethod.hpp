@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 18:31:10 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/13 15:23:36 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/13 16:47:39 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,19 @@ class PostMethod : public AHttpResponse
         PostMethod(HttpRequest request);
         ~PostMethod();
 
-        std::string handleMethod(std::string uri);
-        void        handleMultipart();
-        void        handleForm();
-        void        print();
-        void        setResponse(std::string status, std::string message, std::string body);
-        void        saveFile(std::string& fileName, const std::string& value);
-        void        parseMultipartFormData(size_t pos, size_t endPos);
+        std::string     handleMethod(std::string uri);
+        responseData    handlePost();
+        void            handleMultipart();
+        void            handleForm();
+        void            print();
+        void            setResponse(std::string statusCode, std::string content);
+        void            saveFile(std::string& fileName, const std::string& value);
+        void            parseMultipartFormData(size_t pos, size_t endPos);
 
-        bool        created;
+        bool            created;
     private:
         HttpRequest                         _httpRequest;
-        std::string                         _responseHeader;
+        responseData                        _responseData;
         bool                                _file;
         std::map<std::string, std::string>  _formData;
 };
