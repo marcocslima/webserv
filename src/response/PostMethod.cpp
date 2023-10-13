@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/13 16:45:18 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/13 17:07:43 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ responseData PostMethod::handlePost()
     created = false;
 
     if (_httpRequest.has_body) {
-        if (_httpRequest.has_multipart) {
+        if (_httpRequest.has_multipart)
+        {
             handleMultipart();
             if (created && _file == true) {
                 setResponse("201", "<html><body><h1>HTTP/1.1 201 Created</h1></body></html>");
@@ -38,15 +39,17 @@ responseData PostMethod::handlePost()
             } else if (!created && _file == true) {
                 setResponse("500",
                             "<html><body><h1>HTTP/1.1 500 Internal Server Error</h1></body></html>");
-                std::cout << "Unable to create file." << std::endl;
+                Logger::info << "Unable to create file." << std::endl;
                 return (_responseData);
             }
         }
-        if (_httpRequest.has_form)
+        else if (_httpRequest.has_form)
             handleForm();
+        else
+            std::cout << "Body: " << _httpRequest.getBody() << "\n";
 
         setResponse("200", "<html><body><h1>HTTP/1.1 200 OK</h1></body></html>");
-        std::cout << "Post request completed successfully." << std::endl;
+        Logger::info << "Post request completed successfully." << std::endl;
     } else if (!_httpRequest.has_body) {
         setResponse("204", "<html><body><h1>HTTP/1.1 204 No Content</h1></body></html>");
         Logger::info << "No content." << std::endl;
