@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 20:36:23 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:52:12 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,13 +64,23 @@ int ResponseHandlers::_resolveOption(std::string method)
     return (i);
 }
 
+responseData ResponseHandlers::_getCgi(HttpRequest &request)
+{
+    CGI          cgi;
+    responseData res;
+
+    std::string cgi_response = cgi.executeCGI(request);
+    res = setResponseData(OK, "text/html", cgi_response.c_str(), (int)cgi_response.length());
+    return (res);
+}
+
 void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
 {
     Location location(request);
 
     // TODO: chamar autoindex
     if (Constants::isCgi(extractFileExtension(request.getUri()))) {
-        // TODO: chamar cgi
+        this->_getCgi(request);
     }
     location.setup(parser);
     this->_res = location.getLocationContent();
@@ -81,7 +91,7 @@ void ResponseHandlers::_postHandler(HttpRequest &request)
     PostMethod post_method(request);
 
     if (Constants::isCgi(extractFileExtension(request.getUri()))) {
-        // TODO: chamar cgi
+        this->_getCgi(request);
     }
     this->_res = post_method.handleMethod();
 }
