@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 16:03:41 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 17:06:17 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,10 @@ void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
 
 void ResponseHandlers::_postHandler(HttpRequest &request)
 {
-    (void)request;
-    // PostMethod post_method(request);
+    PostMethod post_method(request);
 
     // TODO: chamar cgi
-    // post_method.handleMethod(request.getUri());
-    // TODO: preciso que retorne o responseData
+    this->_res = post_method.handleMethod();
 }
 
 void ResponseHandlers::_deleteHandler(HttpRequest &request)
