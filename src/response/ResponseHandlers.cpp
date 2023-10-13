@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 19:53:40 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:36:23 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,9 @@ void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
     Location location(request);
 
     // TODO: chamar autoindex
-    // TODO: chamar cgi
+    if (Constants::isCgi(extractFileExtension(request.getUri()))) {
+        // TODO: chamar cgi
+    }
     location.setup(parser);
     this->_res = location.getLocationContent();
 }
@@ -78,7 +80,9 @@ void ResponseHandlers::_postHandler(HttpRequest &request)
 {
     PostMethod post_method(request);
 
-    // TODO: chamar cgi
+    if (Constants::isCgi(extractFileExtension(request.getUri()))) {
+        // TODO: chamar cgi
+    }
     this->_res = post_method.handleMethod();
 }
 

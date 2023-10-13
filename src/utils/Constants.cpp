@@ -6,18 +6,24 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 18:56:35 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/05 23:07:19 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:34:09 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Constants.hpp"
 
-const std::map<std::string, std::string> Constants::_mimeTypes   = Constants::setMimeTypes();
-const std::map<std::string, std::string> Constants::_statusCodes = Constants::setStatusCodes();
+const std::map<std::string, std::string> Constants::_mimeTypes    = Constants::setMimeTypes();
+const std::map<std::string, std::string> Constants::_statusCodes  = Constants::setStatusCodes();
+const std::set<std::string>              Constants::_cgiSupported = Constants::setCgiSupported();
 
 Constants::Constants() {}
 
 Constants::~Constants() {}
+
+bool Constants::isCgi(std::string extension)
+{
+    return (Constants::_cgiSupported.find(extension) != Constants::_cgiSupported.end());
+}
 
 std::string Constants::getStatusCodes(std::string status)
 {
@@ -193,4 +199,15 @@ std::map<std::string, std::string> Constants::setStatusCodes()
     statusCodes["510"] = "Not Extended";
     statusCodes["511"] = "Network Authentication Required";
     return (statusCodes);
+}
+
+std::set<std::string> setCgiSupported()
+{
+    std::set<std::string> data;
+
+    data.insert(".php");
+    data.insert(".py");
+    data.insert(".rb");
+    data.insert(".pl");
+    return (data);
 }

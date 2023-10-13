@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 18:55:15 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/10 05:52:01 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:32:13 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,10 @@ class Constants {
     private:
     static const std::map<std::string, std::string> _mimeTypes;
     static const std::map<std::string, std::string> _statusCodes;
-
-    static std::map<std::string, std::string> setMimeTypes();
-    static std::map<std::string, std::string> setStatusCodes();
+    static const std::set<std::string>              _cgiSupported;
+    static std::map<std::string, std::string>       setMimeTypes();
+    static std::map<std::string, std::string>       setStatusCodes();
+    static std::set<std::string>                    setCgiSupported();
 
     public:
     Constants();
@@ -28,4 +29,5 @@ class Constants {
 
     static std::string getMimeTypes(std::string extension);
     static std::string getStatusCodes(std::string status);
+    static bool        isCgi(std::string extension);
 };

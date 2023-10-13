@@ -6,12 +6,13 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:42:45 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 19:40:34 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:34:47 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include "Constants.hpp"
 #include "DeleteMethod.hpp"
 #include "ErrorPage.hpp"
 #include "Libs.hpp"
