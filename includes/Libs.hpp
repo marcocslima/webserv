@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:12:50 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/12 15:32:35 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 15:37:21 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <cerrno>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -49,6 +50,7 @@
 // #define MAX_BODY_SIZE 100
 
 struct responseData {
+    int         status;
     std::string content;
     std::string statusCode;
     std::string contentType;

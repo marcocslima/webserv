@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 17:08:10 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 11:41:32 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 16:02:13 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,7 @@ responseData getContent(std::string root, std::string file)
     const char       *fullPathCStr;
     responseData      data;
 
-    data.content       = "";
-    data.statusCode    = "";
-    data.contentType   = "";
-    data.contentLength = 0;
+    data = setResponseData(0, "", "", 0);
     fullPathStream << root << file;
     fullPath     = fullPathStream.str();
     fullPathCStr = fullPath.c_str();
@@ -57,4 +54,25 @@ std::string extractFileExtension(std::string file)
         return extension;
     }
     return "";
+}
+
+responseData
+setResponseData(int status, std::string contentType, std::string content, int contentLength)
+{
+    responseData res;
+
+    res.status        = status;
+    res.statusCode    = Constants::getStatusCodes(to_string(status));
+    res.contentType   = contentType;
+    res.content       = content;
+    res.contentLength = contentLength;
+    return (res);
+}
+
+template <typename ValueType>
+std::string to_string(ValueType v)
+{
+    std::ostringstream oss;
+    oss << v;
+    return oss.str();
 }

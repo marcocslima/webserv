@@ -6,11 +6,13 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:09:25 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 12:16:41 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 16:02:22 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Location.hpp"
+
+// TODO: verificar se é definido o status de responseData
 
 Location::Location(void) {}
 
@@ -20,11 +22,8 @@ Location::~Location(void) {}
 
 void Location::setup(Parser &parser)
 {
-    this->_responseData.content       = "";
-    this->_responseData.statusCode    = "";
-    this->_responseData.contentType   = "";
-    this->_responseData.contentLength = 0;
-    this->_uriExtension               = extractFileExtension(this->_req.getUri());
+    this->_responseData = setResponseData(0, "", "", 0);
+    this->_uriExtension = extractFileExtension(this->_req.getUri());
     this->_setIndexPage(parser);
 }
 
