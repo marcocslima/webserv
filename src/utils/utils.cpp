@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 17:08:10 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/10 18:08:50 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 11:41:32 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,15 @@ responseData getContent(std::string root, std::string file)
         ifs.close();
     }
     return (data);
+}
+
+std::string extractFileExtension(std::string file)
+{
+    size_t dotPos = file.rfind('.');
+
+    if (dotPos != std::string::npos) {
+        std::string extension = file.substr(dotPos);
+        return extension;
+    }
+    return "";
 }

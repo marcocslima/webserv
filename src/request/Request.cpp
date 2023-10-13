@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/12 15:35:03 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 12:19:39 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,19 @@ std::vector<std::string> HttpRequest::getQuery(void) const { return (this->_para
 
 std::map<std::string, std::string> HttpRequest::getHeaders() const { return (_header); }
 
+int HttpRequest::getServerIndex(void) const { return (this->_serverIndex); }
+
+int HttpRequest::getLocationIndex(void) const { return (this->_locationIndex); }
+
+int HttpRequest::getLocationSize(void) const { return (this->_locationSize); }
+
+std::string HttpRequest::getRoot(void) const { return (this->_root); }
+
+std::vector<std::string> HttpRequest::getErrorPageConfig(void) const
+{
+    return (this->_errorPageConfig);
+}
+
 const char *HttpRequest::RequestException::what() const throw()
 {
     return ("Error parsing HTTP request.");
@@ -39,9 +52,6 @@ const char *HttpRequest::RequestException::what() const throw()
 
 void HttpRequest::init()
 {
-    // _allowMethods.push_back("GET");
-    // _allowMethods.push_back("POST");
-    // _allowMethods.push_back("DELETE");
     _has_body      = false;
     _has_form      = false;
     _has_multipart = false;
@@ -60,7 +70,9 @@ void HttpRequest::init()
 
 void HttpRequest::requestHttp(std::string request, Parser &parser)
 {
-    size_t firstLineEnd = request.find("\r\n");
+    std::vector<int> serverSize   = parser.getSizeServers();
+    size_t           firstLineEnd = request.find("\r\n");
+
     if (firstLineEnd == std::string::npos) {
         this->_statusError = BAD_REQUEST;
         return;
@@ -71,9 +83,8 @@ void HttpRequest::requestHttp(std::string request, Parser &parser)
     try {
         _parseFirstLine(requestLine);
         _parseHeaders(headersPart);
-        // _checkLocations(parser);
-        // _checkPorts(parser);
         _getMaxBody(parser);
+        _getServerParam(parser);
 
         if (_has_body) {
             _has_multipart = false;
@@ -187,40 +198,6 @@ void HttpRequest::_findHeaders(std::string key, std::string value)
     }
 }
 
-// void HttpRequest::_checkLocations(Parser &parser)
-// {
-//     std::vector<int> sizeServers   = parser.getSizeServers();
-//     bool             foundLocation = false;
-
-//     int loc = 1;
-//     for (int i = 0; i < sizeServers[0]; i++) {
-//         for (int j = 0; j < sizeServers[loc]; j++) {
-//             std::vector<std::string> location = parser.getLocationParam(i, j, "location");
-//             if (!location.empty() && _uri.find(location[0]) == 0)
-//                 foundLocation = true;
-//         }
-//         loc++;
-//     }
-//     if (foundLocation == false)
-//         Logger::error << "Invalid location." << std::endl;
-// }
-
-// void HttpRequest::_checkPorts(Parser &parser)
-// {
-//     int  servers   = parser.getServers();
-//     bool foundPort = false;
-
-//     for (int i = 0; i < servers; i++) {
-//         std::vector<std::string> listen = parser.getServerParam(i, "listen");
-//         if (!_port.empty() && _port.find(listen[0]) == 0)
-//             foundPort = true;
-//     }
-//     if (foundPort == false) {
-//         this->_statusError = BAD_REQUEST;
-//         throw RequestException();
-//     }
-// }
-
 void HttpRequest::_getMaxBody(Parser &parser)
 {
     int servers = parser.getServers();
@@ -276,4 +253,98 @@ void HttpRequest::_getBody(std::string request)
     } else if (_maxBodySize < 0) {
         Logger::error << "Invalid client_max_body_size." << std::endl;
     }
+}
+
+void HttpRequest::_getServerParam(Parser &parser)
+{
+    std::vector<int> serverSize = parser.getSizeServers();
+
+    this->_serverIndex   = this->_findServerIndex(parser, serverSize[0], this->_port);
+    this->_locationSize  = serverSize[this->_serverIndex + 1];
+    this->_locationIndex = this->_findLocationIndex(parser);
+    this->_setRoot(parser);
+    this->_setErrorPage(parser);
+}
+
+int HttpRequest::_findServerIndex(Parser &parser, int serverSize, std::string port)
+{
+    std::vector<std::string> listenParam;
+    int                      i = 0;
+
+    for (i = 0; i != serverSize; ++i) {
+        listenParam = parser.getServerParam(i, "listen");
+        if (listenParam.empty()) {
+            continue;
+        }
+        if (port == listenParam[0]) {
+            break;
+        }
+    }
+    return (i);
+}
+
+int HttpRequest::_findLocationIndex(Parser &parser)
+{
+    std::vector<std::string>           locationParam;
+    std::vector<std::string>::iterator it;
+    int                                i = 0;
+    std::string                        found, path;
+
+    path  = this->_extractPathFromURI();
+    found = path.empty() ? this->_uri : path;
+    for (i = 0; i < this->_locationSize; i++) {
+        locationParam = parser.getLocationParam(this->_serverIndex, i, "location");
+        it            = std::find(locationParam.begin(), locationParam.end(), found);
+        if (it != locationParam.end()) {
+            break;
+        }
+    }
+    return (i);
+}
+
+std::string HttpRequest::_extractPathFromURI(void)
+{
+    size_t      pos;
+    std::string path;
+
+    if (this->_uri.length() == 1)
+        return ("");
+    pos = this->_uri.find("/", 1);
+    if (pos == std::string::npos) {
+        path = this->_uri;
+    } else {
+        path = this->_uri.substr(0, pos);
+    }
+    return (path);
+}
+
+void HttpRequest::_setRoot(Parser &parser)
+{
+    std::vector<std::string> rootParam;
+
+    this->_root = DEFAULT_ROOT;
+    rootParam   = parser.getServerParam(this->_serverIndex, "root");
+    if (!rootParam.empty()) {
+        this->_root = rootParam[0];
+    }
+    if (this->_locationSize != this->_locationIndex) {
+        rootParam = parser.getLocationParam(this->_serverIndex, this->_locationIndex, "root");
+        if (!rootParam.empty()) {
+            this->_root = rootParam[0];
+        }
+    }
+    return;
+}
+
+void HttpRequest::_setErrorPage(Parser &parser)
+{
+    if (this->_locationSize != this->_locationIndex) {
+        this->_errorPageConfig
+            = parser.getLocationParam(this->_serverIndex, this->_locationIndex, "error_page");
+        if (!this->_errorPageConfig.empty()) {
+            return;
+        }
+    }
+    this->_errorPageConfig = parser.getServerParam(this->_serverIndex, "error_page");
+    return;
 }

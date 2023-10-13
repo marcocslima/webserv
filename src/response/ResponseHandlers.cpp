@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/12 15:37:50 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 12:04:42 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,14 @@ responseData ResponseHandlers::exec(Parser &parser, HttpRequest &request)
     // TODO: check method
     switch (this->_resolveOption(request.getMethod())) {
         case GET:
-            this->_getHandler(parser, request.getPort(), request.getUri());
+            this->_getHandler(request, parser);
             break;
         case POST:
             this->_postHandler(request);
+            break;
         case DELETE:
             this->_deleteHandler(request.getUri());
+            break;
         default:
             break;
     }
@@ -53,13 +55,13 @@ int ResponseHandlers::_resolveOption(std::string method)
     return (i);
 }
 
-void ResponseHandlers::_getHandler(Parser &parser, std::string port, std::string uri)
+void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
 {
-    Location location;
+    Location location(request);
 
     // TODO: chamar autoindex
     // TODO: chamar cgi
-    location.setup(parser, port, uri);
+    location.setup(parser);
     this->_res = location.getLocationContent();
 }
 
