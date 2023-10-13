@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 17:08:10 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 19:30:11 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:00:58 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,16 @@ responseData getJson(std::string body, int status)
     return (data);
 }
 
-responseData getContent(std::string root, std::string file)
+responseData getContent(std::string root, std::string file, int status)
 {
     std::stringstream fullPathStream;
     std::string       fullPath;
     const char       *fullPathCStr;
     responseData      data;
+    std::string       extension;
 
-    data = setResponseData(0, "", "", 0);
+    data      = setResponseData(0, "", "", 0);
+    extension = extractFileExtension(file);
     fullPathStream << root << file;
     fullPath     = fullPathStream.str();
     fullPathCStr = fullPath.c_str();
@@ -36,8 +38,8 @@ responseData getContent(std::string root, std::string file)
     if (ifs.is_open()) {
         std::string content((std::istreambuf_iterator<char>(ifs)),
                             std::istreambuf_iterator<char>());
-        data.content       = content;
-        data.contentLength = (int)content.length();
+        data = setResponseData(
+            status, Constants::getMimeTypes(extension), content, (int)content.length());
         ifs.close();
     }
     return (data);

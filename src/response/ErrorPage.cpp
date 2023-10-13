@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 05:34:14 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 18:56:20 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:02:18 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,7 @@ responseData ErrorPage::getErrorPageContent(std::vector<std::string> errorPage,
             filePath += '/';
         }
         filePath += errorPage.back();
-        res             = getContent(root, filePath);
-        res.status      = statusCode; // TODO: Passar essa atribuição para utils, que nem content
-        res.statusCode  = Constants::getStatusCodes(to_string(statusCode));
-        res.contentType = "text/html";
+        res = getContent(root, filePath, statusCode);
         if (res.contentLength) {
             return (res);
         }
@@ -42,10 +39,7 @@ responseData ErrorPage::getErrorPageContent(std::vector<std::string> errorPage,
     std::string standardErrorFile = "/";
     standardErrorFile += to_string(statusCode);
     standardErrorFile += ".html";
-    res             = getContent(DEFAULT_ERROR_ROOT, standardErrorFile);
-    res.status      = statusCode;
-    res.statusCode  = Constants::getStatusCodes(to_string(statusCode));
-    res.contentType = "text/html";
+    res = getContent(DEFAULT_ERROR_ROOT, standardErrorFile, statusCode);
     if (res.contentLength) {
         return (res);
     }

@@ -6,13 +6,11 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:09:25 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 19:52:48 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:04:05 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Location.hpp"
-
-// TODO: verificar se é definido o status de responseData
 
 Location::Location(void) {}
 
@@ -57,9 +55,7 @@ responseData Location::getLocationContent(void)
 
 void Location::_getFileContent(void)
 {
-    this->_responseData             = getContent(this->_req.getRoot(), this->_req.getUri());
-    this->_responseData.statusCode  = Constants::getStatusCodes(to_string(OK));
-    this->_responseData.contentType = Constants::getMimeTypes(this->_uriExtension);
+    this->_responseData = getContent(this->_req.getRoot(), this->_req.getUri(), OK);
     if (!this->_responseData.contentLength) {
         this->_responseData = this->_errorPage.getErrorPageContent(
             this->_req.getErrorPageConfig(), NOT_FOUND, this->_req.getUri(), this->_req.getRoot());
@@ -81,10 +77,8 @@ void Location::_getIndexContent(void)
     if (uri[uri.length() - 1] != '/') {
         uri += '/';
     }
-    indexPath                       = uri + this->_indexPage;
-    this->_responseData             = getContent(this->_req.getRoot(), indexPath);
-    this->_responseData.statusCode  = Constants::getStatusCodes(to_string(OK));
-    this->_responseData.contentType = Constants::getMimeTypes(extractFileExtension(indexPath));
+    indexPath           = uri + this->_indexPage;
+    this->_responseData = getContent(this->_req.getRoot(), indexPath, OK);
     if (!this->_responseData.contentLength) {
         this->_responseData = this->_errorPage.getErrorPageContent(
             this->_req.getErrorPageConfig(), FORBIDDEN, uri, this->_req.getRoot());
