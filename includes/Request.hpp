@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/13 12:19:38 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 15:26:40 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ class HttpRequest {
 
     std::string                        getMethod(void) const;
     std::string                        getPort(void) const;
+    std::string                        getHost(void) const;
     std::string                        getUri(void) const;
     std::string                        getHttp(void) const;
     std::string                        getBody(void) const;
@@ -57,6 +58,7 @@ class HttpRequest {
     void        _getMaxBody(Parser &parser);
     void        _getServerParam(Parser &parser);
     void        _getBody(std::string request);
+    void        _getHost();
     int         _findServerIndex(Parser &parser, int serverSize, std::string port);
     int         _findLocationIndex(Parser &parser);
     std::string _extractPathFromURI(void);
@@ -68,6 +70,7 @@ class HttpRequest {
     std::string                        _uri;
     std::string                        _body;
     std::string                        _port;
+    std::string                        _host;
     std::string                        _method;
     std::string                        _boundary;
     std::string                        _httpVersion;

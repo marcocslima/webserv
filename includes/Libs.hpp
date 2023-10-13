@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Libs.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:12:50 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/12 15:32:35 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 17:57:05 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <sys/wait.h>
 #include <vector>
 
 #include <arpa/inet.h>
@@ -32,12 +33,14 @@
 #include <netinet/in.h>
 #include <poll.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 #define IP "127.0.0.1"
 
 #define DEFAULT_ROOT "www/html"
+#define DEFAULT_ROOT_CGI "www/cgi"
 #define DEFAULT_ERROR_ROOT "www/error"
 
 #define RESET_COLOR "\033[0m"

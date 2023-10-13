@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/13 12:19:39 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 15:35:50 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ HttpRequest::~HttpRequest() {}
 std::string HttpRequest::getMethod(void) const { return (this->_method); }
 
 std::string HttpRequest::getPort(void) const { return (this->_port); }
+
+std::string HttpRequest::getHost(void) const { return (this->_host); }
 
 std::string HttpRequest::getUri(void) const { return (this->_uri); }
 
@@ -212,6 +214,15 @@ void HttpRequest::_getMaxBody(Parser &parser)
             break;
         }
     }
+}
+
+void HttpRequest::_getHost()
+{
+    std::string       uri = _header["Host"];
+    std::stringstream ss(uri);
+
+    if (std::getline(ss, _host, ':'))
+        _host.erase(std::remove_if(_host.begin(), _host.end(), ::isspace), _host.end());
 }
 
 void HttpRequest::_getMultipartData(std::string request)

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseHandlers.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 12:04:42 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 17:15:39 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ResponseHandlers.hpp"
 
-ResponseHandlers::ResponseHandlers(void) {}
+ResponseHandlers::ResponseHandlers(void) { CGI _cgi; }
 
 ResponseHandlers::~ResponseHandlers(void) {}
 
@@ -26,7 +26,7 @@ responseData ResponseHandlers::exec(Parser &parser, HttpRequest &request)
             this->_getHandler(request, parser);
             break;
         case POST:
-            this->_postHandler(request);
+            this->_postHandler(request, parser);
             break;
         case DELETE:
             this->_deleteHandler(request.getUri());
@@ -61,15 +61,29 @@ void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
 
     // TODO: chamar autoindex
     // TODO: chamar cgi
+    std::string resp = _cgi.executeCGI(request, parser);
+
     location.setup(parser);
-    this->_res = location.getLocationContent();
+    this->_res               = location.getLocationContent();
+    this->_res.content       = resp;
+    this->_res.contentLength = resp.length();
+    this->_res.contentType   = "text/html";
+    this->_res.statusCode    = "200 OK";
 }
 
-void ResponseHandlers::_postHandler(HttpRequest &request)
+void ResponseHandlers::_postHandler(HttpRequest &request, Parser &parser)
 {
     PostMethod post_method(request);
 
     // TODO: chamar cgi
+
+    std::string resp = _cgi.executeCGI(request, parser);
+
+    this->_res.content       = resp;
+    this->_res.contentLength = resp.length();
+    this->_res.contentType   = "text/html";
+    this->_res.statusCode    = "200 OK";
+
     post_method.handleMethod(request.getUri());
     // TODO: preciso que retorne o responseData
 }
