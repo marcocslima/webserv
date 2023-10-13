@@ -6,7 +6,7 @@
 #    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/10/12 16:44:10 by pmitsuko         ###   ########.fr        #
+#    Updated: 2023/10/13 16:22:37 by pmitsuko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,12 +14,12 @@ CHECK		=	\342\234\224
 
 ## COLORS ##
 
-RESET		=	\e[39m
+RESET_COLOR		=	\e[39m
 GREEN		=	\e[92m
 YELLOW		=	\e[93m
 MAGENTA		=	\e[95m
 CYAN		=	\e[96m
-LOG			= printf "[$(CYAN)$(CHECK)$(RESET)] %s\n"
+LOG			= printf "[$(CYAN)$(CHECK)$(RESET_COLOR)] %s\n"
 
 # **************************************************************************** #
 
