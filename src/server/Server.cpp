@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 19:32:22 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 19:53:44 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ void Server::processClientData(int clientSocket)
     char responseHeader[1024];
     if (res.contentType.empty()) {
         sprintf(responseHeader, "HTTP/1.1 %s\r\n\r\n", res.statusCode.c_str());
-    } else if (res.status == 405) {
+    } else if (res.status == METHOD_NOT_ALLOWED) {
         sprintf(responseHeader,
                 "HTTP/1.1 %s\r\nAllow: %s\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n",
                 res.statusCode.c_str(),

@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/13 19:19:56 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 19:50:26 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void HttpRequest::requestHttp(std::string request, Parser &parser)
     size_t           firstLineEnd = request.find("\r\n");
 
     if (firstLineEnd == std::string::npos) {
-        this->_statusError = BAD_REQUEST;
+        this->_statusError = to_string(BAD_REQUEST);
         return;
     }
 
@@ -117,12 +117,12 @@ void HttpRequest::_parseFirstLine(std::string &requestLine)
     if (!(iss >> this->_method >> this->_uri >> this->_httpVersion)
         || requestLine != this->_method + " " + this->_uri + " " + this->_httpVersion
         || this->_uri[0] != '/') {
-        this->_statusError = BAD_REQUEST;
+        this->_statusError = to_string(BAD_REQUEST);
         throw RequestException();
     }
 
     if (this->_httpVersion != "HTTP/1.1") {
-        this->_statusError = HTTP_VERSION_NOT_SUPPORTED;
+        this->_statusError = to_string(HTTP_VERSION_NOT_SUPPORTED);
         throw RequestException();
     }
     size_t pos = this->_uri.find('?');
@@ -225,7 +225,7 @@ void HttpRequest::_getMultipartData(std::string request)
         _boundary = contentType.substr(pos + 9);
         _boundary = "--" + _boundary;
     } else {
-        this->_statusError = BAD_REQUEST;
+        this->_statusError = to_string(BAD_REQUEST);
         throw RequestException();
     }
 
@@ -234,7 +234,7 @@ void HttpRequest::_getMultipartData(std::string request)
     if (startBody != std::string::npos)
         _body = request.substr(startBody);
     else {
-        this->_statusError = BAD_REQUEST;
+        this->_statusError = to_string(BAD_REQUEST);
         throw RequestException();
     }
 }

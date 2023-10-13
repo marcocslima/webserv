@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/13 17:05:05 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 19:52:16 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,10 @@ responseData PostMethod::handleMethod()
                 Logger::info << "File created." << std::endl;
                 return (_res);
             } else if (!created && _file == true) {
-                _res = _errorPage.getErrorPageContent(
-                    _req.getErrorPageConfig(), 500, _req.getUri(), _req.getRoot());
+                _res = _errorPage.getErrorPageContent(_req.getErrorPageConfig(),
+                                                      INTERNAL_SERVER_ERROR,
+                                                      _req.getUri(),
+                                                      _req.getRoot());
                 Logger::error << "Unable to create file." << std::endl;
                 return (_res);
             }
@@ -41,15 +43,15 @@ responseData PostMethod::handleMethod()
         if (_req._has_form)
             handleForm();
 
-        _res = getJson("{\"status\": \"success\", \"message\": \"Successful operation\"}", 200);
+        _res = getJson("{\"status\": \"success\", \"message\": \"Successful operation\"}", OK);
         Logger::info << "Post request completed successfully." << std::endl;
     } else if (!_req._has_body) {
         _res = _errorPage.getErrorPageContent(
-            _req.getErrorPageConfig(), 400, _req.getUri(), _req.getRoot());
+            _req.getErrorPageConfig(), BAD_REQUEST, _req.getUri(), _req.getRoot());
         Logger::info << "No content." << std::endl;
     } else {
         _res = _errorPage.getErrorPageContent(
-            _req.getErrorPageConfig(), 500, _req.getUri(), _req.getRoot());
+            _req.getErrorPageConfig(), INTERNAL_SERVER_ERROR, _req.getUri(), _req.getRoot());
         Logger::error << "Internal Server Error." << std::endl;
     }
     return (_res);

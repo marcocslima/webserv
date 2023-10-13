@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 19:20:00 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 19:53:40 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ responseData ResponseHandlers::exec(Parser &parser, HttpRequest &request)
 
     if (!this->_methodAllowed(request)) {
         return (this->_errorPage.getErrorPageContent(
-            request.getErrorPageConfig(), 405, request.getUri(), request.getRoot()));
+            request.getErrorPageConfig(), METHOD_NOT_ALLOWED, request.getUri(), request.getRoot()));
     }
     switch (this->_resolveOption(request.getMethod())) {
         case GET:

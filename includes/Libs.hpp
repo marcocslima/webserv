@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:12:50 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 16:23:37 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 19:52:12 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,16 @@
 #define P_BLUE "\e[0;38;5;24m"
 #define RESET_COLOR "\e[0m"
 
-// TODO: Implementar isso para os demais status_codes e torná-lo de fácil leitura
-#define BAD_REQUEST "400"
-#define HTTP_VERSION_NOT_SUPPORTED "505"
 #define ENTITY_TOO_LARGE "413"
+
+#define OK 200
+#define NO_CONTENT 204
+#define BAD_REQUEST 400
+#define FORBIDDEN 403
+#define NOT_FOUND 404
+#define METHOD_NOT_ALLOWED 405
+#define INTERNAL_SERVER_ERROR 500
+#define HTTP_VERSION_NOT_SUPPORTED 505
 
 struct responseData {
     int         status;
