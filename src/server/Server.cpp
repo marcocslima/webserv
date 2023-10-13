@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/12 15:25:54 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 15:49:30 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,13 +136,19 @@ void Server::processClientData(int clientSocket)
         return;
     }
     char responseHeader[1024];
-    sprintf(responseHeader,
-            "HTTP/1.1 %s\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n",
-            res.statusCode.c_str(),
-            res.contentType.c_str(),
-            res.contentLength);
+    if (res.contentType.empty()) {
+        sprintf(responseHeader, "HTTP/1.1 %s\r\n\r\n", res.statusCode.c_str());
+    } else {
+        sprintf(responseHeader,
+                "HTTP/1.1 %s\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n",
+                res.statusCode.c_str(),
+                res.contentType.c_str(),
+                res.contentLength);
+    }
     send(clientSocket, responseHeader, strlen(responseHeader), 0);
-    send(clientSocket, res.content.c_str(), res.contentLength, 0);
+    if (res.contentLength) {
+        send(clientSocket, res.content.c_str(), res.contentLength, 0);
+    }
     return;
 }
 
