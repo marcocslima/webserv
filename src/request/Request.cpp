@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/13 12:19:39 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 15:21:53 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,89 +45,90 @@ std::vector<std::string> HttpRequest::getErrorPageConfig(void) const
     return (this->_errorPageConfig);
 }
 
-const char *HttpRequest::RequestException::what() const throw()
-{
-    return ("Error parsing HTTP request.");
-}
-
 void HttpRequest::init()
 {
-    _has_body      = false;
-    _has_form      = false;
-    _has_multipart = false;
-    _tooLarge      = false;
+    has_body      = false;
+    has_form      = false;
+    has_multipart = false;
+    statusCode   = "";
+    content = "";
     _uri           = "";
     _port          = "";
     _method        = "";
     _boundary      = "";
     _httpVersion   = "";
-    _statusError   = "";
     _contentLength = 0;
     _maxBodySize   = 0;
     _paramQuery.clear();
     _header.clear();
 }
 
-void HttpRequest::requestHttp(std::string request, Parser &parser)
+bool HttpRequest::requestHttp(std::string request, Parser &parser)
 {
-    std::vector<int> serverSize   = parser.getSizeServers();
+    // std::vector<int> serverSize   = parser.getSizeServers();
     size_t           firstLineEnd = request.find("\r\n");
 
     if (firstLineEnd == std::string::npos) {
-        this->_statusError = BAD_REQUEST;
-        return;
+        this->statusCode = BAD_REQUEST;
+        this->content = "<html><body><h1>HTTP/1.1 400 Bad Request</h1></body></html>";
+        return (true);
     }
 
     std::string requestLine = request.substr(0, firstLineEnd);
     std::string headersPart = request.substr(firstLineEnd + 2);
-    try {
-        _parseFirstLine(requestLine);
-        _parseHeaders(headersPart);
-        _getMaxBody(parser);
-        _getServerParam(parser);
+    if (_parseFirstLine(requestLine))
+         return (true);
+    _parseHeaders(headersPart);
+    _getMaxBody(parser);
+    _getServerParam(parser);
 
-        if (_has_body) {
-            _has_multipart = false;
-            _has_form      = false;
-            std::map<std::string, std::string>::const_iterator it;
-            it = _header.find("Content-Type");
-            if (it->second.find("multipart/form-data") != std::string::npos)
-                _has_multipart = true;
-            if (it->second.find("application/x-www-form-urlencoded") != std::string::npos)
-                _has_form = true;
-        }
-
-        if (_has_multipart)
-            _getMultipartData(request);
-        else if (_has_body)
-            _getBody(request);
-
-    } catch (RequestException const &e) {
-        Logger::error << e.what() << " " << this->_statusError << std::endl;
-        return;
+    if (has_body) {
+        has_multipart = false;
+        has_form      = false;
+        std::map<std::string, std::string>::const_iterator it;
+        it = _header.find("Content-Type");
+        if (it->second.find("multipart/form-data") != std::string::npos)
+            has_multipart = true;
+        if (it->second.find("application/x-www-form-urlencoded") != std::string::npos)
+            has_form = true;
     }
+
+    if (has_multipart)
+    {
+        if (_getMultipartData(request))
+            return (true);
+    }
+    else if (has_body)
+    {
+        if (_getBody(request))
+            return (true);
+    }
+    return (false);
 }
 
-void HttpRequest::_parseFirstLine(std::string &requestLine)
+bool HttpRequest::_parseFirstLine(std::string &requestLine)
 {
     std::istringstream iss(requestLine);
 
     if (!(iss >> this->_method >> this->_uri >> this->_httpVersion)
         || requestLine != this->_method + " " + this->_uri + " " + this->_httpVersion
         || this->_uri[0] != '/') {
-        this->_statusError = BAD_REQUEST;
-        throw RequestException();
+        this->statusCode = BAD_REQUEST;
+        this->content = "<html><body><h1>HTTP/1.1 400 Bad Request</h1></body></html>";
+        return (true);
     }
 
     if (this->_httpVersion != "HTTP/1.1") {
-        this->_statusError = HTTP_VERSION_NOT_SUPPORTED;
-        throw RequestException();
+        this->statusCode = HTTP_VERSION_NOT_SUPPORTED;
+        this->content = "<html><body><h1>HTTP/1.1 505 HTTP Version Not Supported</h1></body></html>";
+        return (true);
     }
     size_t pos = this->_uri.find('?');
     if (pos != std::string::npos) {
         _parseQuery();
         this->_uri.erase(pos);
     }
+    return (false);
 }
 
 void HttpRequest::_parseQuery()
@@ -159,7 +160,7 @@ void HttpRequest::_parseHeaders(const std::string &request)
 {
     std::istringstream iss(request);
     std::string        headerLine;
-    _has_body = false;
+    has_body = false;
 
     while (std::getline(iss, headerLine, '\r')) {
         headerLine.erase(std::remove(headerLine.begin(), headerLine.end(), '\n'), headerLine.end());
@@ -192,7 +193,7 @@ void HttpRequest::_findHeaders(std::string key, std::string value)
     if (key == "Content-Length") {
         int length = atoi(value.c_str());
         if (length > 0) {
-            _has_body      = true;
+            has_body      = true;
             _contentLength = length;
         }
     }
@@ -214,7 +215,7 @@ void HttpRequest::_getMaxBody(Parser &parser)
     }
 }
 
-void HttpRequest::_getMultipartData(std::string request)
+bool HttpRequest::_getMultipartData(std::string request)
 {
     std::string contentType = _header["Content-Type"];
 
@@ -223,8 +224,9 @@ void HttpRequest::_getMultipartData(std::string request)
         _boundary = contentType.substr(pos + 9);
         _boundary = "--" + _boundary;
     } else {
-        this->_statusError = BAD_REQUEST;
-        throw RequestException();
+        this->statusCode = BAD_REQUEST;
+        this->content = "<html><body><h1>HTTP/1.1 400 Bad Request</h1></body></html>";
+        return (true);
     }
 
     size_t startBody = request.find("\r\n\r\n") + 4;
@@ -232,27 +234,32 @@ void HttpRequest::_getMultipartData(std::string request)
     if (startBody != std::string::npos)
         _body = request.substr(startBody);
     else {
-        this->_statusError = BAD_REQUEST;
-        throw RequestException();
+        this->statusCode = BAD_REQUEST;
+        this->content = "<html><body><h1>HTTP/1.1 400 Bad Request</h1></body></html>";
+        return (true);
     }
+    return (false);
 }
 
-void HttpRequest::_getBody(std::string request)
+bool HttpRequest::_getBody(std::string request)
 {
     std::size_t bodyStart = request.find("\r\n\r\n") + 4;
 
-    _tooLarge = false;
     if (bodyStart != std::string::npos)
         _body = request.substr(bodyStart);
     if (_maxBodySize > 0) {
         if (_contentLength > _maxBodySize) {
-            this->_statusError = ENTITY_TOO_LARGE;
-            Logger::error << "Entity too large" << std::endl;
-            _tooLarge = true;
+            this->statusCode = ENTITY_TOO_LARGE;
+            this->content = "<html><body><h1>HTTP/1.1 413 Payload Too Large </h1></body></html>";
+            std::cout << "Entity too large" << std::endl;
+            return (true);
+
         }
     } else if (_maxBodySize < 0) {
         Logger::error << "Invalid client_max_body_size." << std::endl;
+        return (true);
     }
+    return (false);
 }
 
 void HttpRequest::_getServerParam(Parser &parser)

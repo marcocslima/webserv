@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/13 12:19:38 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 15:18:42 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ class HttpRequest {
     HttpRequest();
     ~HttpRequest();
 
-    void requestHttp(std::string request, Parser &parser);
+    bool requestHttp(std::string request, Parser &parser);
     void init();
 
     std::string                        getMethod(void) const;
@@ -39,24 +39,21 @@ class HttpRequest {
     std::string                        getRoot(void) const;
     std::vector<std::string>           getErrorPageConfig(void) const;
 
-    bool _has_body;
-    bool _has_form;
-    bool _tooLarge;
-    bool _has_multipart;
-    class RequestException : public std::exception {
-        public:
-        virtual const char *what() const throw();
-    };
+    bool has_body;
+    bool has_form;
+    bool has_multipart;
+    std::string statusCode;
+    std::string content;
 
     private:
     void        _parseHeaders(const std::string &request);
-    void        _parseFirstLine(std::string &requestLine);
+    bool        _parseFirstLine(std::string &requestLine);
     void        _findHeaders(std::string key, std::string value);
     void        _parseQuery(void);
-    void        _getMultipartData(std::string request);
+    bool        _getMultipartData(std::string request);
     void        _getMaxBody(Parser &parser);
     void        _getServerParam(Parser &parser);
-    void        _getBody(std::string request);
+    bool        _getBody(std::string request);
     int         _findServerIndex(Parser &parser, int serverSize, std::string port);
     int         _findLocationIndex(Parser &parser);
     std::string _extractPathFromURI(void);
@@ -71,7 +68,6 @@ class HttpRequest {
     std::string                        _method;
     std::string                        _boundary;
     std::string                        _httpVersion;
-    std::string                        _statusError;
     std::vector<std::string>           _paramQuery;
     std::map<std::string, std::string> _header;
     int                                _serverIndex;
