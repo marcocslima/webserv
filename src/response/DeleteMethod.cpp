@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 07:17:35 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/13 15:43:00 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 16:57:28 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,12 @@ responseData DeleteMethod::handleMethod(void)
             Logger::info << "Resource deleted successfully." << std::endl;
         } else {
             this->_res = this->_errorPage.getErrorPageContent(
-                this->_req.getErrorPageConfig(), "500", this->_req.getUri(), this->_req.getRoot());
+                this->_req.getErrorPageConfig(), 500, this->_req.getUri(), this->_req.getRoot());
             Logger::info << "Error deleting resource." << std::endl;
         }
     } else {
         this->_res = this->_errorPage.getErrorPageContent(
-            this->_req.getErrorPageConfig(), "404", this->_req.getUri(), this->_req.getRoot());
+            this->_req.getErrorPageConfig(), 404, this->_req.getUri(), this->_req.getRoot());
         Logger::info << "Resource not found." << std::endl;
     }
     return (this->_res);

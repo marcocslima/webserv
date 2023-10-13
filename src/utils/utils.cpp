@@ -6,20 +6,18 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 17:08:10 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 16:02:13 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 17:12:59 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.hpp"
 #include "Logger.hpp"
 
-responseData getJson(std::string body)
+responseData getJson(std::string body, int status)
 {
     responseData data;
 
-    data.content       = body;
-    data.contentLength = (int)body.length();
-    data.contentType   = "application/json";
+    data = setResponseData(status, "application/json", body, (int)body.length());
     return (data);
 }
 

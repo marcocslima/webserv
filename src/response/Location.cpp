@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:09:25 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 16:02:22 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 16:57:46 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void Location::_getFileContent(void)
     this->_responseData.contentType = Constants::getMimeTypes(this->_uriExtension);
     if (!this->_responseData.contentLength) {
         this->_responseData = this->_errorPage.getErrorPageContent(
-            this->_req.getErrorPageConfig(), "404", this->_req.getUri(), this->_req.getRoot());
+            this->_req.getErrorPageConfig(), 404, this->_req.getUri(), this->_req.getRoot());
         return;
     }
     return;
@@ -74,7 +74,7 @@ void Location::_getIndexContent(void)
 
     if (this->_indexPage.empty()) {
         this->_responseData = this->_errorPage.getErrorPageContent(
-            this->_req.getErrorPageConfig(), "404", this->_req.getUri(), this->_req.getRoot());
+            this->_req.getErrorPageConfig(), 404, this->_req.getUri(), this->_req.getRoot());
         return;
     }
     uri = this->_req.getUri();
@@ -87,7 +87,7 @@ void Location::_getIndexContent(void)
     this->_responseData.contentType = Constants::getMimeTypes(extractFileExtension(indexPath));
     if (!this->_responseData.contentLength) {
         this->_responseData = this->_errorPage.getErrorPageContent(
-            this->_req.getErrorPageConfig(), "403", uri, this->_req.getRoot());
+            this->_req.getErrorPageConfig(), 403, uri, this->_req.getRoot());
     }
     return;
 }
