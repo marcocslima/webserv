@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 12:04:42 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 16:03:41 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ ResponseHandlers::~ResponseHandlers(void) {}
 
 responseData ResponseHandlers::exec(Parser &parser, HttpRequest &request)
 {
-    this->_initResponseData();
+    this->_res = setResponseData(0, "", "", -1);
     // TODO: check server_Name
     // TODO: check method
     switch (this->_resolveOption(request.getMethod())) {
@@ -29,20 +29,12 @@ responseData ResponseHandlers::exec(Parser &parser, HttpRequest &request)
             this->_postHandler(request);
             break;
         case DELETE:
-            this->_deleteHandler(request.getUri());
+            this->_deleteHandler(request);
             break;
         default:
             break;
     }
     return (this->_res);
-}
-
-void ResponseHandlers::_initResponseData(void)
-{
-    this->_res.statusCode    = "";
-    this->_res.contentType   = "";
-    this->_res.content       = "";
-    this->_res.contentLength = -1;
 }
 
 int ResponseHandlers::_resolveOption(std::string method)
@@ -67,17 +59,19 @@ void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
 
 void ResponseHandlers::_postHandler(HttpRequest &request)
 {
-    PostMethod post_method(request);
+    (void)request;
+    // PostMethod post_method(request);
 
     // TODO: chamar cgi
-    post_method.handleMethod(request.getUri());
+    // post_method.handleMethod(request.getUri());
     // TODO: preciso que retorne o responseData
 }
 
-void ResponseHandlers::_deleteHandler(std::string uri)
+void ResponseHandlers::_deleteHandler(HttpRequest &request)
 {
-    DeleteMethod delete_method;
+    DeleteMethod delete_method(request);
 
-    delete_method.handleMethod(uri);
-    // TODO: preciso que retorne o responseData
+    Logger::warning << "Delete Method" << std::endl;
+
+    this->_res = delete_method.handleMethod();
 }
