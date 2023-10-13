@@ -19,9 +19,7 @@
 		function deletarArquivo() {
 			var filePath = document.getElementById("file-path").value;
 
-			var endpoint = 'http://localhost:3007/' + filePath;
-
-			fetch(endpoint, {
+			fetch(filePath, {
 				method: 'DELETE'
 			})
 				.then(response => {

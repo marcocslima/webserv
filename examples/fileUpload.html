@@ -78,8 +78,6 @@
 				Enviar arquivo
 			</button>
 		</form>
-
-		<div id="status"></div>
 	</div>
 
 	<script>
@@ -93,19 +91,25 @@
 			if (file) {
 				formData.append("arquivo", file);
 
-				fetch("http://localhost:3007/images", {
+				fetch("/images", {
 					method: "POST",
 					body: formData
 				})
-					.then(response => response.text())
+					.then(response => response.json())
 					.then(data => {
-						document.getElementById("status").innerHTML = data;
+						if (data.status === 'success') {
+							alert('Arquivo salvo com sucesso!');
+						} else {
+							alert('Erro ao salvar o arquivo. Tente novamente mais tarde.');
+						}
 					})
 					.catch(error => {
 						console.error("Erro ao enviar o arquivo: " + error);
+						alert('Erro ao salvar o arquivo. Tente novamente mais tarde.');
 					});
 			} else {
 				console.error("Nenhum arquivo selecionado.");
+				alert('Erro ao salvar o arquivo. Tente novamente mais tarde.');
 			}
 		}
 
