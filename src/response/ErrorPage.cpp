@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 05:34:14 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 16:56:59 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 18:56:20 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,23 +32,24 @@ responseData ErrorPage::getErrorPageContent(std::vector<std::string> errorPage,
         }
         filePath += errorPage.back();
         res             = getContent(root, filePath);
-        res.statusCode  = statusCode;
+        res.status      = statusCode; // TODO: Passar essa atribuição para utils, que nem content
+        res.statusCode  = Constants::getStatusCodes(to_string(statusCode));
         res.contentType = "text/html";
         if (res.contentLength) {
             return (res);
         }
     }
     std::string standardErrorFile = "/";
-    standardErrorFile += statusCode;
+    standardErrorFile += to_string(statusCode);
     standardErrorFile += ".html";
     res             = getContent(DEFAULT_ERROR_ROOT, standardErrorFile);
-    res.statusCode  = statusCode;
+    res.status      = statusCode;
+    res.statusCode  = Constants::getStatusCodes(to_string(statusCode));
     res.contentType = "text/html";
     if (res.contentLength) {
         return (res);
     }
-    res            = getJson("{\"error\": \"Error page not configured\"}", statusCode);
-    res.statusCode = statusCode;
+    res = getJson("{\"error\": \"Error page not configured\"}", statusCode);
     return (res);
 }
 
