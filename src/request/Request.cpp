@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/13 19:50:26 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:11:14 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -354,6 +354,7 @@ void HttpRequest::_setErrorPage(Parser &parser)
 
 void HttpRequest::_setLimitExcept(Parser &parser)
 {
+    this->_limitExcept.clear();
     if (this->_locationSize != this->_locationIndex) {
         this->_limitExcept
             = parser.getLocationParam(this->_serverIndex, this->_locationIndex, "limit_except");
