@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 11:38:53 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/14 00:13:11 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 01:06:46 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,13 +62,16 @@ char **CGI::assembleCGIEnv(std::map<std::string, std::string> map_envs)
     return (envs);
 }
 
-bool CGI::programExists(const std::string &path)
+bool CGI::programExists(const std::string &path, const HttpRequest &request)
 {
     struct stat info;
 
-    if (stat(path.c_str(), &info) != 0)
-        return (false);
+    _bin = getBin(request.getUri());
 
+    if (stat(path.c_str(), &info) != 0 || _bin == "") {
+        _is_cgi = false;
+        return (false);
+    }
     _is_cgi = true;
     return (true);
 }
@@ -83,7 +86,7 @@ bool CGI::isCGI(const HttpRequest &request, Parser &parser)
     size_t                   pos       = defaultRoot.find("/");
     if (pos != std::string::npos) {
         _cgi_path = rootTmp + "/" + rootParam[0] + defaultRoot.substr(pos) + request.getUri();
-        if (!programExists(_cgi_path))
+        if (!programExists(_cgi_path, request))
             _cgi_path = rootTmp + "/" + defaultRoot + request.getUri();
     } else
         _cgi_path = rootTmp + "/" + defaultRoot + request.getUri();
@@ -99,14 +102,14 @@ std::string CGI::executeCGI(const HttpRequest &request)
     struct timespec startTime;
     clock_gettime(CLOCK_MONOTONIC, &startTime);
 
-    std::string bin = getBin(request.getUri());
+    // std::string bin = getBin(request.getUri());
 
-    if (bin.empty())
+    if (_bin.empty())
         Logger::info << "There are not this program." << std::endl;
 
     _envs = assembleCGIEnv(assembleCGIHeaders(request));
 
-    char *cbin    = const_cast<char *>(bin.c_str());
+    char *cbin    = const_cast<char *>(_bin.c_str());
     char *pathBin = const_cast<char *>(_cgi_path.c_str());
 
     if (pipe(pipe_fd) == -1) {

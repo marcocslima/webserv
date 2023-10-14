@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/14 00:23:50 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 00:42:23 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,6 @@ void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
 
     // TODO: chamar autoindex
     // TODO: chamar cgi
-    location.setup(parser);
-    this->_res = location.getLocationContent();
 
     if (_cgi.isCGI(request, parser)) {
         std::string cgi_response = _cgi.executeCGI(request);
@@ -70,6 +68,9 @@ void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
         this->_res.contentLength = cgi_response.length();
         this->_res.contentType   = "text/html";
         this->_res.statusCode    = "200 OK";
+    } else {
+        location.setup(parser);
+        this->_res = location.getLocationContent();
     }
 }
 
@@ -85,9 +86,10 @@ void ResponseHandlers::_postHandler(HttpRequest &request, Parser &parser)
         this->_res.contentLength = cgi_response.length();
         this->_res.contentType   = "text/html";
         this->_res.statusCode    = "200 OK";
+    } else {
+        post_method.handleMethod(request.getUri());
     }
 
-    post_method.handleMethod(request.getUri());
     // TODO: preciso que retorne o responseData
 }
 
