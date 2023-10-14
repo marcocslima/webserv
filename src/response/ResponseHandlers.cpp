@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/14 10:28:16 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 11:08:37 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,10 +96,11 @@ void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
 
     if (Constants::isCgi(extractFileExtension(request.getUri()))) {
         if (_cgi.isCGI(request, parser))
-            this->_getCgi(request);
+            this->_res = this->_getCgi(request);
+    } else {
+        location.setup(parser);
+        this->_res = location.getLocationContent();
     }
-    location.setup(parser);
-    this->_res = location.getLocationContent();
 }
 
 void ResponseHandlers::_postHandler(HttpRequest &request, Parser &parser)
@@ -108,9 +109,9 @@ void ResponseHandlers::_postHandler(HttpRequest &request, Parser &parser)
 
     if (Constants::isCgi(extractFileExtension(request.getUri()))) {
         if (_cgi.isCGI(request, parser))
-            this->_getCgi(request);
-    }
-    this->_res = post_method.handleMethod();
+            this->_res = this->_getCgi(request);
+    } else
+        this->_res = post_method.handleMethod();
 }
 
 void ResponseHandlers::_deleteHandler(HttpRequest &request)
