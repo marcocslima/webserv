@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/12 15:25:54 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:08:51 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,17 +132,7 @@ void Server::processClientData(int clientSocket)
         Logger::verbose << clientReq << std::endl;
     }
     res = this->_responseHandlers.exec(this->_parser, this->_request);
-    if (res.contentLength < 0) {
-        return;
-    }
-    char responseHeader[1024];
-    sprintf(responseHeader,
-            "HTTP/1.1 %s\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n",
-            res.statusCode.c_str(),
-            res.contentType.c_str(),
-            res.contentLength);
-    send(clientSocket, responseHeader, strlen(responseHeader), 0);
-    send(clientSocket, res.content.c_str(), res.contentLength, 0);
+    this->_sendClientData(clientSocket, res);
     return;
 }
 
@@ -184,3 +174,32 @@ void Server::closeServer(void)
 }
 
 void Server::setVerbose(bool verbose) { this->_verbose = verbose; }
+
+void Server::_sendClientData(int clientSocket, responseData res)
+{
+    char responseHeader[1024];
+
+    if (res.contentLength < 0) {
+        return;
+    }
+    if (res.contentType.empty()) {
+        sprintf(responseHeader, "HTTP/1.1 %s\r\n\r\n", res.statusCode.c_str());
+    } else if (res.status == METHOD_NOT_ALLOWED) {
+        sprintf(responseHeader,
+                "HTTP/1.1 %s\r\nAllow: %s\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n",
+                res.statusCode.c_str(),
+                vector_join(this->_request.getLimitExcept(), " ").c_str(),
+                res.contentType.c_str(),
+                res.contentLength);
+    } else {
+        sprintf(responseHeader,
+                "HTTP/1.1 %s\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n",
+                res.statusCode.c_str(),
+                res.contentType.c_str(),
+                res.contentLength);
+    }
+    send(clientSocket, responseHeader, strlen(responseHeader), 0);
+    if (res.contentLength) {
+        send(clientSocket, res.content.c_str(), res.contentLength, 0);
+    }
+}

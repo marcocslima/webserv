@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/13 15:26:40 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 09:11:26 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class HttpRequest {
     int                                getLocationSize(void) const;
     std::string                        getRoot(void) const;
     std::vector<std::string>           getErrorPageConfig(void) const;
+    std::vector<std::string>           getLimitExcept(void) const;
 
     bool _has_body;
     bool _has_form;
@@ -64,6 +65,7 @@ class HttpRequest {
     std::string _extractPathFromURI(void);
     void        _setRoot(Parser &parser);
     void        _setErrorPage(Parser &parser);
+    void        _setLimitExcept(Parser &parser);
 
     int                                _contentLength;
     int                                _maxBodySize;
@@ -82,4 +84,5 @@ class HttpRequest {
     int                                _locationSize;
     std::string                        _root;
     std::vector<std::string>           _errorPageConfig;
+    std::vector<std::string>           _limitExcept;
 };

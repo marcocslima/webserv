@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/14 08:47:32 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 09:36:29 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,16 @@ ResponseHandlers::~ResponseHandlers(void) {}
 
 responseData ResponseHandlers::exec(Parser &parser, HttpRequest &request)
 {
-    this->_initResponseData();
-    // TODO: check server_Name
+    this->_res = setResponseData(0, "", "", -1);
+
     if (!this->_verifyServerName(request, parser)) {
-        this->_res.statusCode = "404";
-        return (this->_res);
+        return (this->_errorPage.getErrorPageContent(
+            request.getErrorPageConfig(), BAD_REQUEST, request.getUri(), request.getRoot()));
     }
-    // TODO: check method
+    if (!this->_methodAllowed(request)) {
+        return (this->_errorPage.getErrorPageContent(
+            request.getErrorPageConfig(), METHOD_NOT_ALLOWED, request.getUri(), request.getRoot()));
+    }
     switch (this->_resolveOption(request.getMethod())) {
         case GET:
             this->_getHandler(request, parser);
@@ -33,7 +36,7 @@ responseData ResponseHandlers::exec(Parser &parser, HttpRequest &request)
             this->_postHandler(request, parser);
             break;
         case DELETE:
-            this->_deleteHandler(request.getUri());
+            this->_deleteHandler(request);
             break;
         default:
             break;
@@ -41,12 +44,17 @@ responseData ResponseHandlers::exec(Parser &parser, HttpRequest &request)
     return (this->_res);
 }
 
-void ResponseHandlers::_initResponseData(void)
+bool ResponseHandlers::_methodAllowed(HttpRequest &request)
 {
-    this->_res.statusCode    = "";
-    this->_res.contentType   = "";
-    this->_res.content       = "";
-    this->_res.contentLength = -1;
+    if (request.getLimitExcept().empty()) {
+        return (true);
+    }
+    for (size_t i = 0; i < request.getLimitExcept().size(); i++) {
+        if (request.getLimitExcept()[i] == request.getMethod()) {
+            return (true);
+        }
+    }
+    return (false);
 }
 
 bool ResponseHandlers::_verifyServerName(HttpRequest &request, Parser &parser)
@@ -70,48 +78,46 @@ int ResponseHandlers::_resolveOption(std::string method)
     return (i);
 }
 
+responseData ResponseHandlers::_getCgi(HttpRequest &request)
+{
+    CGI          cgi;
+    responseData res;
+
+    std::string cgi_response = cgi.executeCGI(request);
+    res = setResponseData(OK, "text/html", cgi_response.c_str(), (int)cgi_response.length());
+    return (res);
+}
+
 void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
 {
     Location location(request);
 
     // TODO: chamar autoindex
-    // TODO: chamar cgi
 
-    if (_cgi.isCGI(request, parser)) {
-        std::string cgi_response = _cgi.executeCGI(request);
-        this->_res.content       = cgi_response;
-        this->_res.contentLength = cgi_response.length();
-        this->_res.contentType   = "text/html";
-        this->_res.statusCode    = "200 OK";
-    } else {
-        location.setup(parser);
-        this->_res = location.getLocationContent();
+    if (Constants::isCgi(extractFileExtension(request.getUri()))) {
+        if (_cgi.isCGI(request, parser))
+            this->_getCgi(request);
     }
+    location.setup(parser);
+    this->_res = location.getLocationContent();
 }
 
 void ResponseHandlers::_postHandler(HttpRequest &request, Parser &parser)
 {
     PostMethod post_method(request);
 
-    // TODO: chamar cgi
-
-    if (_cgi.isCGI(request, parser)) {
-        std::string cgi_response = _cgi.executeCGI(request);
-        this->_res.content       = cgi_response;
-        this->_res.contentLength = cgi_response.length();
-        this->_res.contentType   = "text/html";
-        this->_res.statusCode    = "200 OK";
-    } else {
-        post_method.handleMethod(request.getUri());
+    if (Constants::isCgi(extractFileExtension(request.getUri()))) {
+        if (_cgi.isCGI(request, parser))
+            this->_getCgi(request);
     }
-
-    // TODO: preciso que retorne o responseData
+    this->_res = post_method.handleMethod();
 }
 
-void ResponseHandlers::_deleteHandler(std::string uri)
+void ResponseHandlers::_deleteHandler(HttpRequest &request)
 {
-    DeleteMethod delete_method;
+    DeleteMethod delete_method(request);
 
-    delete_method.handleMethod(uri);
-    // TODO: preciso que retorne o responseData
+    Logger::warning << "Delete Method" << std::endl;
+
+    this->_res = delete_method.handleMethod();
 }

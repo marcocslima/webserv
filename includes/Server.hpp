@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/13 12:03:10 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:07:21 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ class Server {
     bool                    _verbose;
     std::string             _defaultHtmlContent;
     ResponseHandlers        _responseHandlers;
+
+    void _sendClientData(int clientSocket, responseData res);
 
     public:
     Server(void);

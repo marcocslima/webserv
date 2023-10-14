@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:09:25 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 12:16:41 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:04:05 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,8 @@ Location::~Location(void) {}
 
 void Location::setup(Parser &parser)
 {
-    this->_responseData.content       = "";
-    this->_responseData.statusCode    = "";
-    this->_responseData.contentType   = "";
-    this->_responseData.contentLength = 0;
-    this->_uriExtension               = extractFileExtension(this->_req.getUri());
+    this->_responseData = setResponseData(0, "", "", 0);
+    this->_uriExtension = extractFileExtension(this->_req.getUri());
     this->_setIndexPage(parser);
 }
 
@@ -58,12 +55,10 @@ responseData Location::getLocationContent(void)
 
 void Location::_getFileContent(void)
 {
-    this->_responseData             = getContent(this->_req.getRoot(), this->_req.getUri());
-    this->_responseData.statusCode  = Constants::getStatusCodes("200");
-    this->_responseData.contentType = Constants::getMimeTypes(this->_uriExtension);
+    this->_responseData = getContent(this->_req.getRoot(), this->_req.getUri(), OK);
     if (!this->_responseData.contentLength) {
         this->_responseData = this->_errorPage.getErrorPageContent(
-            this->_req.getErrorPageConfig(), "404", this->_req.getUri(), this->_req.getRoot());
+            this->_req.getErrorPageConfig(), NOT_FOUND, this->_req.getUri(), this->_req.getRoot());
         return;
     }
     return;
@@ -75,20 +70,18 @@ void Location::_getIndexContent(void)
 
     if (this->_indexPage.empty()) {
         this->_responseData = this->_errorPage.getErrorPageContent(
-            this->_req.getErrorPageConfig(), "404", this->_req.getUri(), this->_req.getRoot());
+            this->_req.getErrorPageConfig(), NOT_FOUND, this->_req.getUri(), this->_req.getRoot());
         return;
     }
     uri = this->_req.getUri();
     if (uri[uri.length() - 1] != '/') {
         uri += '/';
     }
-    indexPath                       = uri + this->_indexPage;
-    this->_responseData             = getContent(this->_req.getRoot(), indexPath);
-    this->_responseData.statusCode  = Constants::getStatusCodes("200");
-    this->_responseData.contentType = Constants::getMimeTypes(extractFileExtension(indexPath));
+    indexPath           = uri + this->_indexPage;
+    this->_responseData = getContent(this->_req.getRoot(), indexPath, OK);
     if (!this->_responseData.contentLength) {
         this->_responseData = this->_errorPage.getErrorPageContent(
-            this->_req.getErrorPageConfig(), "403", uri, this->_req.getRoot());
+            this->_req.getErrorPageConfig(), FORBIDDEN, uri, this->_req.getRoot());
     }
     return;
 }

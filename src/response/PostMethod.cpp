@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PostMethod.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/11 19:50:54 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/13 19:52:16 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,49 +16,51 @@ PostMethod::PostMethod() {}
 
 PostMethod::~PostMethod() {}
 
-PostMethod::PostMethod(HttpRequest request) : _httpRequest(request) {}
+PostMethod::PostMethod(HttpRequest request) : AHttpResponse(request) {}
 
-std::string PostMethod::handleMethod(std::string uri)
+responseData PostMethod::handleMethod()
 {
-    static_cast<void>(uri);
     created = false;
 
-    if (_httpRequest._has_body && _httpRequest._tooLarge == false) {
-        if (_httpRequest._has_multipart) {
+    if (_req._has_body && _req._tooLarge == false) {
+        if (_req._has_multipart) {
             handleMultipart();
             if (created && _file == true) {
-                setResponse("201", "Created", "<html><body><h1>201 Created</h1></body></html>");
+                _res = getJson(
+                    "{\"status\": \"success\", \"message\": \"Resource created successfully\"}",
+                    201);
                 Logger::info << "File created." << std::endl;
-                return (_responseHeader);
+                return (_res);
             } else if (!created && _file == true) {
-                setResponse("500",
-                            "Internal Server Error",
-                            "<html><body><h1>500  Internal Server Error</h1></body></html>");
+                _res = _errorPage.getErrorPageContent(_req.getErrorPageConfig(),
+                                                      INTERNAL_SERVER_ERROR,
+                                                      _req.getUri(),
+                                                      _req.getRoot());
                 Logger::error << "Unable to create file." << std::endl;
-                return (_responseHeader);
+                return (_res);
             }
         }
-        if (_httpRequest._has_form)
+        if (_req._has_form)
             handleForm();
 
-        setResponse("200", "OK", "<html><body><h1>200 OK</h1></body></html>");
+        _res = getJson("{\"status\": \"success\", \"message\": \"Successful operation\"}", OK);
         Logger::info << "Post request completed successfully." << std::endl;
-    } else if (!_httpRequest._has_body) {
-        setResponse("204", "No content", "<html><body><h1>204 No Content</h1></body></html>");
+    } else if (!_req._has_body) {
+        _res = _errorPage.getErrorPageContent(
+            _req.getErrorPageConfig(), BAD_REQUEST, _req.getUri(), _req.getRoot());
         Logger::info << "No content." << std::endl;
     } else {
-        setResponse("500",
-                    "Internal Server Error",
-                    "<html><body><h1>500  Internal Server Error</h1></body></html>");
+        _res = _errorPage.getErrorPageContent(
+            _req.getErrorPageConfig(), INTERNAL_SERVER_ERROR, _req.getUri(), _req.getRoot());
         Logger::error << "Internal Server Error." << std::endl;
     }
-    return (_responseHeader);
+    return (_res);
 }
 
 void PostMethod::handleMultipart()
 {
-    std::string boundary = _httpRequest.getBoundary();
-    std::string body     = _httpRequest.getBody();
+    std::string boundary = _req.getBoundary();
+    std::string body     = _req.getBody();
 
     _formData.clear();
     _file      = false;
@@ -94,7 +96,7 @@ std::string setFileName(size_t pos, std::string data)
 
 void PostMethod::parseMultipartFormData(size_t pos, size_t endPos)
 {
-    std::string body     = _httpRequest.getBody();
+    std::string body     = _req.getBody();
     std::string partData = body.substr(pos, endPos - pos);
     std::size_t bodyEnd  = partData.find("\r\n\r\n");
 
@@ -175,7 +177,7 @@ std::string replaceChar(const std::string &input)
 
 void PostMethod::handleForm()
 {
-    std::string        body = _httpRequest.getBody();
+    std::string        body = _req.getBody();
     std::istringstream ss(body);
     std::string        pair;
 
@@ -201,16 +203,5 @@ void PostMethod::print()
     for (it = _formData.begin(); it != _formData.end(); ++it)
         std::cout << std::left << std::setw(19) << it->first << " | " << it->second;
     std::cout << std::setfill('-') << std::setw(50) << "-" << std::setfill(' ') << std::endl;
-    std::cout << RESET << std::endl;
-}
-
-void PostMethod::setResponse(std::string status, std::string message, std::string body)
-{
-    _response.version        = "HTTP/1.1";
-    _response.status_code    = status;
-    _response.status_message = message;
-    _response.content_type   = "text/html";
-    _response.content_length = "0";
-    _response.body           = body;
-    _responseHeader          = assembleResponse();
+    std::cout << RESET_COLOR << std::endl;
 }

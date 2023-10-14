@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/14 08:34:03 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 09:12:33 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ std::vector<std::string> HttpRequest::getErrorPageConfig(void) const
     return (this->_errorPageConfig);
 }
 
+std::vector<std::string> HttpRequest::getLimitExcept(void) const { return (this->_limitExcept); }
+
 const char *HttpRequest::RequestException::what() const throw()
 {
     return ("Error parsing HTTP request.");
@@ -76,7 +78,7 @@ void HttpRequest::requestHttp(std::string request, Parser &parser)
     size_t           firstLineEnd = request.find("\r\n");
 
     if (firstLineEnd == std::string::npos) {
-        this->_statusError = BAD_REQUEST;
+        this->_statusError = to_string(BAD_REQUEST);
         return;
     }
 
@@ -118,12 +120,12 @@ void HttpRequest::_parseFirstLine(std::string &requestLine)
     if (!(iss >> this->_method >> this->_uri >> this->_httpVersion)
         || requestLine != this->_method + " " + this->_uri + " " + this->_httpVersion
         || this->_uri[0] != '/') {
-        this->_statusError = BAD_REQUEST;
+        this->_statusError = to_string(BAD_REQUEST);
         throw RequestException();
     }
 
     if (this->_httpVersion != "HTTP/1.1") {
-        this->_statusError = HTTP_VERSION_NOT_SUPPORTED;
+        this->_statusError = to_string(HTTP_VERSION_NOT_SUPPORTED);
         throw RequestException();
     }
     size_t pos = this->_uri.find('?');
@@ -235,7 +237,7 @@ void HttpRequest::_getMultipartData(std::string request)
         _boundary = contentType.substr(pos + 9);
         _boundary = "--" + _boundary;
     } else {
-        this->_statusError = BAD_REQUEST;
+        this->_statusError = to_string(BAD_REQUEST);
         throw RequestException();
     }
 
@@ -244,7 +246,7 @@ void HttpRequest::_getMultipartData(std::string request)
     if (startBody != std::string::npos)
         _body = request.substr(startBody);
     else {
-        this->_statusError = BAD_REQUEST;
+        this->_statusError = to_string(BAD_REQUEST);
         throw RequestException();
     }
 }
@@ -275,6 +277,7 @@ void HttpRequest::_getServerParam(Parser &parser)
     this->_locationSize  = serverSize[this->_serverIndex + 1];
     this->_locationIndex = this->_findLocationIndex(parser);
     this->_setRoot(parser);
+    this->_setLimitExcept(parser);
     this->_setErrorPage(parser);
 }
 
@@ -358,5 +361,15 @@ void HttpRequest::_setErrorPage(Parser &parser)
         }
     }
     this->_errorPageConfig = parser.getServerParam(this->_serverIndex, "error_page");
+    return;
+}
+
+void HttpRequest::_setLimitExcept(Parser &parser)
+{
+    this->_limitExcept.clear();
+    if (this->_locationSize != this->_locationIndex) {
+        this->_limitExcept
+            = parser.getLocationParam(this->_serverIndex, this->_locationIndex, "limit_except");
+    }
     return;
 }

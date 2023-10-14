@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 05:34:14 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/12 14:18:24 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/13 20:02:18 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ ErrorPage::ErrorPage(void) {}
 ErrorPage::~ErrorPage(void) {}
 
 responseData ErrorPage::getErrorPageContent(std::vector<std::string> errorPage,
-                                            std::string              statusCode,
+                                            int                      statusCode,
                                             std::string              uri,
                                             std::string              root)
 {
@@ -31,31 +31,26 @@ responseData ErrorPage::getErrorPageContent(std::vector<std::string> errorPage,
             filePath += '/';
         }
         filePath += errorPage.back();
-        res             = getContent(root, filePath);
-        res.statusCode  = statusCode;
-        res.contentType = "text/html";
+        res = getContent(root, filePath, statusCode);
         if (res.contentLength) {
             return (res);
         }
     }
     std::string standardErrorFile = "/";
-    standardErrorFile += statusCode;
+    standardErrorFile += to_string(statusCode);
     standardErrorFile += ".html";
-    res             = getContent(DEFAULT_ERROR_ROOT, standardErrorFile);
-    res.statusCode  = statusCode;
-    res.contentType = "text/html";
+    res = getContent(DEFAULT_ERROR_ROOT, standardErrorFile, statusCode);
     if (res.contentLength) {
         return (res);
     }
-    res            = getJson("{\"error\": \"Error page not configured\"}");
-    res.statusCode = statusCode;
+    res = getJson("{\"error\": \"Error page not configured\"}", statusCode);
     return (res);
 }
 
-bool ErrorPage::_hasErrorPageConfig(std::vector<std::string> errorPage, std::string statusCode)
+bool ErrorPage::_hasErrorPageConfig(std::vector<std::string> errorPage, int statusCode)
 {
     for (std::vector<std::string>::iterator it = errorPage.begin(); it != errorPage.end(); ++it) {
-        if (*it == statusCode) {
+        if (*it == to_string(statusCode)) {
             return (true);
         }
     }

@@ -6,7 +6,7 @@
 #    By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/10/13 15:42:09 by mcl              ###   ########.fr        #
+#    Updated: 2023/10/14 09:07:51 by mcl              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,12 +14,12 @@ CHECK		=	\342\234\224
 
 ## COLORS ##
 
-RESET		=	\e[39m
+RESET_COLOR		=	\e[39m
 GREEN		=	\e[92m
 YELLOW		=	\e[93m
 MAGENTA		=	\e[95m
 CYAN		=	\e[96m
-LOG			= printf "[$(CYAN)$(CHECK)$(RESET)] %s\n"
+LOG			= printf "[$(CYAN)$(CHECK)$(RESET_COLOR)] %s\n"
 
 # **************************************************************************** #
 
@@ -43,14 +43,13 @@ RM = rm -rf
 SRC_DIR = ./src/
 
 VPATH = $(SRC_DIR)\
-		$(SRC_DIR)location\
 		$(SRC_DIR)cgi\
 		$(SRC_DIR)parser\
 		$(SRC_DIR)request\
 		$(SRC_DIR)response\
 		$(SRC_DIR)server\
 		$(SRC_DIR)utils\
-		$(SRC_DIR)response\
+
 # FILES #
 
 FILES = main.cpp\

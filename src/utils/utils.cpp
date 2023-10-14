@@ -6,34 +6,31 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 17:08:10 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/14 00:17:14 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 09:21:32 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.hpp"
 #include "Logger.hpp"
 
-responseData getJson(std::string body)
+responseData getJson(std::string body, int status)
 {
     responseData data;
 
-    data.content       = body;
-    data.contentLength = (int)body.length();
-    data.contentType   = "application/json";
+    data = setResponseData(status, "application/json", body, (int)body.length());
     return (data);
 }
 
-responseData getContent(std::string root, std::string file)
+responseData getContent(std::string root, std::string file, int status)
 {
     std::stringstream fullPathStream;
     std::string       fullPath;
     const char       *fullPathCStr;
     responseData      data;
+    std::string       extension;
 
-    data.content       = "";
-    data.statusCode    = "";
-    data.contentType   = "";
-    data.contentLength = 0;
+    data      = setResponseData(0, "", "", 0);
+    extension = extractFileExtension(file);
     fullPathStream << root << file;
     fullPath     = fullPathStream.str();
     fullPathCStr = fullPath.c_str();
@@ -41,8 +38,8 @@ responseData getContent(std::string root, std::string file)
     if (ifs.is_open()) {
         std::string content((std::istreambuf_iterator<char>(ifs)),
                             std::istreambuf_iterator<char>());
-        data.content       = content;
-        data.contentLength = (int)content.length();
+        data = setResponseData(
+            status, Constants::getMimeTypes(extension), content, (int)content.length());
         ifs.close();
     }
     return (data);
@@ -124,4 +121,37 @@ std::string getBin(const std::string &url)
         Logger::info << "Error getting binary name" << std::endl;
         return "";
     }
+}
+
+responseData
+setResponseData(int status, std::string contentType, std::string content, int contentLength)
+{
+    responseData res;
+
+    res.status        = status;
+    res.statusCode    = Constants::getStatusCodes(to_string(status));
+    res.contentType   = contentType;
+    res.content       = content;
+    res.contentLength = contentLength;
+    return (res);
+}
+
+std::string vector_join(std::vector<std::string> vec, std::string delimiter)
+{
+    std::string                        result = "";
+    std::vector<std::string>::iterator it;
+
+    for (it = vec.begin(); it != vec.end(); ++it) {
+        result += *it;
+        result += delimiter;
+    }
+    return (result);
+}
+
+template <typename ValueType>
+std::string to_string(ValueType v)
+{
+    std::ostringstream oss;
+    oss << v;
+    return oss.str();
 }
