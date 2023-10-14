@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/14 09:36:29 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 10:28:16 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,10 @@ int ResponseHandlers::_resolveOption(std::string method)
 
 responseData ResponseHandlers::_getCgi(HttpRequest &request)
 {
-    CGI          cgi;
+    // CGI          cgi;
     responseData res;
 
-    std::string cgi_response = cgi.executeCGI(request);
+    std::string cgi_response = _cgi.executeCGI(request);
     res = setResponseData(OK, "text/html", cgi_response.c_str(), (int)cgi_response.length());
     return (res);
 }
