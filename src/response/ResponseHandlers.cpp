@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/14 11:08:37 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 16:12:02 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ bool ResponseHandlers::_verifyServerName(HttpRequest &request, Parser &parser)
 {
     std::vector<std::string> server_names
         = parser.getServerParam(request.getServerIndex(), "server_name");
+    if (server_names.empty())
+        return (true);
     for (std::vector<std::string>::iterator it = server_names.begin(); it != server_names.end();
          ++it)
         if (*it == request.getHost())
