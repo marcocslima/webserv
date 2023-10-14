@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/14 00:42:23 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 08:47:32 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,10 @@ responseData ResponseHandlers::exec(Parser &parser, HttpRequest &request)
 {
     this->_initResponseData();
     // TODO: check server_Name
+    if (!this->_verifyServerName(request, parser)) {
+        this->_res.statusCode = "404";
+        return (this->_res);
+    }
     // TODO: check method
     switch (this->_resolveOption(request.getMethod())) {
         case GET:
@@ -43,6 +47,17 @@ void ResponseHandlers::_initResponseData(void)
     this->_res.contentType   = "";
     this->_res.content       = "";
     this->_res.contentLength = -1;
+}
+
+bool ResponseHandlers::_verifyServerName(HttpRequest &request, Parser &parser)
+{
+    std::vector<std::string> server_names
+        = parser.getServerParam(request.getServerIndex(), "server_name");
+    for (std::vector<std::string>::iterator it = server_names.begin(); it != server_names.end();
+         ++it)
+        if (*it == request.getHost())
+            return (true);
+    return (false);
 }
 
 int ResponseHandlers::_resolveOption(std::string method)

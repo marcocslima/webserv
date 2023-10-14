@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/13 15:35:50 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 08:34:03 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ void HttpRequest::requestHttp(std::string request, Parser &parser)
         _parseHeaders(headersPart);
         _getMaxBody(parser);
         _getServerParam(parser);
+        _getHost();
 
         if (_has_body) {
             _has_multipart = false;

@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:42:45 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 17:09:35 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 08:41:08 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ class ResponseHandlers {
 
     void _initResponseData(void);
     int  _resolveOption(std::string method);
+    bool _verifyServerName(HttpRequest &request, Parser &parser);
     void _getHandler(HttpRequest &request, Parser &parser);
     void _postHandler(HttpRequest &request, Parser &parser);
     void _deleteHandler(std::string uri);
