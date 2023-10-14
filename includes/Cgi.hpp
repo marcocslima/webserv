@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 11:36:29 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/14 01:06:30 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 11:26:18 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,5 @@ class CGI : public HttpRequest {
     bool isCGI(const HttpRequest &request, Parser &parser);
 };
 
-bool        binExists(const std::string &path);
 int         getSIndex(Parser &parser, int serverSize, std::string port);
 std::string queryToString(std::vector<std::string> query);
