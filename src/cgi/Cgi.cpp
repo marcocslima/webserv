@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 11:38:53 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/14 01:06:46 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 08:05:50 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,8 @@ bool CGI::programExists(const std::string &path, const HttpRequest &request)
     _bin = getBin(request.getUri());
 
     if (stat(path.c_str(), &info) != 0 || _bin == "") {
-        _is_cgi = false;
         return (false);
     }
-    _is_cgi = true;
     return (true);
 }
 
@@ -80,16 +78,26 @@ bool CGI::isCGI(const HttpRequest &request, Parser &parser)
 {
     std::string defaultRoot = DEFAULT_ROOT_CGI;
     std::string rootTmp     = getDir();
+    std::string tmp_path;
+
+    _is_cgi = false;
 
     int serverIndex                    = getSIndex(parser, parser.getServers(), request.getPort());
     std::vector<std::string> rootParam = parser.getServerParam(serverIndex, "root");
     size_t                   pos       = defaultRoot.find("/");
-    if (pos != std::string::npos) {
-        _cgi_path = rootTmp + "/" + rootParam[0] + defaultRoot.substr(pos) + request.getUri();
-        if (!programExists(_cgi_path, request))
-            _cgi_path = rootTmp + "/" + defaultRoot + request.getUri();
-    } else
-        _cgi_path = rootTmp + "/" + defaultRoot + request.getUri();
+    if (pos != std::string::npos && rootParam.size() > 0) {
+        tmp_path = rootTmp + "/" + rootParam[0] + defaultRoot.substr(pos) + request.getUri();
+        if (programExists(tmp_path, request)) {
+            _cgi_path = tmp_path;
+            _is_cgi   = true;
+            return (_is_cgi);
+        }
+    }
+    tmp_path = rootTmp + "/" + defaultRoot + request.getUri();
+    if (programExists(tmp_path, request)) {
+        _cgi_path = tmp_path;
+        _is_cgi   = true;
+    }
     return (_is_cgi);
 }
 
@@ -101,8 +109,6 @@ std::string CGI::executeCGI(const HttpRequest &request)
     unsigned int    timeout = 10000;
     struct timespec startTime;
     clock_gettime(CLOCK_MONOTONIC, &startTime);
-
-    // std::string bin = getBin(request.getUri());
 
     if (_bin.empty())
         Logger::info << "There are not this program." << std::endl;
