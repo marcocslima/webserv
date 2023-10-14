@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 11:36:29 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/13 18:52:46 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 00:07:43 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ class CGI : public HttpRequest {
     private:
     char      **_envs;
     std::string _cgi_path;
+    bool        _is_cgi;
 
     public:
     CGI();
@@ -29,8 +30,9 @@ class CGI : public HttpRequest {
 
     std::map<std::string, std::string> assembleCGIHeaders(const HttpRequest &request);
     char                             **assembleCGIEnv(std::map<std::string, std::string> map_envs);
-    std::string                        executeCGI(const HttpRequest &request, Parser &parser);
-    void                               selectRootCGI(const HttpRequest &request, Parser &parser);
+    std::string                        executeCGI(const HttpRequest &request);
+    bool                               isCGI(const HttpRequest &request, Parser &parser);
+    bool                               programExists(const std::string &path);
 };
 
 bool        binExists(const std::string &path);

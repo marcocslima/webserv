@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 17:15:39 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 00:23:50 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,16 @@ void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
 
     // TODO: chamar autoindex
     // TODO: chamar cgi
-    std::string resp = _cgi.executeCGI(request, parser);
-
     location.setup(parser);
-    this->_res               = location.getLocationContent();
-    this->_res.content       = resp;
-    this->_res.contentLength = resp.length();
-    this->_res.contentType   = "text/html";
-    this->_res.statusCode    = "200 OK";
+    this->_res = location.getLocationContent();
+
+    if (_cgi.isCGI(request, parser)) {
+        std::string cgi_response = _cgi.executeCGI(request);
+        this->_res.content       = cgi_response;
+        this->_res.contentLength = cgi_response.length();
+        this->_res.contentType   = "text/html";
+        this->_res.statusCode    = "200 OK";
+    }
 }
 
 void ResponseHandlers::_postHandler(HttpRequest &request, Parser &parser)
@@ -77,12 +79,13 @@ void ResponseHandlers::_postHandler(HttpRequest &request, Parser &parser)
 
     // TODO: chamar cgi
 
-    std::string resp = _cgi.executeCGI(request, parser);
-
-    this->_res.content       = resp;
-    this->_res.contentLength = resp.length();
-    this->_res.contentType   = "text/html";
-    this->_res.statusCode    = "200 OK";
+    if (_cgi.isCGI(request, parser)) {
+        std::string cgi_response = _cgi.executeCGI(request);
+        this->_res.content       = cgi_response;
+        this->_res.contentLength = cgi_response.length();
+        this->_res.contentType   = "text/html";
+        this->_res.statusCode    = "200 OK";
+    }
 
     post_method.handleMethod(request.getUri());
     // TODO: preciso que retorne o responseData

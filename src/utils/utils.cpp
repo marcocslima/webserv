@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 17:08:10 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 17:35:34 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/14 00:17:14 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,9 @@ std::string getDir()
         size_t      pos = dir.find(rPath);
         if (pos != std::string::npos)
             dir = dir.substr(0, pos + 7);
-        std::cout << "Current working dir: " << dir << std::endl;
         return dir;
     } else {
-        std::cout << "Error getting current working directory" << std::endl;
+        Logger::error << "Error getting current working directory" << std::endl;
         return "";
     }
 }
