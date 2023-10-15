@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseHandlers.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/15 11:07:59 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/15 15:29:37 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,14 +79,14 @@ bool ResponseHandlers::_verifyRedirection(HttpRequest &request, Parser &parser)
         = parser.getServerParam(request.getServerIndex(), "redirect");
     std::vector<std::string>::iterator it_s = server_redirection.begin();
     if (!server_redirection.empty()) {
-        this->_res = setResponseData(std::atoi(it_s[0].c_str()), "text/html", "", 0, it_s[1]);
+        this->_res = setResponseData(std::atoi(it_s[0].c_str()), "", "", 0, it_s[1]);
         return (true);
     }
     std::vector<std::string> location_redirection
         = parser.getLocationParam(request.getServerIndex(), request.getLocationIndex(), "redirect");
     std::vector<std::string>::iterator it_p = location_redirection.begin();
     if (!location_redirection.empty()) {
-        this->_res = setResponseData(std::atoi(it_p[0].c_str()), "text/html", "", 0, it_p[1]);
+        this->_res = setResponseData(std::atoi(it_p[0].c_str()), "", "", 0, it_p[1]);
         return (true);
     }
     return (false);
