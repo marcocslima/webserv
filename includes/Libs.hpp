@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:12:50 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/14 09:11:12 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/15 01:54:27 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,4 +65,5 @@ struct responseData {
     std::string statusCode;
     std::string contentType;
     int         contentLength;
+    std::string location;
 };

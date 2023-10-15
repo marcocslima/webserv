@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 20:08:51 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/15 02:18:54 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,11 +192,14 @@ void Server::_sendClientData(int clientSocket, responseData res)
                 res.contentType.c_str(),
                 res.contentLength);
     } else {
+        // res.location   = "http://www.google.com";
+        // res.statusCode = "302 Found";
         sprintf(responseHeader,
-                "HTTP/1.1 %s\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n",
+                "HTTP/1.1 %s\r\nContent-Type: %s\r\nContent-Length: %d\r\nlocation: %s\r\n\r\n",
                 res.statusCode.c_str(),
                 res.contentType.c_str(),
-                res.contentLength);
+                res.contentLength,
+                res.location.c_str());
     }
     send(clientSocket, responseHeader, strlen(responseHeader), 0);
     if (res.contentLength) {
