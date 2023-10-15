@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/14 16:07:55 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/15 11:07:59 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ responseData ResponseHandlers::exec(Parser &parser, HttpRequest &request)
     if (!this->_verifyServerName(request, parser)) {
         return (this->_errorPage.getErrorPageContent(
             request.getErrorPageConfig(), BAD_REQUEST, request.getUri(), request.getRoot()));
+    }
+    if (this->_verifyRedirection(request, parser)) {
+        return (this->_res);
     }
     if (!this->_methodAllowed(request)) {
         return (this->_errorPage.getErrorPageContent(
@@ -67,6 +70,25 @@ bool ResponseHandlers::_verifyServerName(HttpRequest &request, Parser &parser)
          ++it)
         if (*it == request.getHost())
             return (true);
+    return (false);
+}
+
+bool ResponseHandlers::_verifyRedirection(HttpRequest &request, Parser &parser)
+{
+    std::vector<std::string> server_redirection
+        = parser.getServerParam(request.getServerIndex(), "redirect");
+    std::vector<std::string>::iterator it_s = server_redirection.begin();
+    if (!server_redirection.empty()) {
+        this->_res = setResponseData(std::atoi(it_s[0].c_str()), "text/html", "", 0, it_s[1]);
+        return (true);
+    }
+    std::vector<std::string> location_redirection
+        = parser.getLocationParam(request.getServerIndex(), request.getLocationIndex(), "redirect");
+    std::vector<std::string>::iterator it_p = location_redirection.begin();
+    if (!location_redirection.empty()) {
+        this->_res = setResponseData(std::atoi(it_p[0].c_str()), "text/html", "", 0, it_p[1]);
+        return (true);
+    }
     return (false);
 }
 

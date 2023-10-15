@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 17:08:10 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/14 09:21:32 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/15 08:57:10 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,8 +123,11 @@ std::string getBin(const std::string &url)
     }
 }
 
-responseData
-setResponseData(int status, std::string contentType, std::string content, int contentLength)
+responseData setResponseData(int         status,
+                             std::string contentType,
+                             std::string content,
+                             int         contentLength,
+                             std::string location)
 {
     responseData res;
 
@@ -133,6 +136,7 @@ setResponseData(int status, std::string contentType, std::string content, int co
     res.contentType   = contentType;
     res.content       = content;
     res.contentLength = contentLength;
+    res.location      = location;
     return (res);
 }
 

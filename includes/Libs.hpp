@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:12:50 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/15 01:54:27 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/15 09:52:50 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@
 
 #define OK 200
 #define NO_CONTENT 204
+#define PERMANENT_REDIRECT 301
+#define TEMPORARY_REDIRECT 302
 #define BAD_REQUEST 400
 #define FORBIDDEN 403
 #define NOT_FOUND 404

@@ -6,7 +6,7 @@
 /*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:42:45 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/14 09:09:15 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/15 10:00:20 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class ResponseHandlers {
 
     int          _resolveOption(std::string method);
     bool         _verifyServerName(HttpRequest &request, Parser &parser);
+    bool         _verifyRedirection(HttpRequest &request, Parser &parser);
     bool         _methodAllowed(HttpRequest &request);
     responseData _getCgi(HttpRequest &request);
     void         _getHandler(HttpRequest &request, Parser &parser);
