@@ -16,6 +16,7 @@ CGI::CGI() { _is_cgi = false; }
 
 CGI::~CGI() {}
 
+
 std::map<std::string, std::string> CGI::assembleCGIHeaders(const HttpRequest &request)
 {
 
