@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 05:34:14 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 20:02:18 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/16 18:31:31 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,22 @@ responseData ErrorPage::getErrorPageContent(std::vector<std::string> errorPage,
             return (res);
         }
     }
+    res = this.getErrorPageStandard(statusCode);
+    // std::string standardErrorFile = "/";
+    // standardErrorFile += to_string(statusCode);
+    // standardErrorFile += ".html";
+    // res = getContent(DEFAULT_ERROR_ROOT, standardErrorFile, statusCode);
+    // if (res.contentLength) {
+    //     return (res);
+    // }
+    // res = getJson("{\"error\": \"Error page not configured\"}", statusCode);
+    return (res);
+}
+
+responseData ErrorPage::getErrorPageStandard(int statusCode)
+{
+    responseData res;
+
     std::string standardErrorFile = "/";
     standardErrorFile += to_string(statusCode);
     standardErrorFile += ".html";
