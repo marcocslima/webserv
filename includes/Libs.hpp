@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Libs.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:12:50 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/16 18:22:34 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/16 18:43:17 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,6 @@
 #define P_BLUE "\e[0;38;5;24m"
 #define RESET_COLOR "\e[0m"
 
-#define ENTITY_TOO_LARGE "413"
-
 #define OK 200
 #define NO_CONTENT 204
 #define PERMANENT_REDIRECT 301
@@ -59,6 +57,7 @@
 #define FORBIDDEN 403
 #define NOT_FOUND 404
 #define METHOD_NOT_ALLOWED 405
+#define PAYLOAD_TOO_LARGE 413
 #define INTERNAL_SERVER_ERROR 500
 #define HTTP_VERSION_NOT_SUPPORTED 505
 

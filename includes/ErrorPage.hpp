@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorPage.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 05:35:10 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 16:56:14 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/16 18:35:18 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,4 +28,5 @@ class ErrorPage {
                                      int                      statusCode,
                                      std::string              uri,
                                      std::string              root);
+    responseData getErrorPageStandard(int statusCode);
 };

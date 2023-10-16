@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/16 18:27:22 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/16 18:56:29 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,13 +123,14 @@ void Server::processClientData(int clientSocket)
     }
     if (this->_request.requestHttp(clientReq, this->_parser)) {
         // TODO: está parte será modificada após chamar errorPage na classe _request
-        std::string status  = _request.statusCode;
-        std::string content = _request.content;
+        res = _errorPage.getErrorPageStandard(_request.statusCode);
+        // std::string status  = _request.statusCode;
+        // std::string content = _request.content;
 
-        res.content       = content;
-        res.statusCode    = status;
-        res.contentType   = "text/html";
-        res.contentLength = content.size();
+        // res.content       = content;
+        // res.statusCode    = status;
+        // res.contentType   = "text/html";
+        // res.contentLength = content.size();
 
         // setResponse(res, clientSocket);
         // return ;

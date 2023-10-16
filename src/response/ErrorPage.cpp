@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorPage.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 05:34:14 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/16 18:31:31 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/16 18:35:50 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ responseData ErrorPage::getErrorPageContent(std::vector<std::string> errorPage,
             return (res);
         }
     }
-    res = this.getErrorPageStandard(statusCode);
+    res = this->getErrorPageStandard(statusCode);
     // std::string standardErrorFile = "/";
     // standardErrorFile += to_string(statusCode);
     // standardErrorFile += ".html";

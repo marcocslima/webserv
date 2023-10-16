@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/16 18:23:32 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/16 18:55:01 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class Server {
     bool                    _verbose;
     std::string             _defaultHtmlContent;
     ResponseHandlers        _responseHandlers;
+    ErrorPage   _errorPage;
 
     void _sendClientData(int clientSocket, responseData res);
 

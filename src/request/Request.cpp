@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/16 18:21:16 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/16 18:58:45 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void HttpRequest::init()
     has_body       = false;
     has_form       = false;
     has_multipart  = false;
-    statusCode     = "";
+    statusCode     = 0;
     content        = "";
     _uri           = "";
     _port          = "";
@@ -76,7 +76,6 @@ bool HttpRequest::requestHttp(std::string request, Parser &parser)
 
     if (firstLineEnd == std::string::npos) {
         this->statusCode = BAD_REQUEST;
-        this->content    = "<html><body><h1>HTTP/1.1 400 Bad Request</h1></body></html>";
         return (true);
     }
 
@@ -120,14 +119,11 @@ bool HttpRequest::_parseFirstLine(std::string &requestLine)
         || requestLine != this->_method + " " + this->_uri + " " + this->_httpVersion
         || this->_uri[0] != '/') {
         this->statusCode = BAD_REQUEST;
-        this->content    = "<html><body><h1>HTTP/1.1 400 Bad Request</h1></body></html>";
         return (true);
     }
 
     if (this->_httpVersion != "HTTP/1.1") {
         this->statusCode = HTTP_VERSION_NOT_SUPPORTED;
-        this->content
-            = "<html><body><h1>HTTP/1.1 505 HTTP Version Not Supported</h1></body></html>";
         return (true);
     }
     size_t pos = this->_uri.find('?');
@@ -240,7 +236,7 @@ bool HttpRequest::_getMultipartData(std::string request)
         this->_boundary = contentType.substr(pos + 9);
         this->_boundary = "--" + _boundary;
     } else {
-        this->content = "<html><body><h1>HTTP/1.1 400 Bad Request</h1></body></html>";
+        this->statusCode = BAD_REQUEST;
         return (true);
     }
 
@@ -250,7 +246,6 @@ bool HttpRequest::_getMultipartData(std::string request)
         _body = request.substr(startBody);
     else {
         this->statusCode = BAD_REQUEST;
-        this->content    = "<html><body><h1>HTTP/1.1 400 Bad Request</h1></body></html>";
         return (true);
     }
     return (false);
@@ -264,9 +259,7 @@ bool HttpRequest::_getBody(std::string request)
         this->_body = request.substr(bodyStart);
     if (_maxBodySize > 0) {
         if (_contentLength > _maxBodySize) {
-            this->statusCode = ENTITY_TOO_LARGE;
-            this->content    = "<html><body><h1>HTTP/1.1 413 Payload Too Large </h1></body></html>";
-            std::cout << "Payload too large" << std::endl;
+            this->statusCode = PAYLOAD_TOO_LARGE;
             return (true);
         }
     } else if (_maxBodySize < 0) {

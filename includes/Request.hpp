@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/16 18:23:17 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/16 18:54:37 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "Libs.hpp"
 #include "Logger.hpp"
 #include "Parser.hpp"
+#include "ErrorPage.hpp"
 #include "utils.hpp"
 
 class HttpRequest {
@@ -47,7 +48,7 @@ class HttpRequest {
     bool        has_multipart;
     bool        autoIndexServer;
     bool        autoIndexLoc;
-    std::string statusCode;
+    int         statusCode;
     std::string content;
 
     private:
