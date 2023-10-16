@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseHandlers.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:42:45 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 12:18:02 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/14 11:58:24 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "Location.hpp"
 #include "Parser.hpp"
 #include "PostMethod.hpp"
+#include "AutoIndex.hpp"
 #include "Request.hpp"
 
 typedef enum e_method_option {

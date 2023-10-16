@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/13 15:21:53 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/16 12:07:27 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ int HttpRequest::getLocationIndex(void) const { return (this->_locationIndex); }
 int HttpRequest::getLocationSize(void) const { return (this->_locationSize); }
 
 std::string HttpRequest::getRoot(void) const { return (this->_root); }
+
+std::string HttpRequest::getPath(void) const { return (this->_path); }
 
 std::vector<std::string> HttpRequest::getErrorPageConfig(void) const
 {
@@ -81,6 +83,7 @@ bool HttpRequest::requestHttp(std::string request, Parser &parser)
     _parseHeaders(headersPart);
     _getMaxBody(parser);
     _getServerParam(parser);
+    _setAutoIndex(parser);
 
     if (has_body) {
         has_multipart = false;
@@ -174,8 +177,8 @@ void HttpRequest::_parseHeaders(const std::string &request)
             if (colonPos != std::string::npos) {
                 std::string key   = headerLine.substr(0, colonPos);
                 std::string value = headerLine.substr(colonPos + 1);
-                _header[key]      = value;
-                _findHeaders(key, value);
+                this->_header[key]      = value;
+                this->_findHeaders(key, value);
             }
         }
     }
@@ -194,7 +197,7 @@ void HttpRequest::_findHeaders(std::string key, std::string value)
         int length = atoi(value.c_str());
         if (length > 0) {
             has_body      = true;
-            _contentLength = length;
+            this->_contentLength = length;
         }
     }
 }
@@ -209,7 +212,7 @@ void HttpRequest::_getMaxBody(Parser &parser)
         if (!listen.empty() && !listen[0].empty() && _port == listen[0]) {
             std::vector<std::string> maxBody = parser.getServerParam(i, "client_max_body_size");
             if (!maxBody.empty() && !maxBody[0].empty())
-                _maxBodySize = std::atoi(maxBody[0].c_str());
+                this->_maxBodySize = std::atoi(maxBody[0].c_str());
             break;
         }
     }
@@ -221,8 +224,8 @@ bool HttpRequest::_getMultipartData(std::string request)
 
     size_t pos = contentType.find("boundary=");
     if (pos != std::string::npos) {
-        _boundary = contentType.substr(pos + 9);
-        _boundary = "--" + _boundary;
+        this->_boundary = contentType.substr(pos + 9);
+        this->_boundary = "--" + _boundary;
     } else {
         this->statusCode = BAD_REQUEST;
         this->content = "<html><body><h1>HTTP/1.1 400 Bad Request</h1></body></html>";
@@ -246,12 +249,12 @@ bool HttpRequest::_getBody(std::string request)
     std::size_t bodyStart = request.find("\r\n\r\n") + 4;
 
     if (bodyStart != std::string::npos)
-        _body = request.substr(bodyStart);
+        this->_body = request.substr(bodyStart);
     if (_maxBodySize > 0) {
         if (_contentLength > _maxBodySize) {
             this->statusCode = ENTITY_TOO_LARGE;
             this->content = "<html><body><h1>HTTP/1.1 413 Payload Too Large </h1></body></html>";
-            std::cout << "Entity too large" << std::endl;
+            std::cout << "Payload too large" << std::endl;
             return (true);
 
         }
@@ -354,4 +357,41 @@ void HttpRequest::_setErrorPage(Parser &parser)
     }
     this->_errorPageConfig = parser.getServerParam(this->_serverIndex, "error_page");
     return;
+}
+
+void HttpRequest::_setAutoIndex(Parser &parser)
+{
+    std::vector<int> serverSize = parser.getSizeServers();
+    std::vector<std::string>    server;
+    std::vector<std::string>    locationParam;
+    std::vector<std::string>::iterator it;
+
+    autoIndexServer = false;
+    autoIndexLoc = false;
+    server = parser.getServerParam(this->_serverIndex, "autoindex");
+    if (!server.empty() && server[0] == "on")
+        autoIndexServer = true;
+    else
+    {
+        int loc = 1;
+        for (int i = 0; i < serverSize[0]; i++)
+        {
+            for (int j = 0; j < serverSize[loc]; j++)
+            {
+                std::vector<std::string> locationPath = parser.getLocationParam(i, j, "location");
+                if (!locationPath.empty() && _uri == locationPath[0])
+                {
+                    std::vector<std::string> autoindexParam = parser.getLocationParam(i, j, "autoindex");
+                    for (size_t k = 0; k < autoindexParam.size(); k++)
+                    {
+                        if (autoindexParam[k] == "on"){
+                            _path = locationPath[0];
+                            autoIndexLoc = true;
+                        }
+                    }
+                }
+            }
+            loc++;
+        }
+    }
 }

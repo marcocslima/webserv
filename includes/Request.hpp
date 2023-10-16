@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/13 15:18:42 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/16 12:06:57 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,14 @@ class HttpRequest {
     int                                getLocationIndex(void) const;
     int                                getLocationSize(void) const;
     std::string                        getRoot(void) const;
+    std::string                        getPath(void) const;
     std::vector<std::string>           getErrorPageConfig(void) const;
 
-    bool has_body;
-    bool has_form;
-    bool has_multipart;
+    bool    has_body;
+    bool    has_form;
+    bool    has_multipart;
+    bool    autoIndexServer;
+    bool    autoIndexLoc;
     std::string statusCode;
     std::string content;
 
@@ -59,6 +62,7 @@ class HttpRequest {
     std::string _extractPathFromURI(void);
     void        _setRoot(Parser &parser);
     void        _setErrorPage(Parser &parser);
+    void        _setAutoIndex(Parser &parser);
 
     int                                _contentLength;
     int                                _maxBodySize;
@@ -74,5 +78,6 @@ class HttpRequest {
     int                                _locationIndex;
     int                                _locationSize;
     std::string                        _root;
+    std::string                        _path;
     std::vector<std::string>           _errorPageConfig;
 };

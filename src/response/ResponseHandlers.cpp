@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/13 16:47:57 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/16 11:58:00 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,17 @@ int ResponseHandlers::_resolveOption(std::string method)
 void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
 {
     Location location(request);
+    AutoIndex   autoIndex;
 
-    // TODO: chamar autoindex
+    if (request.autoIndexServer && request.getUri() == "/autoindex")
+        this->_res = autoIndex.autoIndex(request.getRoot(), "/", request.getPort());
+    else if (request.autoIndexLoc)
+        this->_res = autoIndex.autoIndex(request.getRoot(), request.getPath(), request.getPort());
     // TODO: chamar cgi
-    location.setup(parser);
-    this->_res = location.getLocationContent();
+    else {
+        location.setup(parser);
+        this->_res = location.getLocationContent();
+    }
 }
 
 void ResponseHandlers::_postHandler(HttpRequest &request)
