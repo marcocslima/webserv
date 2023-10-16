@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+         #
+#    By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/04 00:39:21 by mcesar-d          #+#    #+#              #
-#    Updated: 2023/10/14 09:07:51 by mcl              ###   ########.fr        #
+#    Updated: 2023/10/16 18:22:19 by pmitsuko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -67,7 +67,8 @@ FILES = main.cpp\
 		ErrorPage.cpp\
 		utils.cpp\
 		Cgi.cpp\
-		ResponseHandlers.cpp
+		ResponseHandlers.cpp\
+		AutoIndex.cpp
 
 # COMPILED_SOURCES #
 

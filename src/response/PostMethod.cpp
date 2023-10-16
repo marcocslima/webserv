@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/13 19:52:16 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/16 18:24:27 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ responseData PostMethod::handleMethod()
 {
     created = false;
 
-    if (_req._has_body && _req._tooLarge == false) {
-        if (_req._has_multipart) {
+    if (_req.has_body) {
+        if (_req.has_multipart) {
             handleMultipart();
             if (created && _file == true) {
                 _res = getJson(
@@ -40,12 +40,14 @@ responseData PostMethod::handleMethod()
                 return (_res);
             }
         }
-        if (_req._has_form)
+        if (_req.has_form)
             handleForm();
+        else
+            std::cout << "Body: " << _req.getBody() << "\n";
 
         _res = getJson("{\"status\": \"success\", \"message\": \"Successful operation\"}", OK);
         Logger::info << "Post request completed successfully." << std::endl;
-    } else if (!_req._has_body) {
+    } else if (!_req.has_body) {
         _res = _errorPage.getErrorPageContent(
             _req.getErrorPageConfig(), BAD_REQUEST, _req.getUri(), _req.getRoot());
         Logger::info << "No content." << std::endl;

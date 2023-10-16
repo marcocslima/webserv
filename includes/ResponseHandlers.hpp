@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseHandlers.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:42:45 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/15 10:00:20 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/16 18:23:26 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include "AutoIndex.hpp"
 #include "Cgi.hpp"
 #include "Constants.hpp"
 #include "DeleteMethod.hpp"

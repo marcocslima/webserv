@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/15 15:30:02 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/16 18:27:22 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,17 +121,21 @@ void Server::processClientData(int clientSocket)
         this->_poll.addFdToClose(clientSocket);
         return;
     }
-    this->_request.requestHttp(clientReq, this->_parser);
+    if (this->_request.requestHttp(clientReq, this->_parser)) {
+        // TODO: está parte será modificada após chamar errorPage na classe _request
+        std::string status  = _request.statusCode;
+        std::string content = _request.content;
 
-    size_t methodPosition = clientReq.find(this->_request.getMethod());
-    size_t httpPosition   = clientReq.find(this->_request.getHttp());
-    if (methodPosition == std::string::npos || httpPosition == std::string::npos) {
-        return;
+        res.content       = content;
+        res.statusCode    = status;
+        res.contentType   = "text/html";
+        res.contentLength = content.size();
+
+        // setResponse(res, clientSocket);
+        // return ;
+    } else {
+        res = this->_responseHandlers.exec(this->_parser, this->_request);
     }
-    if (this->_verbose) {
-        Logger::verbose << clientReq << std::endl;
-    }
-    res = this->_responseHandlers.exec(this->_parser, this->_request);
     this->_sendClientData(clientSocket, res);
     return;
 }

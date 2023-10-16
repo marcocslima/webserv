@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/15 15:29:37 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/16 18:25:35 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,11 +114,14 @@ responseData ResponseHandlers::_getCgi(HttpRequest &request)
 
 void ResponseHandlers::_getHandler(HttpRequest &request, Parser &parser)
 {
-    Location location(request);
+    Location  location(request);
+    AutoIndex autoIndex;
 
-    // TODO: chamar autoindex
-
-    if (Constants::isCgi(extractFileExtension(request.getUri()))) {
+    if (request.autoIndexServer && request.getUri() == "/autoindex")
+        this->_res = autoIndex.autoIndex(request.getRoot(), "/", request.getPort());
+    else if (request.autoIndexLoc)
+        this->_res = autoIndex.autoIndex(request.getRoot(), request.getPath(), request.getPort());
+    else if (Constants::isCgi(extractFileExtension(request.getUri()))) {
         if (_cgi.isCGI(request, parser))
             this->_res = this->_getCgi(request);
     } else {
