@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 18:31:10 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/17 12:48:21 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/17 15:56:21 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,13 @@ class PostMethod : public AHttpResponse {
     PostMethod(HttpRequest request);
     ~PostMethod();
 
-    responseData handleMethod();
-    bool         handleMultipart();
-    void         handleForm();
-    void         print();
-    void         saveFile(std::string &fileName, const std::string &value);
-    void         parseMultipartFormData(size_t pos, size_t endPos);
+    responseData    handleMethod();
+    bool            verifyLimit();
+    bool            handleMultipart();
+    void            handleForm();
+    void            print();
+    void            saveFile(std::string &fileName, const std::string &value);
+    void            parseMultipartFormData(size_t pos, size_t endPos);
 
     bool created;
 

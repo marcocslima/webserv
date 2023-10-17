@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/17 12:49:39 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/17 16:05:42 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,19 +73,27 @@ bool PostMethod::handleMultipart()
     std::string body     = _req.getBody();
 
     _formData.clear();
-    _file      = false;
-    size_t pos = 0;
-    _bodySize = 0;
+    _file       = false;
+    size_t pos  = 0;
+    _bodySize   = 0;
     while ((pos = body.find(boundary, pos)) != std::string::npos) {
         pos += boundary.length();
         size_t endPos = body.find(boundary, pos);
         if (endPos != std::string::npos)
             parseMultipartFormData(pos, endPos);
     }
-    if (_bodySize > _req.getMaxBodySize())
+    if (verifyLimit())
         return (true);
     if (_file == false)
         print();
+    return (false);
+}
+
+bool    PostMethod::verifyLimit()
+{
+    if ((_bodySize / 1024) > _req.getMaxBodySize() ||
+        (_req.getContentLength() / 1024) > _req.getMaxBodySize())
+        return (true);
     return (false);
 }
 
@@ -131,7 +139,8 @@ void PostMethod::parseMultipartFormData(size_t pos, size_t endPos)
                     std::size_t filenameEnd = data.find("\"", filenamePos);
                     if (filenameEnd != std::string::npos) {
                         std::string fileName = setFileName(filenamePos, data);
-                        saveFile(fileName, value);
+                        if ((_req.getContentLength() / 1024) < _req.getMaxBodySize())
+                            saveFile(fileName, value);
                         _file = true;
                     }
                 } else{

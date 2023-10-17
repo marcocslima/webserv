@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/17 12:39:15 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/17 16:07:08 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ int HttpRequest::getLocationIndex(void) const { return (this->_locationIndex); }
 int HttpRequest::getLocationSize(void) const { return (this->_locationSize); }
 
 size_t HttpRequest::getMaxBodySize(void) const { return (this->_maxBodySize); }
+
+size_t HttpRequest::getContentLength(void) const { return (this->_contentLength); }
 
 std::string HttpRequest::getRoot(void) const { return (this->_root); }
 
@@ -198,6 +200,7 @@ void HttpRequest::_findHeaders(std::string key, std::string value)
         int length = atoi(value.c_str());
         if (length > 0) {
             has_body             = true;
+            _contentLength = length;
         }
     }
 }
@@ -258,7 +261,7 @@ bool HttpRequest::_getBody(std::string request)
     if (bodyStart != std::string::npos)
         this->_body = request.substr(bodyStart);
     if (_maxBodySize > 0) {
-        if (!_body.empty() && (_body.size()) > _maxBodySize) {
+        if (!_body.empty() && (_body.size() / 1024) > _maxBodySize) {
             this->statusCode = PAYLOAD_TOO_LARGE;
             return (true);
         }
