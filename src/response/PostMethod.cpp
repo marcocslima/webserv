@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/17 10:45:51 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/17 12:49:39 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,15 @@ responseData PostMethod::handleMethod()
 
     if (_req.has_body) {
         if (_req.has_multipart) {
-            handleMultipart();
+            if (handleMultipart())
+            {
+                _res = _errorPage.getErrorPageContent(_req.getErrorPageConfig(),
+                                                      PAYLOAD_TOO_LARGE,
+                                                      _req.getUri(),
+                                                      _req.getRoot());
+                Logger::error << "Payload to large." << std::endl;
+                return (_res);
+            }
             if (created && _file == true) {
                 _res = getJson(
                     "{\"status\": \"success\", \"message\": \"Resource created successfully\"}",
@@ -59,7 +67,7 @@ responseData PostMethod::handleMethod()
     return (_res);
 }
 
-void PostMethod::handleMultipart()
+bool PostMethod::handleMultipart()
 {
     std::string boundary = _req.getBoundary();
     std::string body     = _req.getBody();
@@ -67,14 +75,18 @@ void PostMethod::handleMultipart()
     _formData.clear();
     _file      = false;
     size_t pos = 0;
+    _bodySize = 0;
     while ((pos = body.find(boundary, pos)) != std::string::npos) {
         pos += boundary.length();
         size_t endPos = body.find(boundary, pos);
         if (endPos != std::string::npos)
             parseMultipartFormData(pos, endPos);
     }
+    if (_bodySize > _req.getMaxBodySize())
+        return (true);
     if (_file == false)
         print();
+    return (false);
 }
 
 std::string setFileName(size_t pos, std::string data)
@@ -122,8 +134,10 @@ void PostMethod::parseMultipartFormData(size_t pos, size_t endPos)
                         saveFile(fileName, value);
                         _file = true;
                     }
-                } else
+                } else{
+                    _bodySize += value.size();
                     _formData[name] = value;
+                }
             }
         }
     }
@@ -136,7 +150,6 @@ void PostMethod::saveFile(std::string &fileName, const std::string &value)
         std::string filePath = cwd;
         filePath += "/examples/uploads/" + fileName;
 
-        std::cout << filePath << "\n";
         std::ifstream checkFile(filePath.c_str());
         if (checkFile.good()) {
             created = false;

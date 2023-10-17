@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PostMethod.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 18:31:10 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/16 18:22:47 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/17 12:48:21 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ class PostMethod : public AHttpResponse {
     ~PostMethod();
 
     responseData handleMethod();
-    void         handleMultipart();
+    bool         handleMultipart();
     void         handleForm();
     void         print();
     void         saveFile(std::string &fileName, const std::string &value);
@@ -32,5 +32,6 @@ class PostMethod : public AHttpResponse {
 
     private:
     bool                               _file;
+    size_t                                 _bodySize;
     std::map<std::string, std::string> _formData;
 };

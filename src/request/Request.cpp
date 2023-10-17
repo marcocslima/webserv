@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/17 11:12:45 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/17 12:39:15 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ int HttpRequest::getLocationIndex(void) const { return (this->_locationIndex); }
 
 int HttpRequest::getLocationSize(void) const { return (this->_locationSize); }
 
+size_t HttpRequest::getMaxBodySize(void) const { return (this->_maxBodySize); }
+
 std::string HttpRequest::getRoot(void) const { return (this->_root); }
 
 std::string HttpRequest::getPath(void) const { return (this->_path); }
@@ -63,7 +65,6 @@ void HttpRequest::init()
     _method        = "";
     _boundary      = "";
     _httpVersion   = "";
-    _contentLength = 0;
     _maxBodySize   = 0;
     _paramQuery.clear();
     _header.clear();
@@ -197,7 +198,6 @@ void HttpRequest::_findHeaders(std::string key, std::string value)
         int length = atoi(value.c_str());
         if (length > 0) {
             has_body             = true;
-            this->_contentLength = length;
         }
     }
 }
@@ -258,11 +258,11 @@ bool HttpRequest::_getBody(std::string request)
     if (bodyStart != std::string::npos)
         this->_body = request.substr(bodyStart);
     if (_maxBodySize > 0) {
-        if ((_contentLength / 1024) > _maxBodySize) {
+        if (!_body.empty() && (_body.size()) > _maxBodySize) {
             this->statusCode = PAYLOAD_TOO_LARGE;
             return (true);
         }
-    } else if (_maxBodySize < 0) {
+    } else {
         Logger::error << "Invalid client_max_body_size." << std::endl;
         return (true);
     }
