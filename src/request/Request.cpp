@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/16 18:58:45 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/17 11:12:45 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,7 +258,7 @@ bool HttpRequest::_getBody(std::string request)
     if (bodyStart != std::string::npos)
         this->_body = request.substr(bodyStart);
     if (_maxBodySize > 0) {
-        if (_contentLength > _maxBodySize) {
+        if ((_contentLength / 1024) > _maxBodySize) {
             this->statusCode = PAYLOAD_TOO_LARGE;
             return (true);
         }
