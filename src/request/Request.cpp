@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/17 16:13:58 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/17 16:21:41 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ void HttpRequest::init()
     _boundary      = "";
     _httpVersion   = "";
     _maxBodySize   = 0;
+    _contentLength = 0;
     _paramQuery.clear();
     _header.clear();
 }
