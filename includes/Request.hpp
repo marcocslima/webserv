@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/14 09:11:26 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/16 18:54:37 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "Libs.hpp"
 #include "Logger.hpp"
 #include "Parser.hpp"
+#include "ErrorPage.hpp"
 #include "utils.hpp"
 
 class HttpRequest {
@@ -22,7 +23,7 @@ class HttpRequest {
     HttpRequest();
     ~HttpRequest();
 
-    void requestHttp(std::string request, Parser &parser);
+    bool requestHttp(std::string request, Parser &parser);
     void init();
 
     std::string                        getMethod(void) const;
@@ -38,34 +39,35 @@ class HttpRequest {
     int                                getLocationIndex(void) const;
     int                                getLocationSize(void) const;
     std::string                        getRoot(void) const;
+    std::string                        getPath(void) const;
     std::vector<std::string>           getErrorPageConfig(void) const;
     std::vector<std::string>           getLimitExcept(void) const;
 
-    bool _has_body;
-    bool _has_form;
-    bool _tooLarge;
-    bool _has_multipart;
-    class RequestException : public std::exception {
-        public:
-        virtual const char *what() const throw();
-    };
+    bool        has_body;
+    bool        has_form;
+    bool        has_multipart;
+    bool        autoIndexServer;
+    bool        autoIndexLoc;
+    int         statusCode;
+    std::string content;
 
     private:
     void        _parseHeaders(const std::string &request);
-    void        _parseFirstLine(std::string &requestLine);
+    bool        _parseFirstLine(std::string &requestLine);
     void        _findHeaders(std::string key, std::string value);
     void        _parseQuery(void);
-    void        _getMultipartData(std::string request);
+    bool        _getMultipartData(std::string request);
     void        _getMaxBody(Parser &parser);
     void        _getServerParam(Parser &parser);
-    void        _getBody(std::string request);
     void        _getHost();
+    bool        _getBody(std::string request);
     int         _findServerIndex(Parser &parser, int serverSize, std::string port);
     int         _findLocationIndex(Parser &parser);
     std::string _extractPathFromURI(void);
     void        _setRoot(Parser &parser);
     void        _setErrorPage(Parser &parser);
     void        _setLimitExcept(Parser &parser);
+    void        _setAutoIndex(Parser &parser);
 
     int                                _contentLength;
     int                                _maxBodySize;
@@ -76,13 +78,13 @@ class HttpRequest {
     std::string                        _method;
     std::string                        _boundary;
     std::string                        _httpVersion;
-    std::string                        _statusError;
     std::vector<std::string>           _paramQuery;
     std::map<std::string, std::string> _header;
     int                                _serverIndex;
     int                                _locationIndex;
     int                                _locationSize;
     std::string                        _root;
+    std::string                        _path;
     std::vector<std::string>           _errorPageConfig;
     std::vector<std::string>           _limitExcept;
 };

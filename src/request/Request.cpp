@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/14 09:12:33 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/16 18:58:45 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ int HttpRequest::getLocationSize(void) const { return (this->_locationSize); }
 
 std::string HttpRequest::getRoot(void) const { return (this->_root); }
 
+std::string HttpRequest::getPath(void) const { return (this->_path); }
+
 std::vector<std::string> HttpRequest::getErrorPageConfig(void) const
 {
     return (this->_errorPageConfig);
@@ -49,90 +51,87 @@ std::vector<std::string> HttpRequest::getErrorPageConfig(void) const
 
 std::vector<std::string> HttpRequest::getLimitExcept(void) const { return (this->_limitExcept); }
 
-const char *HttpRequest::RequestException::what() const throw()
-{
-    return ("Error parsing HTTP request.");
-}
-
 void HttpRequest::init()
 {
-    _has_body      = false;
-    _has_form      = false;
-    _has_multipart = false;
-    _tooLarge      = false;
+    has_body       = false;
+    has_form       = false;
+    has_multipart  = false;
+    statusCode     = 0;
+    content        = "";
     _uri           = "";
     _port          = "";
     _method        = "";
     _boundary      = "";
     _httpVersion   = "";
-    _statusError   = "";
     _contentLength = 0;
     _maxBodySize   = 0;
     _paramQuery.clear();
     _header.clear();
 }
 
-void HttpRequest::requestHttp(std::string request, Parser &parser)
+bool HttpRequest::requestHttp(std::string request, Parser &parser)
 {
-    std::vector<int> serverSize   = parser.getSizeServers();
-    size_t           firstLineEnd = request.find("\r\n");
+    // std::vector<int> serverSize   = parser.getSizeServers();
+    size_t firstLineEnd = request.find("\r\n");
 
     if (firstLineEnd == std::string::npos) {
-        this->_statusError = to_string(BAD_REQUEST);
-        return;
+        this->statusCode = BAD_REQUEST;
+        return (true);
     }
 
     std::string requestLine = request.substr(0, firstLineEnd);
     std::string headersPart = request.substr(firstLineEnd + 2);
-    try {
-        _parseFirstLine(requestLine);
-        _parseHeaders(headersPart);
-        _getMaxBody(parser);
-        _getServerParam(parser);
-        _getHost();
 
-        if (_has_body) {
-            _has_multipart = false;
-            _has_form      = false;
-            std::map<std::string, std::string>::const_iterator it;
-            it = _header.find("Content-Type");
-            if (it->second.find("multipart/form-data") != std::string::npos)
-                _has_multipart = true;
-            if (it->second.find("application/x-www-form-urlencoded") != std::string::npos)
-                _has_form = true;
-        }
+    if (_parseFirstLine(requestLine))
+        return (true);
+    _parseHeaders(headersPart);
+    _getMaxBody(parser);
+    _getServerParam(parser);
+    _setAutoIndex(parser);
+    _getHost();
 
-        if (_has_multipart)
-            _getMultipartData(request);
-        else if (_has_body)
-            _getBody(request);
-
-    } catch (RequestException const &e) {
-        Logger::error << e.what() << " " << this->_statusError << std::endl;
-        return;
+    if (has_body) {
+        has_multipart = false;
+        has_form      = false;
+        std::map<std::string, std::string>::const_iterator it;
+        it = _header.find("Content-Type");
+        if (it->second.find("multipart/form-data") != std::string::npos)
+            has_multipart = true;
+        if (it->second.find("application/x-www-form-urlencoded") != std::string::npos)
+            has_form = true;
     }
+
+    if (has_multipart) {
+        if (_getMultipartData(request))
+            return (true);
+    } else if (has_body) {
+        if (_getBody(request))
+            return (true);
+    }
+    return (false);
 }
 
-void HttpRequest::_parseFirstLine(std::string &requestLine)
+bool HttpRequest::_parseFirstLine(std::string &requestLine)
 {
     std::istringstream iss(requestLine);
 
     if (!(iss >> this->_method >> this->_uri >> this->_httpVersion)
         || requestLine != this->_method + " " + this->_uri + " " + this->_httpVersion
         || this->_uri[0] != '/') {
-        this->_statusError = to_string(BAD_REQUEST);
-        throw RequestException();
+        this->statusCode = BAD_REQUEST;
+        return (true);
     }
 
     if (this->_httpVersion != "HTTP/1.1") {
-        this->_statusError = to_string(HTTP_VERSION_NOT_SUPPORTED);
-        throw RequestException();
+        this->statusCode = HTTP_VERSION_NOT_SUPPORTED;
+        return (true);
     }
     size_t pos = this->_uri.find('?');
     if (pos != std::string::npos) {
         _parseQuery();
         this->_uri.erase(pos);
     }
+    return (false);
 }
 
 void HttpRequest::_parseQuery()
@@ -164,7 +163,7 @@ void HttpRequest::_parseHeaders(const std::string &request)
 {
     std::istringstream iss(request);
     std::string        headerLine;
-    _has_body = false;
+    has_body = false;
 
     while (std::getline(iss, headerLine, '\r')) {
         headerLine.erase(std::remove(headerLine.begin(), headerLine.end(), '\n'), headerLine.end());
@@ -176,10 +175,10 @@ void HttpRequest::_parseHeaders(const std::string &request)
             size_t colonPos = headerLine.find(": ");
 
             if (colonPos != std::string::npos) {
-                std::string key   = headerLine.substr(0, colonPos);
-                std::string value = headerLine.substr(colonPos + 1);
-                _header[key]      = value;
-                _findHeaders(key, value);
+                std::string key    = headerLine.substr(0, colonPos);
+                std::string value  = headerLine.substr(colonPos + 1);
+                this->_header[key] = value;
+                this->_findHeaders(key, value);
             }
         }
     }
@@ -197,8 +196,8 @@ void HttpRequest::_findHeaders(std::string key, std::string value)
     if (key == "Content-Length") {
         int length = atoi(value.c_str());
         if (length > 0) {
-            _has_body      = true;
-            _contentLength = length;
+            has_body             = true;
+            this->_contentLength = length;
         }
     }
 }
@@ -213,7 +212,7 @@ void HttpRequest::_getMaxBody(Parser &parser)
         if (!listen.empty() && !listen[0].empty() && _port == listen[0]) {
             std::vector<std::string> maxBody = parser.getServerParam(i, "client_max_body_size");
             if (!maxBody.empty() && !maxBody[0].empty())
-                _maxBodySize = std::atoi(maxBody[0].c_str());
+                this->_maxBodySize = std::atoi(maxBody[0].c_str());
             break;
         }
     }
@@ -228,17 +227,17 @@ void HttpRequest::_getHost()
         _host.erase(std::remove_if(_host.begin(), _host.end(), ::isspace), _host.end());
 }
 
-void HttpRequest::_getMultipartData(std::string request)
+bool HttpRequest::_getMultipartData(std::string request)
 {
     std::string contentType = _header["Content-Type"];
 
     size_t pos = contentType.find("boundary=");
     if (pos != std::string::npos) {
-        _boundary = contentType.substr(pos + 9);
-        _boundary = "--" + _boundary;
+        this->_boundary = contentType.substr(pos + 9);
+        this->_boundary = "--" + _boundary;
     } else {
-        this->_statusError = to_string(BAD_REQUEST);
-        throw RequestException();
+        this->statusCode = BAD_REQUEST;
+        return (true);
     }
 
     size_t startBody = request.find("\r\n\r\n") + 4;
@@ -246,27 +245,28 @@ void HttpRequest::_getMultipartData(std::string request)
     if (startBody != std::string::npos)
         _body = request.substr(startBody);
     else {
-        this->_statusError = to_string(BAD_REQUEST);
-        throw RequestException();
+        this->statusCode = BAD_REQUEST;
+        return (true);
     }
+    return (false);
 }
 
-void HttpRequest::_getBody(std::string request)
+bool HttpRequest::_getBody(std::string request)
 {
     std::size_t bodyStart = request.find("\r\n\r\n") + 4;
 
-    _tooLarge = false;
     if (bodyStart != std::string::npos)
-        _body = request.substr(bodyStart);
+        this->_body = request.substr(bodyStart);
     if (_maxBodySize > 0) {
         if (_contentLength > _maxBodySize) {
-            this->_statusError = ENTITY_TOO_LARGE;
-            Logger::error << "Entity too large" << std::endl;
-            _tooLarge = true;
+            this->statusCode = PAYLOAD_TOO_LARGE;
+            return (true);
         }
     } else if (_maxBodySize < 0) {
         Logger::error << "Invalid client_max_body_size." << std::endl;
+        return (true);
     }
+    return (false);
 }
 
 void HttpRequest::_getServerParam(Parser &parser)
@@ -372,4 +372,37 @@ void HttpRequest::_setLimitExcept(Parser &parser)
             = parser.getLocationParam(this->_serverIndex, this->_locationIndex, "limit_except");
     }
     return;
+}
+
+void HttpRequest::_setAutoIndex(Parser &parser)
+{
+    std::vector<int>                   serverSize = parser.getSizeServers();
+    std::vector<std::string>           server;
+    std::vector<std::string>           locationParam;
+    std::vector<std::string>::iterator it;
+
+    autoIndexServer = false;
+    autoIndexLoc    = false;
+    server          = parser.getServerParam(this->_serverIndex, "autoindex");
+    if (!server.empty() && server[0] == "on")
+        autoIndexServer = true;
+    else {
+        int loc = 1;
+        for (int i = 0; i < serverSize[0]; i++) {
+            for (int j = 0; j < serverSize[loc]; j++) {
+                std::vector<std::string> locationPath = parser.getLocationParam(i, j, "location");
+                if (!locationPath.empty() && _uri == locationPath[0]) {
+                    std::vector<std::string> autoindexParam
+                        = parser.getLocationParam(i, j, "autoindex");
+                    for (size_t k = 0; k < autoindexParam.size(); k++) {
+                        if (autoindexParam[k] == "on") {
+                            _path        = locationPath[0];
+                            autoIndexLoc = true;
+                        }
+                    }
+                }
+            }
+            loc++;
+        }
+    }
 }

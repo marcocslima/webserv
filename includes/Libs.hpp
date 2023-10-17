@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Libs.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:12:50 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/15 09:52:50 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/16 18:43:17 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <dirent.h>
 #include <exception>
 #include <fstream>
 #include <iomanip>
@@ -48,8 +49,6 @@
 #define P_BLUE "\e[0;38;5;24m"
 #define RESET_COLOR "\e[0m"
 
-#define ENTITY_TOO_LARGE "413"
-
 #define OK 200
 #define NO_CONTENT 204
 #define PERMANENT_REDIRECT 301
@@ -58,6 +57,7 @@
 #define FORBIDDEN 403
 #define NOT_FOUND 404
 #define METHOD_NOT_ALLOWED 405
+#define PAYLOAD_TOO_LARGE 413
 #define INTERNAL_SERVER_ERROR 500
 #define HTTP_VERSION_NOT_SUPPORTED 505
 

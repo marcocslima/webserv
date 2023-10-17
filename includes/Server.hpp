@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2023/10/13 20:07:21 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/16 22:54:48 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,13 @@ class Server {
     bool                    _verbose;
     std::string             _defaultHtmlContent;
     ResponseHandlers        _responseHandlers;
+    ErrorPage               _errorPage;
+    int                     _bytesRead;
 
-    void _sendClientData(int clientSocket, responseData res);
+    bool        _acceptNewConnection(size_t i);
+    std::string _readClientData(int clientSocket);
+    void        _processClientData(int clientSocket);
+    void        _sendClientData(int clientSocket, responseData res);
 
     public:
     Server(void);
@@ -50,8 +55,6 @@ class Server {
     void initSockets(void);
     void initPoll(void);
     int  run(void);
-    bool acceptNewConnection(size_t i);
-    void processClientData(int clientSocket);
     void closeServer(void);
 
     void setVerbose(bool verbose);
