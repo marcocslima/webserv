@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PostMethod.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/16 18:24:27 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/17 10:45:51 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,8 +134,9 @@ void PostMethod::saveFile(std::string &fileName, const std::string &value)
     char cwd[1024];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
         std::string filePath = cwd;
-        filePath += "/uploads/" + fileName;
+        filePath += "/examples/uploads/" + fileName;
 
+        std::cout << filePath << "\n";
         std::ifstream checkFile(filePath.c_str());
         if (checkFile.good()) {
             created = false;
