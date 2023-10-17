@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AutoIndex.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 08:47:30 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/17 09:41:33 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/17 09:54:28 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ class AutoIndex {
 
     private:
     // void			setResponse(std::string statusCode, std::string content);
-    std::string  _link(const std::string &pathLink, std::string dirEntry, std::string port);
     responseData _responseData;
     HttpRequest  _request;
     ErrorPage    _errorPage;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseHandlers.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/17 09:44:28 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/17 10:20:01 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,11 @@ bool ResponseHandlers::_verifyServerName(HttpRequest &request, Parser &parser)
     if (server_names.empty())
         return (true);
     for (std::vector<std::string>::iterator it = server_names.begin(); it != server_names.end();
-         ++it)
-        if (*it == request.getHost())
-            return (true);
+         ++it){
+            if (*it == request.getHost() || request.getHost() == "127.0.0.1")
+                return (true);
+
+         }
     return (false);
 }
 
