@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/16 18:56:29 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/16 22:55:40 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Server.hpp"
+#include "Server.hpp"
 
 Server::Server(void) : _verbose(false) {}
 
@@ -59,7 +59,46 @@ void Server::initPoll(void)
     }
 }
 
-bool Server::acceptNewConnection(size_t i)
+int Server::run(void)
+{
+    while (true) {
+        if (this->_poll.execute() == -1) {
+            Logger::error << "Error in poll()" << std::endl;
+            return (1);
+        }
+        for (size_t i = 0; i < this->_poll.getSize(); ++i) {
+            if (this->_poll.isReadable(i)) {
+                if (this->_poll.isListeningSocketMatch(i)) {
+                    if (!this->_acceptNewConnection(i))
+                        continue;
+                } else {
+                    int clientSocket = this->_poll.getPollFd(i);
+                    if (clientSocket < 0) {
+                        Logger::error << "Index out of bounds of vector _pollFds" << std::endl;
+                        continue;
+                    }
+                    _processClientData(clientSocket);
+                }
+            }
+        }
+        this->_poll.removeMarkedElements();
+    }
+    return (0);
+}
+
+void Server::closeServer(void)
+{
+    for (std::vector<Socket *>::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
+        delete *it;
+    }
+    this->_sockets.clear();
+    this->_parser.clearParams();
+    this->_poll.closePoll();
+}
+
+void Server::setVerbose(bool verbose) { this->_verbose = verbose; }
+
+bool Server::_acceptNewConnection(size_t i)
 {
     try {
         Socket *client;
@@ -77,22 +116,20 @@ bool Server::acceptNewConnection(size_t i)
     }
 }
 
-void Server::processClientData(int clientSocket)
+std::string Server::_readClientData(int clientSocket)
 {
-    char         buffer[1024] = {0};
-    int          bytesRead, bytes = 0;
-    std::string  clientReq;
-    responseData res;
+    char        buffer[1024] = {0};
+    int         bytes        = 0;
+    std::string clientReq;
 
-    // TODO: essa lógica de leitura não poderia estar em outra função?
-    while ((bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0)) > 0) {
-        clientReq.append(buffer, bytesRead);
+    while ((_bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0)) > 0) {
+        clientReq.append(buffer, _bytesRead);
         if (clientReq.find("Expect: 100-continue") != std::string::npos) {
             sleep(4);
             continue;
         }
-        buffer[bytesRead] = '\0';
-        bytes += bytesRead;
+        buffer[_bytesRead] = '\0';
+        bytes += _bytesRead;
         if (clientReq.find("multipart/form-data") != std::string::npos) {
             std::string boundary;
             size_t      contentTypePos = clientReq.find("Content-Type: ");
@@ -115,70 +152,29 @@ void Server::processClientData(int clientSocket)
             break;
         }
     }
-    if (bytesRead == -1) {
+    return (clientReq);
+}
+
+void Server::_processClientData(int clientSocket)
+{
+    std::string  clientReq;
+    responseData res;
+
+    clientReq = this->_readClientData(clientSocket);
+    if (_bytesRead == -1) {
         Logger::info << "Client connection closed"
                      << " on socket " << clientSocket << std::endl;
         this->_poll.addFdToClose(clientSocket);
         return;
     }
     if (this->_request.requestHttp(clientReq, this->_parser)) {
-        // TODO: está parte será modificada após chamar errorPage na classe _request
         res = _errorPage.getErrorPageStandard(_request.statusCode);
-        // std::string status  = _request.statusCode;
-        // std::string content = _request.content;
-
-        // res.content       = content;
-        // res.statusCode    = status;
-        // res.contentType   = "text/html";
-        // res.contentLength = content.size();
-
-        // setResponse(res, clientSocket);
-        // return ;
     } else {
         res = this->_responseHandlers.exec(this->_parser, this->_request);
     }
     this->_sendClientData(clientSocket, res);
     return;
 }
-
-int Server::run(void)
-{
-    while (true) {
-        if (this->_poll.execute() == -1) {
-            Logger::error << "Error in poll()" << std::endl;
-            return (1);
-        }
-        for (size_t i = 0; i < this->_poll.getSize(); ++i) {
-            if (this->_poll.isReadable(i)) {
-                if (this->_poll.isListeningSocketMatch(i)) {
-                    if (!this->acceptNewConnection(i))
-                        continue;
-                } else {
-                    int clientSocket = this->_poll.getPollFd(i);
-                    if (clientSocket < 0) {
-                        Logger::error << "Index out of bounds of vector _pollFds" << std::endl;
-                        continue;
-                    }
-                    processClientData(clientSocket);
-                }
-            }
-        }
-        this->_poll.removeMarkedElements();
-    }
-    return (0);
-}
-
-void Server::closeServer(void)
-{
-    for (std::vector<Socket *>::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
-        delete *it;
-    }
-    this->_sockets.clear();
-    this->_parser.clearParams();
-    this->_poll.closePoll();
-}
-
-void Server::setVerbose(bool verbose) { this->_verbose = verbose; }
 
 void Server::_sendClientData(int clientSocket, responseData res)
 {
