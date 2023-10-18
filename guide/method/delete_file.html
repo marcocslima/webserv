@@ -16,14 +16,14 @@
 	<div class="card">
 		<h1 class="card-title">Excluir arquivo</h1>
 
-		<form id="form">
+		<form id="form" class="w-50 mx-500">
 			<div class="form-group">
-				<label for="file-path">Caminho do arquivo:</label>
+				<label for="file-path">Nome do arquivo:</label>
 				<input type="text" id="file-path" name="file-path" required>
 			</div>
 
 			<div class="button-container">
-				<button class="btn" type="button" onclick="window.history.back()">Voltar</button>
+				<a href="./delete.html" class="btn">Voltar</a>
 				<button class="btn" type="submit" onclick="deleteFile()">Deletar arquivo</button>
 			</div>
 		</form>

@@ -26,10 +26,6 @@
     $num2 = $requestData['num2'];
     $operator = $requestData['operator'];
 
-    // while (true) {
-    //     echo '  @@@ --- INFINITE LOOP !!! --- @@@  ';
-    // }
-
     switch ($operator) {
       case 'add':
         $result = $num1 + $num2;

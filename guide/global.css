@@ -27,6 +27,7 @@ body {
 	color: #fff;
 	background: #2A2B38;
 	padding: 15px 40px;
+	margin: 4px 12px;
 	border-radius: 4px;
 	text-transform: uppercase;
 	transition: 0.5s linear;
@@ -124,7 +125,8 @@ form textarea {
 
 .button-container {
 	display: flex;
-	justify-content: space-between;
+	flex-wrap: wrap;
+	justify-content: center;
 	margin-top: 20px;
 }
 
@@ -141,6 +143,10 @@ form textarea {
 
 .w-50 {
 	width: 50%;
+}
+
+.mx-500 {
+	max-width: 500px;
 }
 
 .mt-36 {
