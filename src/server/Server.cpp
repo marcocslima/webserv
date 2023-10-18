@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/16 22:55:40 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/18 10:50:24 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,8 +206,8 @@ void Server::_sendClientData(int clientSocket, responseData res)
                 res.contentLength);
     }
 
-    send(clientSocket, responseHeader, strlen(responseHeader), 0);
+    send(clientSocket, responseHeader, strlen(responseHeader), MSG_NOSIGNAL);
     if (res.contentLength) {
-        send(clientSocket, res.content.c_str(), res.contentLength, 0);
+        send(clientSocket, res.content.c_str(), res.contentLength, MSG_NOSIGNAL);
     }
 }
