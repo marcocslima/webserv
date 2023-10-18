@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/17 16:05:42 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/18 08:45:56 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@ responseData PostMethod::handleMethod()
             if (handleMultipart())
             {
                 _res = _errorPage.getErrorPageContent(_req.getErrorPageConfig(),
-                                                      PAYLOAD_TOO_LARGE,
+                                                      ENTITY_TOO_LARGE,
                                                       _req.getUri(),
                                                       _req.getRoot());
-                Logger::error << "Payload to large." << std::endl;
+                Logger::error << "Request Entity Too Large." << std::endl;
                 return (_res);
             }
             if (created && _file == true) {

@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 22:12:50 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/16 18:43:17 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/18 08:44:34 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@
 #define FORBIDDEN 403
 #define NOT_FOUND 404
 #define METHOD_NOT_ALLOWED 405
-#define PAYLOAD_TOO_LARGE 413
+#define ENTITY_TOO_LARGE 413
 #define INTERNAL_SERVER_ERROR 500
 #define HTTP_VERSION_NOT_SUPPORTED 505
 

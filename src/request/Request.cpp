@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/17 16:21:41 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/18 08:45:34 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,7 +263,7 @@ bool HttpRequest::_getBody(std::string request)
         this->_body = request.substr(bodyStart);
     if (_maxBodySize > 0) {
         if ((_body.size() / 1024) > _maxBodySize) {
-            this->statusCode = PAYLOAD_TOO_LARGE;
+            this->statusCode = ENTITY_TOO_LARGE;
             return (true);
         }
     } else {
