@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 17:08:10 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/15 08:57:10 by mcl              ###   ########.fr       */
+/*   Updated: 2023/10/18 16:48:46 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,14 @@ responseData getContent(std::string root, std::string file, int status)
 {
     std::stringstream fullPathStream;
     std::string       fullPath;
-    const char       *fullPathCStr;
     responseData      data;
     std::string       extension;
 
     data      = setResponseData(0, "", "", 0);
     extension = extractFileExtension(file);
     fullPathStream << root << file;
-    fullPath     = fullPathStream.str();
-    fullPathCStr = fullPath.c_str();
-    std::ifstream ifs(fullPathCStr);
+    fullPath = fullPathStream.str();
+    std::ifstream ifs(fullPath.c_str());
     if (ifs.is_open()) {
         std::string content((std::istreambuf_iterator<char>(ifs)),
                             std::istreambuf_iterator<char>());

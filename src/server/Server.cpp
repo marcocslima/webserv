@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/18 10:50:24 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/18 16:23:26 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,6 +160,7 @@ void Server::_processClientData(int clientSocket)
     std::string  clientReq;
     responseData res;
 
+    res       = setResponseData(0, "", "", 0);
     clientReq = this->_readClientData(clientSocket);
     if (_bytesRead == -1) {
         Logger::info << "Client connection closed"
