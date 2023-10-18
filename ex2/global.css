@@ -30,6 +30,7 @@ body {
 	border-radius: 4px;
 	text-transform: uppercase;
 	transition: 0.5s linear;
+	cursor: pointer;
 }
 
 .btn:hover {
@@ -87,6 +88,49 @@ body {
 
 .card-link:hover {
 	font-weight: bold;
+}
+
+/* ========= Forms ========= */
+.form-position {
+	display: flex;
+	justify-content: space-around;
+	width: 80%;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+form {
+	text-align: left;
+}
+
+.form-group {
+	margin-bottom: 10px;
+}
+
+form input[type="text"],
+form textarea {
+	width: 100%;
+	padding: 10px;
+	border: 1px #2A2B38 solid;
+	font-size: 16px;
+	border-radius: 4px;
+}
+
+.button-container {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 20px;
+}
+
+#gif {
+	max-width: 200px;
+	max-height: 130px;
+	width: auto;
+	height: auto;
+}
+
+.w-70 {
+	width: 70%;
 }
 
 .w-50 {
