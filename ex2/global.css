@@ -107,6 +107,12 @@ form {
 	margin-bottom: 10px;
 }
 
+.input-file-group {
+	margin: 20px 0 40px;
+	display: flex;
+	flex-direction: column;
+}
+
 form input[type="text"],
 form textarea {
 	width: 100%;
