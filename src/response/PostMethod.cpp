@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/19 10:34:21 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/19 14:51:17 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,9 +108,10 @@ std::string setFileName(size_t pos, std::string data)
     std::size_t filenameEnd = data.find("\"", pos);
     std::string aux         = data.substr(pos, filenameEnd - pos);
     size_t      dot         = aux.find(".");
-    std::string extension   = aux.substr(dot);
-
-    oss << extension;
+    if (dot != std::string::npos){
+        std::string extension = aux.substr(dot);
+        oss << extension;
+    }
 
     std::string fileName = oss.str();
     return (fileName);
