@@ -6,7 +6,7 @@
 /*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 07:17:35 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/13 19:46:26 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/18 15:12:10 by pmitsuko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ responseData DeleteMethod::handleMethod(void)
 
     std::string resourcePath = getDir();
 
-    resourcePath = resourcePath + this->_req.getUri();
+    resourcePath = resourcePath + "/" + this->_req.getRoot() + this->_req.getUri();
 
     Logger::warning << "resourcePath: " << resourcePath << std::endl;
 

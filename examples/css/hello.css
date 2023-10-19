@@ -54,3 +54,10 @@ body {
 	font-size: 20px;
 	margin-bottom: 8px;
 }
+
+.card-link {
+	cursor: pointer;
+	margin-top: 36px;
+	font-size: 20px;
+	color: #00C1BB;
+}
