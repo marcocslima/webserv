@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/19 09:08:23 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/19 12:18:48 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,8 +207,20 @@ void Server::_sendClientData(int clientSocket, responseData res)
                 res.contentLength);
     }
 
-    send(clientSocket, responseHeader, strlen(responseHeader), MSG_NOSIGNAL);
+    int bytes_sent = send(clientSocket, responseHeader, strlen(responseHeader), MSG_NOSIGNAL);
+    if (bytes_sent == -1) {
+        Logger::info << "Client connection closed"
+                     << " on socket " << clientSocket << std::endl;
+        this->_poll.addFdToClose(clientSocket);
+        return;
+    }
     if (res.contentLength) {
-        send(clientSocket, res.content.c_str(), res.contentLength, MSG_NOSIGNAL);
+        int bytes_sent = send(clientSocket, res.content.c_str(), res.contentLength, MSG_NOSIGNAL);
+        if (bytes_sent == -1) {
+            Logger::info << "Client connection closed"
+                    << " on socket " << clientSocket << std::endl;
+            this->_poll.addFdToClose(clientSocket);
+            return;
+        }
     }
 }
