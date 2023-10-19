@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:27:05 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/18 08:45:56 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/19 10:34:21 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,28 +154,24 @@ void PostMethod::parseMultipartFormData(size_t pos, size_t endPos)
 
 void PostMethod::saveFile(std::string &fileName, const std::string &value)
 {
-    char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL) {
-        std::string filePath = cwd;
-        filePath += "/examples/uploads/" + fileName;
+    std::string resourcePath = getDir();
 
-        std::ifstream checkFile(filePath.c_str());
-        if (checkFile.good()) {
-            created = false;
-            Logger::error << "The file already exists." << std::endl;
-            return;
-        }
-        std::ofstream file(filePath.c_str(), std::ios::binary);
-        if (file.is_open()) {
-            file.write(value.c_str(), value.length());
-            file.close();
-            created = true;
-        } else
-            created = false;
-    } else {
-        Logger::error << "Error getting current working directory." << std::endl;
+    resourcePath = resourcePath + "/" + this->_req.getRoot() + "/method/" + fileName;
+
+    std::ifstream checkFile(resourcePath.c_str());
+    if (checkFile.good()) {
         created = false;
+        Logger::info << "The file already exists." << std::endl;
+        return;
     }
+    std::ofstream file(resourcePath.c_str(), std::ios::binary);
+    if (file.is_open()) {
+        file.write(value.c_str(), value.length());
+        file.close();
+        created = true;
+        Logger::info << "File path: " << resourcePath << std::endl;
+    } else
+        created = false;
 }
 
 std::string replaceChar(const std::string &input)

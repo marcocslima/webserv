@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:14:20 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/18 16:23:26 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/19 09:08:23 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ std::string Server::_readClientData(int clientSocket)
     while ((_bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0)) > 0) {
         clientReq.append(buffer, _bytesRead);
         if (clientReq.find("Expect: 100-continue") != std::string::npos) {
-            sleep(4);
+            sleep(2);
             continue;
         }
         buffer[_bytesRead] = '\0';

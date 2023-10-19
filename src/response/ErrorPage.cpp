@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 05:34:14 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/16 18:35:50 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/19 10:03:44 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,6 @@ responseData ErrorPage::getErrorPageContent(std::vector<std::string> errorPage,
         }
     }
     res = this->getErrorPageStandard(statusCode);
-    // std::string standardErrorFile = "/";
-    // standardErrorFile += to_string(statusCode);
-    // standardErrorFile += ".html";
-    // res = getContent(DEFAULT_ERROR_ROOT, standardErrorFile, statusCode);
-    // if (res.contentLength) {
-    //     return (res);
-    // }
-    // res = getJson("{\"error\": \"Error page not configured\"}", statusCode);
     return (res);
 }
 

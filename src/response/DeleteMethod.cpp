@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DeleteMethod.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 07:17:35 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/18 15:12:10 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/19 10:33:16 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ DeleteMethod::~DeleteMethod(void) {}
 
 responseData DeleteMethod::handleMethod(void)
 {
-
     std::string resourcePath = getDir();
 
     resourcePath = resourcePath + "/" + this->_req.getRoot() + this->_req.getUri();

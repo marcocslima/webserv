@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 14:24:07 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/18 08:45:34 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/19 10:05:56 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ void HttpRequest::init()
 
 bool HttpRequest::requestHttp(std::string request, Parser &parser)
 {
-    // std::vector<int> serverSize   = parser.getSizeServers();
     size_t firstLineEnd = request.find("\r\n");
 
     if (firstLineEnd == std::string::npos) {

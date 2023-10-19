@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 21:01:05 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 01:07:15 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/19 10:04:38 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ void Socket::listenForConnections(void)
     Logger::info << "Listening at " << this->_ip << ":" << this->_port << std::endl;
 }
 
-// Get sockaddr, IPv4 or IPv6:
 void *Socket::get_in_addr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET) {

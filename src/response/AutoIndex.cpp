@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AutoIndex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 08:46:45 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/17 09:42:31 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/19 10:03:27 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ responseData AutoIndex::autoIndex(std::string root, std::string path, std::strin
                                                        NOT_FOUND,
                                                        this->_request.getUri(),
                                                        this->_request.getRoot());
-        // setResponse("404 Not Found", "<html><body><h1>404 Not Found</h1></body></html>");
         return (_responseData);
     }
 
@@ -48,11 +47,3 @@ responseData AutoIndex::autoIndex(std::string root, std::string path, std::strin
     closedir(dir);
     return (_responseData);
 }
-
-// void AutoIndex::setResponse(std::string statusCode, std::string content)
-// {
-//     _responseData.content = content;
-//     _responseData.statusCode = statusCode;
-//     _responseData.contentType = "text/html";
-//     _responseData.contentLength = content.size();
-// }

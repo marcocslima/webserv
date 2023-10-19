@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Poll.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 01:48:24 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/09/16 05:01:50 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/19 10:04:18 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ void Poll::removeListeningSocket(int socketFd)
 
 void Poll::removePollFd(int socketFd)
 {
-    // Encontre e remova o socketFd do vetor _pollFds
     std::vector<struct pollfd>::iterator it = _pollFds.begin();
     while (it != _pollFds.end()) {
         if (it->fd == socketFd) {

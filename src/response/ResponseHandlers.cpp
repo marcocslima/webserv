@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseHandlers.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmitsuko <pmitsuko@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:41:36 by pmitsuko          #+#    #+#             */
-/*   Updated: 2023/10/17 20:01:42 by pmitsuko         ###   ########.fr       */
+/*   Updated: 2023/10/19 10:04:09 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,6 @@ int ResponseHandlers::_resolveOption(std::string method)
 
 responseData ResponseHandlers::_getCgi(HttpRequest &request)
 {
-    // CGI          cgi;
     responseData res;
 
     std::string cgi_response = _cgi.executeCGI(request);
