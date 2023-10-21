@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: mcl <mcl@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 11:38:53 by mcl               #+#    #+#             */
-/*   Updated: 2023/10/19 15:03:13 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/20 23:50:00 by mcl              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,15 +157,13 @@ std::string CGI::executeCGI(const HttpRequest &request)
         close(pipe_fd[0]);
     }
 
-    if (!pid) {
-        int i = 0;
-        while (_envs[i]) {
-            delete[] _envs[i];
-            i++;
-        }
-        delete[] _envs;
-        exit(0);
+    int i = 0;
+    while (_envs[i]) {
+        delete[] _envs[i];
+        i++;
     }
+    delete[] _envs;
+
     return (body);
 }
 
