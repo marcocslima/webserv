@@ -6,7 +6,7 @@
 /*   By: jefernan <jefernan@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 08:46:45 by jefernan          #+#    #+#             */
-/*   Updated: 2023/10/19 10:03:27 by jefernan         ###   ########.fr       */
+/*   Updated: 2023/10/24 14:23:35 by jefernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ AutoIndex::~AutoIndex() {}
 
 responseData AutoIndex::autoIndex(std::string root, std::string path, std::string port)
 {
-    static_cast<void>(port);
     std::string dirPath = root + path;
 
     DIR *dir = opendir(dirPath.c_str());
